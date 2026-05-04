@@ -140,12 +140,12 @@
     <string name="saints_title">Saints</string>
     <string name="saints_favorites_section">Mes dévotions</string>
     <string name="saints_no_favorites">Appuyez sur l\'étoile d\'un saint pour l\'ajouter à vos dévotions.</string>
-    <string name="saints_feast_date_label">Fête</string>
+    <string name="saints_feast_date_label">Jour de Fête</string>
     <string name="saints_patronage_label">Patronage</string>
     <string name="saints_search_hint">Rechercher des saints…</string>
-    <string name="saints_sort_name">By Name</string>
-    <string name="saints_sort_feast">By Feast Day</string>
-    <string name="saints_not_available">Les saints ne sont pas encore disponibles dans votre langue. Vous pouvez aider en contribuant sur GitHub.</string>
+    <string name="saints_sort_name">Par nom</string>
+    <string name="saints_sort_feast">Par Fête</string>
+    <string name="saints_not_available">Les saints ne sont pas encore disponibles dans votre langue. Vous pouvez nous aider en apportant votre contribution ou en créant une pull request sur GitHub.</string>
     <string name="section_rosary">Rosaire</string>
     <string name="rosary_order_label">Ordre du Rosaire</string>
     <string name="rosary_order_dominican">Dominicain</string>
