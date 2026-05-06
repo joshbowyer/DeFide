@@ -18,6 +18,7 @@
     <string name="theme_light">明亮</string>
     <string name="theme_dark">深色</string>
     <string name="theme_amoled">AMOLED纯黑</string>
+    <string name="theme_dynamic">动态</string>
     <string name="section_language">语言</string>
     <string name="translate_cta">想要添加或改进翻译？在Weblate网站上参与贡献。</string>
     <string name="section_bible_translation">圣经翻译</string>

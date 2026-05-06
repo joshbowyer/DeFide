@@ -18,6 +18,7 @@
     <string name="theme_light">Šviesi</string>
     <string name="theme_dark">Tamsi</string>
     <string name="theme_amoled">AMOLED juoda</string>
+    <string name="theme_dynamic">Dinamiškas</string>
     <string name="section_language">Kalba</string>
     <string name="translate_cta">Norite pridėti ar patobulinti vertimą? Prisidėkite svetainėje.</string>
     <string name="section_bible_translation">Biblijos vertimas</string>

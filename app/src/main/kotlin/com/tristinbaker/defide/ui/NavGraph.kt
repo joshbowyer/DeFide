@@ -2,7 +2,12 @@ package com.tristinbaker.defide.ui
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.LibraryBooks
 import androidx.compose.material.icons.automirrored.filled.MenuBook
@@ -265,6 +270,21 @@ private fun DeFideNavHost(
     NavHost(
         navController = navController,
         startDestination = "home",
+        modifier = Modifier.background(MaterialTheme.colorScheme.background),
+        enterTransition = {
+            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(300)) +
+                fadeIn(tween(300))
+        },
+        exitTransition = {
+            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(300))
+        },
+        popEnterTransition = {
+            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(300)) +
+                fadeIn(tween(300))
+        },
+        popExitTransition = {
+            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(300))
+        },
     ) {
         // Home
         composable("home") {

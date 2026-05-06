@@ -27,6 +27,7 @@
     <string name="theme_light">Claro</string>
     <string name="theme_dark">Escuro</string>
     <string name="theme_amoled">Preto AMOLED</string>
+    <string name="theme_dynamic">Dinâmico</string>
     <string name="keep_screen_on_label">Manter tela ligada ao usar o app</string>
     <string name="section_language">Idioma</string>
     <string name="translate_cta">Quer adicionar ou melhorar uma tradução? Contribua no Weblate.</string>

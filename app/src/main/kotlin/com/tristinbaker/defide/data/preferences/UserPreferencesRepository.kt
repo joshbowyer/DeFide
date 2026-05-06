@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
-enum class AppTheme { SYSTEM, LIGHT, DARK, AMOLED }
+enum class AppTheme { SYSTEM, LIGHT, DARK, AMOLED, DYNAMIC }
 enum class AppFont { SERIF, SYSTEM, SANS_SERIF }
 enum class RosaryDiagramStyle { CLASSIC, COMPACT }
 enum class RosaryOrder { DOMINICAN, FATIMA }

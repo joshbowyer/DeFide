@@ -1,0 +1,7 @@
+Fixed:
+- Verse of the Day widget now updates immediately at midnight when the daily verse changes, instead of waiting for the next scheduled Android refresh
+
+Added:
+- Dynamic theme: choose "Dynamic" in Settings > Appearance to tint the app with your wallpaper colors (Android 12+ only; falls back to Light/Dark on older devices)
+- Screen transitions: M3 shared-axis slide+fade animations between all screens
+- Predictive back gesture: swipe to go back now shows an animated preview of the previous screen (Android 14+)

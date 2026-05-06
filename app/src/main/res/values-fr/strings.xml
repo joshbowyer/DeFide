@@ -18,6 +18,7 @@
     <string name="theme_light">Clair</string>
     <string name="theme_dark">Sombre</string>
     <string name="theme_amoled">Noir AMOLED</string>
+    <string name="theme_dynamic">Dynamique</string>
     <string name="section_language">Langage</string>
     <string name="translate_cta">Envie d\'ajouter ou d\'améliorer une traduction ? Contribuez sur Weblate.</string>
     <string name="section_bible_translation">Traduction de la Bible</string>

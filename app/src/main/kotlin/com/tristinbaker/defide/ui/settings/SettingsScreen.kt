@@ -116,27 +116,31 @@ fun SettingsScreen(
             }
             item {
                 Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
-                    AppTheme.entries.forEach { theme ->
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            RadioButton(
-                                selected = prefs.theme == theme,
-                                onClick = { viewModel.setTheme(theme) },
-                            )
-                            Text(
-                                text = stringResource(when (theme) {
-                                    AppTheme.SYSTEM -> R.string.theme_system
-                                    AppTheme.LIGHT  -> R.string.theme_light
-                                    AppTheme.DARK   -> R.string.theme_dark
-                                    AppTheme.AMOLED -> R.string.theme_amoled
-                                }),
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.padding(start = 8.dp),
-                            )
+                    val supportsDynamic = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+                    AppTheme.entries
+                        .filter { it != AppTheme.DYNAMIC || supportsDynamic }
+                        .forEach { theme ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                RadioButton(
+                                    selected = prefs.theme == theme,
+                                    onClick = { viewModel.setTheme(theme) },
+                                )
+                                Text(
+                                    text = stringResource(when (theme) {
+                                        AppTheme.SYSTEM   -> R.string.theme_system
+                                        AppTheme.LIGHT    -> R.string.theme_light
+                                        AppTheme.DARK     -> R.string.theme_dark
+                                        AppTheme.AMOLED   -> R.string.theme_amoled
+                                        AppTheme.DYNAMIC  -> R.string.theme_dynamic
+                                    }),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    modifier = Modifier.padding(start = 8.dp),
+                                )
+                            }
                         }
-                    }
                 }
                 Row(
                     modifier = Modifier
