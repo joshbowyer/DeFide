@@ -1,0 +1,6 @@
+- Liturgy of the Hours added to the navigation drawer (opens HoursVibe in browser)
+- Bible search: type in the search bar to search book names and full verse text in two separate sections
+- Rosary bead spacing now reflects a real rosary, with wider gaps around each Our Father bead
+- Widget now shows the full verse when resized taller (removed the 4-line cap)
+- Backup and Restore: save and restore all your data from Settings
+- Rosary diagram is now always compact style; classic oval removed

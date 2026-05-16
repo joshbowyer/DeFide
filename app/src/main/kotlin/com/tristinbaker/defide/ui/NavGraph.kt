@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
@@ -84,6 +85,7 @@ private fun rememberDrawerItems() = listOf(
     DrawerItem("rosary",    stringResource(R.string.nav_rosary),    Icons.Default.Circle),
     DrawerItem("bible",     stringResource(R.string.nav_bible),     Icons.AutoMirrored.Filled.MenuBook),
     DrawerItem("catechism", stringResource(R.string.nav_catechism), Icons.AutoMirrored.Filled.LibraryBooks),
+    DrawerItem("loth",      stringResource(R.string.nav_loth),      Icons.Default.Schedule),
     DrawerItem("prayers",   stringResource(R.string.nav_prayers),   Icons.Default.Star),
     DrawerItem("novena",    stringResource(R.string.nav_novenas),   Icons.Default.Book),
     DrawerItem("saints",    stringResource(R.string.nav_saints),    Icons.Default.Person),
@@ -92,6 +94,7 @@ private fun rememberDrawerItems() = listOf(
 private const val CCC_URL_EN = "https://usccb.cld.bz/Catechism-of-the-Catholic-Church2/7"
 private const val CCC_URL_PT = "https://www.vatican.va/archive/cathechism_po/index_new/prima-pagina-cic_po.html"
 private const val CCC_URL_FR = "https://www.vatican.va/archive/FRA0013/_INDEX.HTM"
+private const val LOTH_URL = "https://hoursvibe.com/"
 
 @Composable
 private fun LocaleWrapper(language: String, content: @Composable () -> Unit) {
@@ -119,6 +122,7 @@ fun DeFideApp() {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     var showCatechismDialog by remember { mutableStateOf(false) }
+    var showLothDialog by remember { mutableStateOf(false) }
     val settingsViewModel: SettingsViewModel = androidx.hilt.navigation.compose.hiltViewModel()
     val prefs by settingsViewModel.preferences.collectAsState()
 
@@ -137,6 +141,8 @@ fun DeFideApp() {
             showCatechismDialog = showCatechismDialog,
             onShowCatechismDialog = { showCatechismDialog = it },
             cccUrl = cccUrl,
+            showLothDialog = showLothDialog,
+            onShowLothDialog = { showLothDialog = it },
             language = prefs.appLanguage,
         )
     }
@@ -151,6 +157,8 @@ private fun DeFideAppContent(
     showCatechismDialog: Boolean,
     onShowCatechismDialog: (Boolean) -> Unit,
     cccUrl: String,
+    showLothDialog: Boolean,
+    onShowLothDialog: (Boolean) -> Unit,
     language: String,
 ) {
     val openDrawer: () -> Unit = { scope.launch { drawerState.open() } }
@@ -164,6 +172,8 @@ private fun DeFideAppContent(
     // which creates its own composition root, receives already-resolved Strings.
     val catechismTitle = stringResource(R.string.catechism_dialog_title)
     val catechismText = stringResource(R.string.catechism_dialog_text)
+    val lothTitle = stringResource(R.string.loth_dialog_title)
+    val lothText = stringResource(R.string.loth_dialog_text)
     val openLabel = stringResource(R.string.action_open)
     val cancelLabel = stringResource(R.string.action_cancel)
 
@@ -180,6 +190,23 @@ private fun DeFideAppContent(
             },
             dismissButton = {
                 TextButton(onClick = { onShowCatechismDialog(false) }) { Text(cancelLabel) }
+            },
+        )
+    }
+
+    if (showLothDialog) {
+        AlertDialog(
+            onDismissRequest = { onShowLothDialog(false) },
+            title = { Text(lothTitle) },
+            text = { Text(lothText) },
+            confirmButton = {
+                TextButton(onClick = {
+                    onShowLothDialog(false)
+                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(LOTH_URL)))
+                }) { Text(openLabel) }
+            },
+            dismissButton = {
+                TextButton(onClick = { onShowLothDialog(false) }) { Text(cancelLabel) }
             },
         )
     }
@@ -204,6 +231,8 @@ private fun DeFideAppContent(
                             closeDrawer()
                             if (item.route == "catechism") {
                                 onShowCatechismDialog(true)
+                            } else if (item.route == "loth") {
+                                onShowLothDialog(true)
                             } else {
                                 navController.navigate(item.route) {
                                     popUpTo(navController.graph.findStartDestination().id) { saveState = true }
@@ -356,6 +385,9 @@ private fun DeFideNavHost(
                 },
                 onBookmarksSelected = { navController.navigate("bible/bookmarks") },
                 onOpenDrawer = openDrawer,
+                onVerseSelected = { translationId, bookNumber, chapter, verse ->
+                    navController.navigate("bible/$translationId/book/$bookNumber/chapter/$chapter?verse=$verse")
+                },
             )
         }
         composable("bible/bookmarks") {

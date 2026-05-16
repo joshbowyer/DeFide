@@ -7,6 +7,8 @@
     <string name="action_all">Tout</string>
     <string name="catechism_dialog_title">Ouvrir le Catéchisme</string>
     <string name="catechism_dialog_text">Ceci va ouvrir le Catéchisme de l\'Église catholique sur le site USCCB sur votre navigateur.</string>
+    <string name="loth_dialog_title">Open Liturgy of the Hours</string>
+    <string name="loth_dialog_text">This will open the Liturgy of the Hours on HoursVibe in your browser.</string>
     <string name="prayers_title">Prières</string>
     <string name="search_prayers_hint">Chercher des prières…</string>
     <string name="tag_label">Étiquette</string>
@@ -65,6 +67,7 @@
     <string name="nav_rosary">Rosaire</string>
     <string name="nav_bible">Bible</string>
     <string name="nav_catechism">Catéchisme</string>
+    <string name="nav_loth">Liturgy of the Hours</string>
     <string name="nav_prayers">Prières</string>
     <string name="nav_novenas">Neuvaines</string>
     <string name="nav_settings">Paramètres</string>
@@ -84,8 +87,6 @@
     <string name="rosary_streak">Série de Rosaires</string>
     <string name="rosary_title">Rosaire</string>
     <string name="select_mystery">Choisir un mystère</string>
-    <string name="rosary_diagram_classic">Classique</string>
-    <string name="rosary_diagram_compact">Compact</string>
     <string name="today_mystery_prefix">✦ Aujourd\'hui — %s</string>
     <string name="the_nth_mystery">Mystère %s</string>
     <string name="ordinal_first">Premier</string>
@@ -150,7 +151,6 @@
     <string name="section_rosary">Rosaire</string>
     <string name="rosary_order_label">Ordre du Rosaire</string>
     <string name="rosary_order_dominican">Dominicain</string>
-    <string name="rosary_diagram_label">Style de diagramme du chapelet</string>
     <string name="tag_after_communion">Après la Communion</string>
     <string name="tag_anxiety">Anxiété</string>
     <string name="tag_charity">Charité</string>

@@ -13,6 +13,10 @@
     <string name="catechism_dialog_title">Open Catechism</string>
     <string name="catechism_dialog_text">This will open the Catechism of the Catholic Church on the USCCB website in your browser.</string>
 
+    <!-- Liturgy of the Hours dialog -->
+    <string name="loth_dialog_title">Open Liturgy of the Hours</string>
+    <string name="loth_dialog_text">This will open the Liturgy of the Hours on HoursVibe in your browser.</string>
+
     <!-- Prayers -->
     <string name="prayers_title">Prayers</string>
     <string name="search_prayers_hint">Search prayers…</string>
@@ -39,6 +43,15 @@
     <string name="section_bible_streak">Bible Streak</string>
     <string name="chapters_per_day_label">Chapters per day</string>
     <string name="chapters_per_day_desc">How many chapters you need to read each day to keep your streak going</string>
+    <!-- Backup & Restore -->
+    <string name="section_backup">Backup &amp; Restore</string>
+    <string name="backup_label">Back Up</string>
+    <string name="restore_label">Restore</string>
+    <string name="backup_success">Backup saved successfully.</string>
+    <string name="restore_success">Restore completed successfully.</string>
+    <string name="backup_failed">Backup failed.</string>
+    <string name="restore_failed">Restore failed.</string>
+
     <string name="section_help">Help</string>
     <string name="how_to_use_label">How to Use</string>
     <string name="section_about">About</string>
@@ -54,6 +67,10 @@
     <string name="hour_label">Hour</string>
 
     <!-- Bible -->
+    <string name="search_bible_hint">Search verses…</string>
+    <string name="search_no_results">No results found.</string>
+    <string name="search_section_books">Books</string>
+    <string name="search_section_verses">Verses</string>
     <string name="bible_bookmarks">Bookmarks</string>
     <string name="bible_old_testament">Old Testament</string>
     <string name="bible_new_testament">New Testament</string>
@@ -82,6 +99,7 @@
     <string name="nav_rosary">Rosary</string>
     <string name="nav_bible">Bible</string>
     <string name="nav_catechism">Catechism</string>
+    <string name="nav_loth">Liturgy of the Hours</string>
     <string name="nav_prayers">Prayers</string>
     <string name="nav_novenas">Novenas</string>
     <string name="nav_settings">Settings</string>
@@ -156,9 +174,6 @@
     <!-- Rosary screen -->
     <string name="rosary_title">Rosary</string>
     <string name="select_mystery">Select a Mystery</string>
-    <string name="rosary_diagram_classic">Classic</string>
-    <string name="rosary_diagram_compact">Compact</string>
-    <string name="rosary_diagram_label">Rosary Diagram Style</string>
     <string name="section_rosary">Rosary</string>
     <string name="rosary_order_label">Rosary Order</string>
     <string name="rosary_order_dominican">Dominican</string>

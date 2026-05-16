@@ -7,6 +7,8 @@
     <string name="action_all">全部</string>
     <string name="catechism_dialog_title">开放教理问答</string>
     <string name="catechism_dialog_text">这将在您的浏览器中打开USCCB网站上的天主教会教理问答。</string>
+    <string name="loth_dialog_title">Open Liturgy of the Hours</string>
+    <string name="loth_dialog_text">This will open the Liturgy of the Hours on HoursVibe in your browser.</string>
     <string name="prayers_title">祷告</string>
     <string name="search_prayers_hint">搜索祷文</string>
     <string name="tag_label">标签</string>
@@ -65,6 +67,7 @@
     <string name="nav_rosary">玫瑰经</string>
     <string name="nav_bible">圣经</string>
     <string name="nav_catechism">教理问答</string>
+    <string name="nav_loth">Liturgy of the Hours</string>
     <string name="nav_prayers">祷告</string>
     <string name="nav_novenas">九日敬礼</string>
     <string name="nav_settings">设置</string>

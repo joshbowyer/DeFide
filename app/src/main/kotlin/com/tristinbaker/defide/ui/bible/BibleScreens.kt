@@ -28,10 +28,12 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.BookmarkBorder
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -64,6 +66,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -78,13 +81,24 @@ fun BibleHomeScreen(
     onBookSelected: (String, Int) -> Unit,
     onBookmarksSelected: () -> Unit,
     onOpenDrawer: () -> Unit,
+    onVerseSelected: (translationId: String, bookNumber: Int, chapter: Int, verse: Int) -> Unit,
     viewModel: BibleViewModel = hiltViewModel(),
 ) {
     val books by viewModel.books.collectAsState()
     val translationId by viewModel.selectedTranslationId.collectAsState()
+    val searchResults by viewModel.searchResults.collectAsState()
+    var searchQuery by remember { mutableStateOf("") }
 
     val otBooks = books.filter { it.testament == "OT" || it.testament == "DC" }
     val ntBooks = books.filter { it.testament == "NT" }
+    val bookIdMap = remember(books) { books.associate { it.id to it } }
+    val matchedBooks = remember(searchQuery, books) {
+        if (searchQuery.isBlank()) emptyList()
+        else books.filter {
+            it.shortName.contains(searchQuery, ignoreCase = true) ||
+            it.fullName.contains(searchQuery, ignoreCase = true)
+        }
+    }
 
     Scaffold(topBar = {
         TopAppBar(
@@ -102,53 +116,145 @@ fun BibleHomeScreen(
             },
         )
     }) { padding ->
-        LazyColumn(contentPadding = padding, modifier = Modifier.fillMaxSize()) {
-            if (otBooks.isNotEmpty()) {
-                item {
-                    Text(
-                        text = stringResource(R.string.bible_old_testament),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 10.dp),
-                    )
-                    HorizontalDivider()
+        Column(modifier = Modifier.fillMaxSize().padding(padding)) {
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = {
+                    searchQuery = it
+                    viewModel.search(it)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                placeholder = { Text(stringResource(R.string.search_bible_hint)) },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                singleLine = true,
+            )
+            if (searchQuery.isNotBlank()) {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    if (matchedBooks.isNotEmpty()) {
+                        item {
+                            Text(
+                                text = stringResource(R.string.search_section_books),
+                                style = MaterialTheme.typography.labelLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                            )
+                            HorizontalDivider()
+                        }
+                        items(matchedBooks, key = { it.bookNumber }) { book ->
+                            Text(
+                                text = book.fullName,
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { onBookSelected(translationId, book.bookNumber) }
+                                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                            )
+                            HorizontalDivider()
+                        }
+                    }
+                    if (searchResults.isNotEmpty()) {
+                        item {
+                            Text(
+                                text = stringResource(R.string.search_section_verses),
+                                style = MaterialTheme.typography.labelLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                            )
+                            HorizontalDivider()
+                        }
+                        items(searchResults, key = { it.id }) { verse ->
+                            val book = bookIdMap[verse.bookId] ?: return@items
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        onVerseSelected(translationId, book.bookNumber, verse.chapter, verse.verse)
+                                    }
+                                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                            ) {
+                                Text(
+                                    text = "${book.shortName} ${verse.chapter}:${verse.verse}",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.primary,
+                                )
+                                Text(
+                                    text = verse.text,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
+                            HorizontalDivider()
+                        }
+                    }
+                    if (matchedBooks.isEmpty() && searchResults.isEmpty()) {
+                        item {
+                            Box(modifier = Modifier.fillMaxWidth().padding(top = 64.dp), contentAlignment = Alignment.Center) {
+                                Text(
+                                    stringResource(R.string.search_no_results),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        }
+                    }
                 }
-                items(otBooks, key = { it.bookNumber }) { book ->
-                    Text(
-                        text = book.fullName,
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onBookSelected(translationId, book.bookNumber) }
-                            .padding(horizontal = 16.dp, vertical = 12.dp),
-                    )
-                    HorizontalDivider()
-                }
-            }
-            if (ntBooks.isNotEmpty()) {
-                item {
-                    Text(
-                        text = stringResource(R.string.bible_new_testament),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 10.dp),
-                    )
-                    HorizontalDivider()
-                }
-                items(ntBooks, key = { it.bookNumber }) { book ->
-                    Text(
-                        text = book.fullName,
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onBookSelected(translationId, book.bookNumber) }
-                            .padding(horizontal = 16.dp, vertical = 12.dp),
-                    )
-                    HorizontalDivider()
+            } else {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    if (otBooks.isNotEmpty()) {
+                        item {
+                            Text(
+                                text = stringResource(R.string.bible_old_testament),
+                                style = MaterialTheme.typography.labelLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                            )
+                            HorizontalDivider()
+                        }
+                        items(otBooks, key = { it.bookNumber }) { book ->
+                            Text(
+                                text = book.fullName,
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { onBookSelected(translationId, book.bookNumber) }
+                                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                            )
+                            HorizontalDivider()
+                        }
+                    }
+                    if (ntBooks.isNotEmpty()) {
+                        item {
+                            Text(
+                                text = stringResource(R.string.bible_new_testament),
+                                style = MaterialTheme.typography.labelLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                            )
+                            HorizontalDivider()
+                        }
+                        items(ntBooks, key = { it.bookNumber }) { book ->
+                            Text(
+                                text = book.fullName,
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { onBookSelected(translationId, book.bookNumber) }
+                                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                            )
+                            HorizontalDivider()
+                        }
+                    }
                 }
             }
         }

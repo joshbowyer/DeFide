@@ -62,12 +62,11 @@ class VotdWidget : GlanceAppWidget() {
                     if (result != null) {
                         val (verse, book) = result
                         Text(
-                            text = "“${verse.text}”",
+                            text = "\u201C${verse.text}\u201D",
                             style = TextStyle(
                                 color = colors.onSurface,
                                 fontSize = 13.sp,
                             ),
-                            maxLines = 4,
                         )
                         Spacer(modifier = GlanceModifier.height(4.dp))
                         Text(

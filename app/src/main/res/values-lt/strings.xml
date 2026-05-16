@@ -7,6 +7,8 @@
     <string name="action_all">Viskas</string>
     <string name="catechism_dialog_title">Atverti Katekizmą</string>
     <string name="catechism_dialog_text">Jūs būsite nukreipti į Katalikų Bažnyčios Katekizmą (anglų kalba) USCCB svetainėje jūsų naršyklėje.</string>
+    <string name="loth_dialog_title">Open Liturgy of the Hours</string>
+    <string name="loth_dialog_text">This will open the Liturgy of the Hours on HoursVibe in your browser.</string>
     <string name="prayers_title">Maldos</string>
     <string name="search_prayers_hint">Ieškoti maldų…</string>
     <string name="tag_label">Žymė</string>
@@ -65,6 +67,7 @@
     <string name="nav_rosary">Rožinis</string>
     <string name="nav_bible">Biblija</string>
     <string name="nav_catechism">Katekizmas</string>
+    <string name="nav_loth">Liturgy of the Hours</string>
     <string name="nav_prayers">Maldos</string>
     <string name="nav_novenas">Novenos</string>
     <string name="nav_settings">Nustatymai</string>
@@ -84,8 +87,6 @@
     <string name="rosary_streak">Rožinio streak\'as</string>
     <string name="rosary_title">Rožinis</string>
     <string name="select_mystery">Pasirinkti dalį</string>
-    <string name="rosary_diagram_classic">Klasikinis</string>
-    <string name="rosary_diagram_compact">Kompaktiškas</string>
     <string name="section_rosary">Rožinis</string>
     <string name="rosary_order_label">Rožinio eiga</string>
     <string name="rosary_order_dominican">Dominikoniškas</string>

@@ -12,7 +12,6 @@ import javax.inject.Singleton
 
 enum class AppTheme { SYSTEM, LIGHT, DARK, AMOLED, DYNAMIC }
 enum class AppFont { SERIF, SYSTEM, SANS_SERIF }
-enum class RosaryDiagramStyle { CLASSIC, COMPACT }
 enum class RosaryOrder { DOMINICAN, FATIMA }
 
 data class UserPreferences(
@@ -26,7 +25,6 @@ data class UserPreferences(
     val bibleLastBookNumber: Int = 0,
     val bibleLastChapter: Int = 0,
     val keepScreenOn: Boolean = false,
-    val rosaryDiagramStyle: RosaryDiagramStyle = RosaryDiagramStyle.CLASSIC,
     val rosaryOrder: RosaryOrder = RosaryOrder.DOMINICAN,
     val rosaryHapticFeedback: Boolean = true,
 )
@@ -46,7 +44,6 @@ class UserPreferencesRepository @Inject constructor(
         private val KEY_BIBLE_LAST_BOOK = intPreferencesKey("bible_last_book")
         private val KEY_BIBLE_LAST_CHAPTER = intPreferencesKey("bible_last_chapter")
         private val KEY_KEEP_SCREEN_ON = androidx.datastore.preferences.core.booleanPreferencesKey("keep_screen_on")
-        private val KEY_ROSARY_DIAGRAM   = stringPreferencesKey("rosary_diagram_style")
         private val KEY_ROSARY_ORDER     = stringPreferencesKey("rosary_order")
         private val KEY_ROSARY_HAPTIC    = androidx.datastore.preferences.core.booleanPreferencesKey("rosary_haptic_feedback")
     }
@@ -63,7 +60,6 @@ class UserPreferencesRepository @Inject constructor(
             bibleLastBookNumber = prefs[KEY_BIBLE_LAST_BOOK] ?: 0,
             bibleLastChapter = prefs[KEY_BIBLE_LAST_CHAPTER] ?: 0,
             keepScreenOn = prefs[KEY_KEEP_SCREEN_ON] ?: false,
-            rosaryDiagramStyle = prefs[KEY_ROSARY_DIAGRAM]?.let { runCatching { RosaryDiagramStyle.valueOf(it) }.getOrNull() } ?: RosaryDiagramStyle.CLASSIC,
             rosaryOrder = prefs[KEY_ROSARY_ORDER]?.let { runCatching { RosaryOrder.valueOf(it) }.getOrNull() } ?: RosaryOrder.DOMINICAN,
             rosaryHapticFeedback = prefs[KEY_ROSARY_HAPTIC] ?: true,
         )
@@ -95,10 +91,6 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun setKeepScreenOn(enabled: Boolean) {
         dataStore.edit { it[KEY_KEEP_SCREEN_ON] = enabled }
-    }
-
-    suspend fun setRosaryDiagramStyle(style: RosaryDiagramStyle) {
-        dataStore.edit { it[KEY_ROSARY_DIAGRAM] = style.name }
     }
 
     suspend fun setRosaryOrder(order: RosaryOrder) {

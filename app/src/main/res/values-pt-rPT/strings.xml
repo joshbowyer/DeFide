@@ -10,6 +10,9 @@
     <!-- Catechism dialog -->
     <string name="catechism_dialog_title">Abrir Catecismo</string>
     <string name="catechism_dialog_text">Isto abrirá o Catecismo da Igreja Católica no sítio do Vaticano no seu navegador.</string>
+    <!-- Liturgy of the Hours dialog -->
+    <string name="loth_dialog_title">Open Liturgy of the Hours</string>
+    <string name="loth_dialog_text">This will open the Liturgy of the Hours on HoursVibe in your browser.</string>
     <!-- Prayers -->
     <string name="prayers_title">Orações</string>
     <string name="search_prayers_hint">Pesquisar orações…</string>
@@ -72,6 +75,7 @@
     <string name="nav_rosary">Terço</string>
     <string name="nav_bible">Bíblia</string>
     <string name="nav_catechism">Catecismo</string>
+    <string name="nav_loth">Liturgy of the Hours</string>
     <string name="nav_prayers">Orações</string>
     <string name="nav_novenas">Novenas</string>
     <string name="nav_settings">Definições</string>
@@ -101,8 +105,6 @@
     <string name="ordinal_third">Terceiro</string>
     <string name="ordinal_fourth">Quarto</string>
     <string name="ordinal_fifth">Quinto</string>
-    <string name="rosary_diagram_classic">Clássico</string>
-    <string name="rosary_diagram_compact">Compacto</string>
     <string name="section_rosary">Terço</string>
     <string name="rosary_order_label">Ordem do Terço</string>
     <string name="rosary_order_dominican">Dominicana</string>

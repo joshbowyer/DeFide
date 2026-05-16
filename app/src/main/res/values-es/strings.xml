@@ -7,6 +7,8 @@
     <string name="action_all">Todos</string>
     <string name="catechism_dialog_title">Abrir Catecismo</string>
     <string name="catechism_dialog_text">Esto abrirá el Catecismo de la Iglesia Católica en el sitio web de la USCCB en tu navegador.</string>
+    <string name="loth_dialog_title">Open Liturgy of the Hours</string>
+    <string name="loth_dialog_text">This will open the Liturgy of the Hours on HoursVibe in your browser.</string>
     <string name="prayers_title">Oraciones</string>
     <string name="search_prayers_hint">Buscar oraciones…</string>
     <string name="tag_label">Etiqueta</string>
@@ -65,6 +67,7 @@
     <string name="nav_rosary">Rosario</string>
     <string name="nav_bible">Biblia</string>
     <string name="nav_catechism">Catecismo</string>
+    <string name="nav_loth">Liturgy of the Hours</string>
     <string name="nav_prayers">Oraciones</string>
     <string name="nav_novenas">Novenas</string>
     <string name="nav_settings">Ajustes</string>
@@ -84,9 +87,6 @@
     <string name="rosary_streak">Racha del Rosario</string>
     <string name="rosary_title">Rosario</string>
     <string name="select_mystery">Selecciona un Misterio</string>
-    <string name="rosary_diagram_classic">Clásico</string>
-    <string name="rosary_diagram_compact">Compacto</string>
-    <string name="rosary_diagram_label">Estilo de diagrama del Rosario</string>
     <string name="section_rosary">Rosario</string>
     <string name="rosary_order_label">Orden del Rosario</string>
     <string name="rosary_order_dominican">Dominicano</string>

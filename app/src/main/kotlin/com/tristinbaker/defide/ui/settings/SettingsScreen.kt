@@ -3,6 +3,7 @@ package com.tristinbaker.defide.ui.settings
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -36,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -53,7 +55,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.tristinbaker.defide.R
 import com.tristinbaker.defide.data.preferences.AppFont
 import com.tristinbaker.defide.data.preferences.AppTheme
-import com.tristinbaker.defide.data.preferences.RosaryDiagramStyle
 import com.tristinbaker.defide.data.preferences.RosaryOrder
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,6 +72,23 @@ fun SettingsScreen(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
         if (granted) showNotificationDialog = true
+    }
+
+    val backupLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        if (uri != null) viewModel.backup(uri)
+    }
+    val restoreLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) viewModel.restore(uri)
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.backupMessage.collect { message ->
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
     }
 
     fun requestNotificationPermissionThenShow() {
@@ -303,33 +321,7 @@ fun SettingsScreen(
             }
             item {
                 Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
-                    Text(
-                        stringResource(R.string.rosary_diagram_label),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(bottom = 4.dp),
-                    )
-                    RosaryDiagramStyle.entries.forEach { style ->
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            RadioButton(
-                                selected = prefs.rosaryDiagramStyle == style,
-                                onClick = { viewModel.setRosaryDiagramStyle(style) },
-                            )
-                            Text(
-                                text = stringResource(when (style) {
-                                    RosaryDiagramStyle.CLASSIC  -> R.string.rosary_diagram_classic
-                                    RosaryDiagramStyle.COMPACT  -> R.string.rosary_diagram_compact
-                                }),
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.padding(start = 8.dp),
-                            )
-                        }
-                    }
                     if (prefs.appLanguage == "pt-PT") {
-                        Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             stringResource(R.string.rosary_order_label),
                             style = MaterialTheme.typography.bodySmall,
@@ -430,6 +422,28 @@ fun SettingsScreen(
                             enabled = prefs.bibleStreakGoal < 10,
                         ) { Text("+") }
                     }
+                }
+                HorizontalDivider(modifier = Modifier.padding(top = 8.dp))
+            }
+            item {
+                SectionHeader(stringResource(R.string.section_backup))
+            }
+            item {
+                val today = java.time.LocalDate.now().toString().replace("-", "")
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
+                ) {
+                    Button(
+                        onClick = { backupLauncher.launch("DeFide_$today.json") },
+                        modifier = Modifier.weight(1f),
+                    ) { Text(stringResource(R.string.backup_label)) }
+                    Button(
+                        onClick = { restoreLauncher.launch(arrayOf("application/json")) },
+                        modifier = Modifier.weight(1f),
+                    ) { Text(stringResource(R.string.restore_label)) }
                 }
                 HorizontalDivider(modifier = Modifier.padding(top = 8.dp))
             }

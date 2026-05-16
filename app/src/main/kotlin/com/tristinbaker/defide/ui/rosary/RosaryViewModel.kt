@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tristinbaker.defide.data.model.Mystery
 import com.tristinbaker.defide.data.model.MysteryBead
-import com.tristinbaker.defide.data.preferences.RosaryDiagramStyle
 import com.tristinbaker.defide.data.preferences.RosaryOrder
 import com.tristinbaker.defide.data.preferences.UserPreferencesRepository
 import kotlinx.coroutines.flow.SharingStarted
@@ -146,18 +145,10 @@ class RosaryViewModel @Inject constructor(
         .map { it.rosaryOrder }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), RosaryOrder.DOMINICAN)
 
-    val diagramStyle: StateFlow<RosaryDiagramStyle> = prefsRepository.preferences
-        .map { it.rosaryDiagramStyle }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), RosaryDiagramStyle.CLASSIC)
-
     val hapticFeedback: StateFlow<Boolean> = prefsRepository.preferences
         .map { it.rosaryHapticFeedback }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
 
-
-    fun setDiagramStyle(style: RosaryDiagramStyle) {
-        viewModelScope.launch { prefsRepository.setRosaryDiagramStyle(style) }
-    }
 
     private val _sessionId = MutableStateFlow<String?>(null)
     private var currentLanguage = "en"

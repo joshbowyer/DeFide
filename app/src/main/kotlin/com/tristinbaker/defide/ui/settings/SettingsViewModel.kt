@@ -1,19 +1,23 @@
 package com.tristinbaker.defide.ui.settings
 
 import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.tristinbaker.defide.data.backup.BackupManager
 import com.tristinbaker.defide.data.preferences.AppFont
 import com.tristinbaker.defide.data.preferences.AppTheme
-import com.tristinbaker.defide.data.preferences.RosaryDiagramStyle
 import com.tristinbaker.defide.data.preferences.RosaryOrder
 import com.tristinbaker.defide.data.preferences.UserPreferences
 import com.tristinbaker.defide.data.preferences.UserPreferencesRepository
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import com.tristinbaker.defide.widget.VotdWidget
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import com.tristinbaker.defide.worker.NovenaReminderWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,11 +33,35 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val prefsRepository: UserPreferencesRepository,
+    private val backupManager: BackupManager,
     @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
     val preferences: StateFlow<UserPreferences> = prefsRepository.preferences
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), UserPreferences())
+
+    private val _backupMessage = MutableSharedFlow<String>()
+    val backupMessage: SharedFlow<String> = _backupMessage.asSharedFlow()
+
+    fun backup(uri: Uri) {
+        viewModelScope.launch {
+            val result = backupManager.exportTo(uri)
+            _backupMessage.emit(
+                if (result.isSuccess) context.getString(com.tristinbaker.defide.R.string.backup_success)
+                else context.getString(com.tristinbaker.defide.R.string.backup_failed)
+            )
+        }
+    }
+
+    fun restore(uri: Uri) {
+        viewModelScope.launch {
+            val result = backupManager.importFrom(uri)
+            _backupMessage.emit(
+                if (result.isSuccess) context.getString(com.tristinbaker.defide.R.string.restore_success)
+                else context.getString(com.tristinbaker.defide.R.string.restore_failed)
+            )
+        }
+    }
 
     fun setTheme(theme: AppTheme) {
         viewModelScope.launch { prefsRepository.setTheme(theme) }
@@ -120,10 +148,6 @@ class SettingsViewModel @Inject constructor(
 
     fun setRosaryOrder(order: RosaryOrder) {
         viewModelScope.launch { prefsRepository.setRosaryOrder(order) }
-    }
-
-    fun setRosaryDiagramStyle(style: RosaryDiagramStyle) {
-        viewModelScope.launch { prefsRepository.setRosaryDiagramStyle(style) }
     }
 
     fun setRosaryHapticFeedback(enabled: Boolean) {
