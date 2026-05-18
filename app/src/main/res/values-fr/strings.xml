@@ -7,8 +7,8 @@
     <string name="action_all">Tout</string>
     <string name="catechism_dialog_title">Ouvrir le Catéchisme</string>
     <string name="catechism_dialog_text">Ceci va ouvrir le Catéchisme de l\'Église catholique sur le site USCCB sur votre navigateur.</string>
-    <string name="loth_dialog_title">Open Liturgy of the Hours</string>
-    <string name="loth_dialog_text">This will open the Liturgy of the Hours on HoursVibe in your browser.</string>
+    <string name="loth_dialog_title">Ouvrir la Liturgie des Heures</string>
+    <string name="loth_dialog_text">Cela ouvrira la Liturgie des Heures sur HoursVibe dans votre navigateur.</string>
     <string name="prayers_title">Prières</string>
     <string name="search_prayers_hint">Chercher des prières…</string>
     <string name="tag_label">Étiquette</string>
@@ -67,7 +67,7 @@
     <string name="nav_rosary">Rosaire</string>
     <string name="nav_bible">Bible</string>
     <string name="nav_catechism">Catéchisme</string>
-    <string name="nav_loth">Liturgy of the Hours</string>
+    <string name="nav_loth">Liturgie des Heures</string>
     <string name="nav_prayers">Prières</string>
     <string name="nav_novenas">Neuvaines</string>
     <string name="nav_settings">Paramètres</string>
@@ -200,4 +200,15 @@
     <string name="tag_trust">Confiance</string>
     <string name="tag_vocations">Vocations</string>
     <string name="tag_workers">Travailleurs</string>
+    <string name="search_section_verses">Versets</string>
+    <string name="search_section_books">Livres</string>
+    <string name="search_no_results">Aucun résultat trouvé.</string>
+    <string name="search_bible_hint">Rechercher des versets…</string>
+    <string name="restore_failed">La restauration a échoué.</string>
+    <string name="backup_failed">La sauvegarde a échoué.</string>
+    <string name="restore_success">La restauration s\'est déroulée avec succès.</string>
+    <string name="backup_success">La sauvegarde a été enregistrée avec succès.</string>
+    <string name="restore_label">Restaurer</string>
+    <string name="backup_label">Sauvegarder</string>
+    <string name="section_backup">Sauvegarde &amp; Restauration</string>
 </resources>
