@@ -118,6 +118,7 @@ fun Cursor.toDivineOffice() = DivineOffice(
     responsory1 = getStringOrNull("responsory_1"), responsory2 = getStringOrNull("responsory_2"), responsory3 = getStringOrNull("responsory_3"),
     versus = getStringOrNull("versus"),
     preces = getStringOrNull("preces"),
+    capitulum = getStringOrNull("capitulum"),
     oratio = getStringOrNull("oratio"),
     conclusio = getStringOrNull("conclusio"),
     matinsAntiphon = getStringOrNull("matins_antiphon"),

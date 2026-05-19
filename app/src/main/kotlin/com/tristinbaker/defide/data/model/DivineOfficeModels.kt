@@ -33,6 +33,7 @@ data class DivineOffice(
     val responsory1: String?, val responsory2: String?, val responsory3: String?,
     val versus: String?,
     val preces: String?,
+    val capitulum: String?,
     val oratio: String?,
     val conclusio: String?,
     /** Matins antiphon loaded from matutinum.txt, used when office_type is Matins. */
