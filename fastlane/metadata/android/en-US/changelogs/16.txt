@@ -1,0 +1,3 @@
+- Added Russian translation
+- Expanded Spanish and French translations
+- German translation skeleton added
