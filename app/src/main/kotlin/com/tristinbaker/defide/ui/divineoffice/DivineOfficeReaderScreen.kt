@@ -149,8 +149,12 @@ fun OfficeContentCard(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
 
-            maybeShowField(label = "Invitatorium", value = office.invitatorium)
-            maybeShowField(label = "Hymn", value = office.hymn)
+            // Completorium has its own Invitatorium/Hymn/Antiphon handling in the
+            // Completorium branch below — skip those pre-section fields to avoid duplication.
+            if (officeType != "Completorium") {
+                maybeShowField(label = "Invitatorium", value = office.invitatorium)
+                maybeShowField(label = "Hymn", value = office.hymn)
+            }
 
             // Antiphons — ferial antiphons merged by DAO, or fall back to psalm_text blocks
             if (displayAntiphons.isNotEmpty()) {
