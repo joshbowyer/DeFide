@@ -151,7 +151,7 @@ fun OfficeContentCard(
 
             // Completorium has its own Invitatorium/Hymn/Antiphon handling in the
             // Completorium branch below — skip those pre-section fields to avoid duplication.
-            if (officeType != "Completorium") {
+            if (officeType !in listOf("Completorium", "Compline")) {
                 maybeShowField(label = "Invitatorium", value = office.invitatorium)
                 maybeShowField(label = "Hymn", value = office.hymn)
             }
