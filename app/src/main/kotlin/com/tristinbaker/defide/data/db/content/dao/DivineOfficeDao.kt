@@ -108,7 +108,12 @@ class DivineOfficeDao @Inject constructor(private val db: SQLiteDatabase) {
         for (row in ferialPsalmRows) {
             val ot = row.officeType
             if (ot.isBlank()) continue
-            val ferial = ferialMap[ot] ?: continue
+            // The psalms table uses "Compline" for Completorium ferial antiphons.
+            // Try exact key first, then fall back to "Compline" → "Completorium" swap.
+            val ferial = ferialMap[ot]
+                ?: (if (ot == "Compline") ferialMap["Completorium"] else null)
+                ?: (if (ot == "Completorium") ferialMap["Compline"] else null)
+                ?: continue
             val blocks = row.parseBlocks()
             val antiphons = blocks.antiphons
             if (antiphons.isNotEmpty()) {
@@ -137,20 +142,14 @@ class DivineOfficeDao @Inject constructor(private val db: SQLiteDatabase) {
                 if (it == "Completorium") "Compline" else it
             }
             val ferial = ferialMap[ot] ?: return@map office
-            val hasEmptyAnts = listOf(
+            val sanctiAnts = listOfNotNull(
                 office.ant1, office.ant2, office.ant3,
                 office.ant4, office.ant5, office.ant6,
                 office.ant7, office.ant8, office.ant9,
-            ).all { it.isNullOrBlank() }
-            if (hasEmptyAnts && ferial.ferialAntiphons.isNotEmpty()) {
-                office.copy(ferialAntiphons = ferial.ferialAntiphons)
-            } else if (ferial.ferialAntiphons.isNotEmpty()) {
-                // Also attach even if we have some antiphons, in case we need more
-                val existing = listOfNotNull(
-                    office.ant1, office.ant2, office.ant3,
-                    office.ant4, office.ant5, office.ant6,
-                    office.ant7, office.ant8, office.ant9,
-                )
+            )
+            // Only attach ferial antiphons as a fallback when sancti has ZERO antiphons.
+            // Never attach when sancti already has its own ant1-ant9 to avoid duplication.
+            if (sanctiAnts.isEmpty() && ferial.ferialAntiphons.isNotEmpty()) {
                 office.copy(ferialAntiphons = ferial.ferialAntiphons)
             } else {
                 office
