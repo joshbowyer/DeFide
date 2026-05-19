@@ -133,9 +133,6 @@
     <string name="rosary_streak">Серия розария</string>
     <string name="rosary_title">Розарий</string>
     <string name="select_mystery">Выберите тайну</string>
-    <string name="rosary_diagram_classic">Классический</string>
-    <string name="rosary_diagram_compact">Компактный</string>
-    <string name="rosary_diagram_label">Стиль схемы розария</string>
     <string name="section_rosary">Розарий</string>
     <string name="rosary_order_label">Порядок розария</string>
     <string name="rosary_order_dominican">Доминиканский</string>
