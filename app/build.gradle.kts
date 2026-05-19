@@ -27,7 +27,7 @@ android {
 
     signingConfigs {
         create("debugKey") {
-            storeFile = file("${System.getProperty("user.home")}/.android/debug.keystore")
+            storeFile = file("${rootProject.projectDir}/.android/.android/debug.keystore")
             storePassword = "android"
             keyAlias = "androiddebugkey"
             keyPassword = "android"
@@ -41,6 +41,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            signingConfig = signingConfigs.getByName("debugKey")
+        }
         release {
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
@@ -108,6 +111,9 @@ dependencies {
 
     // Glance (home screen widget)
     implementation(libs.glance.appwidget)
+
+    // WebView (for in-app browser)
+    implementation(libs.androidx.browser)
 
     // WorkManager
     implementation(libs.workmanager)

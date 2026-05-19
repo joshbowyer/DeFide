@@ -1,11 +1,15 @@
 package com.tristinbaker.defide.ui
 
-import android.content.Intent
 import android.net.Uri
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.icons.Icons
@@ -25,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
@@ -46,9 +51,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.tristinbaker.defide.ui.bible.BibleBookmarksScreen
+import com.tristinbaker.defide.ui.catechism.BaltimoreCatechismScreen
 import com.tristinbaker.defide.ui.bible.BibleChapterScreen
 import com.tristinbaker.defide.ui.bible.BibleHomeScreen
 import com.tristinbaker.defide.ui.bible.BibleReaderScreen
+import com.tristinbaker.defide.ui.divineoffice.DivineOfficeHomeScreen
+import com.tristinbaker.defide.ui.divineoffice.DivineOfficeReaderScreen
+import com.tristinbaker.defide.ui.divineoffice.DivineOfficeViewModel
 import com.tristinbaker.defide.ui.home.HomeScreen
 import com.tristinbaker.defide.ui.novena.NovenaDetailScreen
 import com.tristinbaker.defide.ui.novena.NovenaListScreen
@@ -84,7 +93,7 @@ private fun rememberDrawerItems() = listOf(
     DrawerItem("home",      stringResource(R.string.nav_home),      Icons.Default.Home),
     DrawerItem("rosary",    stringResource(R.string.nav_rosary),    Icons.Default.Circle),
     DrawerItem("bible",     stringResource(R.string.nav_bible),     Icons.AutoMirrored.Filled.MenuBook),
-    DrawerItem("catechism", stringResource(R.string.nav_catechism), Icons.AutoMirrored.Filled.LibraryBooks),
+    DrawerItem("catechism",           stringResource(R.string.nav_catechism),           Icons.AutoMirrored.Filled.LibraryBooks),
     DrawerItem("loth",      stringResource(R.string.nav_loth),      Icons.Default.Schedule),
     DrawerItem("prayers",   stringResource(R.string.nav_prayers),   Icons.Default.Star),
     DrawerItem("novena",    stringResource(R.string.nav_novenas),   Icons.Default.Book),
@@ -172,22 +181,48 @@ private fun DeFideAppContent(
     // which creates its own composition root, receives already-resolved Strings.
     val catechismTitle = stringResource(R.string.catechism_dialog_title)
     val catechismText = stringResource(R.string.catechism_dialog_text)
+    val catechismOptionCcc = stringResource(R.string.catechism_option_ccc)
+    val catechismOptionBaltimore = stringResource(R.string.catechism_option_baltimore)
     val lothTitle = stringResource(R.string.loth_dialog_title)
     val lothText = stringResource(R.string.loth_dialog_text)
-    val openLabel = stringResource(R.string.action_open)
+    val lothOptionOnline = stringResource(R.string.loth_option_online)
+    val lothOptionOffline = stringResource(R.string.loth_option_offline)
     val cancelLabel = stringResource(R.string.action_cancel)
 
     if (showCatechismDialog) {
         AlertDialog(
             onDismissRequest = { onShowCatechismDialog(false) },
             title = { Text(catechismTitle) },
-            text = { Text(catechismText) },
-            confirmButton = {
-                TextButton(onClick = {
-                    onShowCatechismDialog(false)
-                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(cccUrl)))
-                }) { Text(openLabel) }
+            text = {
+                Column {
+                    Text(catechismText)
+                    Spacer(modifier = Modifier.height(12.dp))
+                    OutlinedButton(
+                        onClick = {
+                            onShowCatechismDialog(false)
+                            CustomTabsIntent.Builder().build().launchUrl(context, Uri.parse(cccUrl))
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(catechismOptionCcc)
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedButton(
+                        onClick = {
+                            onShowCatechismDialog(false)
+                            navController.navigate("baltimore_catechism") {
+                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(catechismOptionBaltimore)
+                    }
+                }
             },
+            confirmButton = {},
             dismissButton = {
                 TextButton(onClick = { onShowCatechismDialog(false) }) { Text(cancelLabel) }
             },
@@ -198,13 +233,36 @@ private fun DeFideAppContent(
         AlertDialog(
             onDismissRequest = { onShowLothDialog(false) },
             title = { Text(lothTitle) },
-            text = { Text(lothText) },
-            confirmButton = {
-                TextButton(onClick = {
-                    onShowLothDialog(false)
-                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(LOTH_URL)))
-                }) { Text(openLabel) }
+            text = {
+                Column {
+                    Text(lothText)
+                    Spacer(modifier = Modifier.height(12.dp))
+                    OutlinedButton(
+                        onClick = {
+                            onShowLothDialog(false)
+                            CustomTabsIntent.Builder().build().launchUrl(context, Uri.parse(LOTH_URL))
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(lothOptionOnline)
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedButton(
+                        onClick = {
+                            onShowLothDialog(false)
+                            navController.navigate("divine_office_home") {
+                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(lothOptionOffline)
+                    }
+                }
             },
+            confirmButton = {},
             dismissButton = {
                 TextButton(onClick = { onShowLothDialog(false) }) { Text(cancelLabel) }
             },
@@ -502,6 +560,34 @@ private fun DeFideNavHost(
                 novenaId = backStack.arguments?.getString("novenaId") ?: "",
                 progressId = backStack.arguments?.getString("progressId") ?: "",
                 onBack = { navController.popBackStack() },
+            )
+        }
+
+        // Divine Office — both screens share a single ViewModel instance
+        composable("divine_office_home") {
+            val divineOfficeViewModel: DivineOfficeViewModel = androidx.hilt.navigation.compose.hiltViewModel()
+            DivineOfficeHomeScreen(
+                viewModel = divineOfficeViewModel,
+                onOfficeClick = { navController.navigate("divine_office_reader") },
+                onBack = { navController.popBackStack() },
+            )
+        }
+
+        composable("divine_office_reader") {
+            val divineOfficeViewModel: DivineOfficeViewModel = androidx.hilt.navigation.compose.hiltViewModel(
+                navController.getBackStackEntry("divine_office_home")
+            )
+            DivineOfficeReaderScreen(
+                viewModel = divineOfficeViewModel,
+                onBack = { navController.popBackStack() },
+            )
+        }
+
+        // Baltimore Catechism
+        composable("baltimore_catechism") {
+            BaltimoreCatechismScreen(
+                onBack = { navController.popBackStack() },
+                onQuestionClick = { /* TODO: navigate to detail */ },
             )
         }
 

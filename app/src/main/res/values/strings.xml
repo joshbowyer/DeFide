@@ -5,17 +5,22 @@
     <!-- Common actions -->
     <string name="action_open">Open</string>
     <string name="action_cancel">Cancel</string>
+    <string name="action_ok">OK</string>
     <string name="action_save">Save</string>
     <string name="action_turn_off">Turn off</string>
     <string name="action_all">All</string>
 
     <!-- Catechism dialog -->
-    <string name="catechism_dialog_title">Open Catechism</string>
-    <string name="catechism_dialog_text">This will open the Catechism of the Catholic Church on the USCCB website in your browser.</string>
+    <string name="catechism_dialog_title">Choose Catechism</string>
+    <string name="catechism_dialog_text">Select which catechism to read:</string>
+    <string name="catechism_option_ccc">Catechism of the Catholic Church (Online)</string>
+    <string name="catechism_option_baltimore">Baltimore Catechism (Offline)</string>
 
-    <!-- Liturgy of the Hours dialog -->
-    <string name="loth_dialog_title">Open Liturgy of the Hours</string>
-    <string name="loth_dialog_text">This will open the Liturgy of the Hours on HoursVibe in your browser.</string>
+    <!-- Liturgy of the Hours / Breviary dialog -->
+    <string name="loth_dialog_title">Divine Office</string>
+    <string name="loth_dialog_text">Would you like to open the online Liturgy of the Hours, or browse the offline Divine Office?</string>
+    <string name="loth_option_online">Liturgy of the Hours (Online)</string>
+    <string name="loth_option_offline">Divine Office (Offline)</string>
 
     <!-- Prayers -->
     <string name="prayers_title">Prayers</string>
@@ -99,7 +104,7 @@
     <string name="nav_rosary">Rosary</string>
     <string name="nav_bible">Bible</string>
     <string name="nav_catechism">Catechism</string>
-    <string name="nav_loth">Liturgy of the Hours</string>
+    <string name="nav_loth">Breviary</string>
     <string name="nav_prayers">Prayers</string>
     <string name="nav_novenas">Novenas</string>
     <string name="nav_settings">Settings</string>
@@ -198,6 +203,18 @@
     <string name="saints_not_available">Saints are not yet available in your language. You can help by contributing, open a pull request on GitHub.</string>
     <string name="today_mystery_prefix">✦ Today — %s</string>
     <string name="the_nth_mystery">The %s Mystery</string>
+
+    <!-- Baltimore Catechism -->
+    <string name="baltimore_catechism_title">Baltimore Catechism</string>
+    <string name="divine_office_title">Divine Office</string>
+    <string name="lesson_number">Lesson %1$d</string>
+    <string name="question_label">Question %1$d</string>
+    <string name="answer_label">Answer</string>
+    <string name="tap_to_reveal">Tap to reveal</string>
+    <string name="office_laudes">Lauds</string>
+    <string name="office_vespers">Vespers</string>
+    <string name="office_matins">Matins</string>
+    <string name="office_psalms">Psalms</string>
     <string name="ordinal_first">First</string>
     <string name="ordinal_second">Second</string>
     <string name="ordinal_third">Third</string>
