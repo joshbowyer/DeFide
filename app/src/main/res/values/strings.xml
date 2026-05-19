@@ -214,6 +214,7 @@
     <string name="office_laudes">Lauds</string>
     <string name="office_vespers">Vespers</string>
     <string name="office_matins">Matins</string>
+    <string name="office_completorium">Compline</string>
     <string name="office_psalms">Psalms</string>
     <string name="ordinal_first">First</string>
     <string name="ordinal_second">Second</string>

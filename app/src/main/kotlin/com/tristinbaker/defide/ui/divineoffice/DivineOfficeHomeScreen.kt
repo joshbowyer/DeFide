@@ -180,6 +180,21 @@ fun DivineOfficeHomeScreen(
                     }
                 }
 
+                if (dayOffices.completorium.isNotEmpty()) {
+                    item {
+                        OfficeGroupCard(
+                            title = stringResource(R.string.office_completorium),
+                            subtitle = "Night Prayer",
+                            offices = dayOffices.completorium,
+                            onOfficeClick = { office ->
+                                viewModel.selectOffice(office)
+                                onOfficeClick()
+                            },
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
+                }
+
                 if (dayOffices.matins.isNotEmpty()) {
                     item {
                         OfficeGroupCard(

@@ -1793,6 +1793,40 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
                     vespers_ant_by_day[day] = srow["antiphon"]
                     break
 
+    print("  Loading Completorium antiphons from Psalmi minor.txt...")
+    minor_txt_path = os.path.join(
+        REPO_ROOT, "divinum-officium", "web", "www", "horas", "Latin",
+        "Psalterium", "Psalmi", "Psalmi minor.txt"
+    )
+    day_map = {"Dominica": 0, "Feria II": 1, "Feria III": 2, "Feria IV": 3,
+               "Feria V": 4, "Feria VI": 5, "Sabbato": 6}
+    completorium_ant_by_day = {}
+    in_completorium = False
+    with open(minor_txt_path, encoding="utf-8") as fh:
+        for raw in fh:
+            line = raw.rstrip("\n")
+            if line.startswith("[") and line.endswith("]"):
+                in_completorium = (line[1:-1] == "Completorium")
+                continue
+            if not in_completorium:
+                continue
+            if "=" not in line:
+                continue
+            label, rest = line.split("=", 1)
+            label = label.strip()
+            if label not in day_map:
+                continue
+            day = day_map[label]
+            ant = rest.strip()
+            # Antiphon text on first line, psalm refs on next line — split at \n
+            if "\n" in ant:
+                ant = ant.split("\n", 1)[0]
+            ant = ant.rstrip(".")
+            if ant and day not in completorium_ant_by_day:
+                completorium_ant_by_day[day] = ant
+
+    print(f"  Completorium antiphons loaded for {len(completorium_ant_by_day)} days.")
+
     matins_updated = 0
     for day, ant in matins_ant_by_day.items():
         n = conn.execute(
@@ -1909,6 +1943,79 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
 
     print(f"  Inserted {inserted} ferial fallback rows into divine_office.")
 
+    # -----------------------------------------------------------------------
+    # Completorium ferial rows — not covered by JSON files, built from txt
+    # -----------------------------------------------------------------------
+    _LATIN_HORAS = os.path.join(REPO_ROOT, "divinum-officium", "web", "www", "horas", "Latin")
+
+    def _load_txt_sections_local(path):
+        sections = {}
+        current = None
+        with open(path, encoding="utf-8") as fh:
+            for raw in fh:
+                line = raw.rstrip("\n")
+                if line.startswith("[") and line.endswith("]"):
+                    current = line[1:-1]
+                    sections[current] = []
+                elif current is not None:
+                    sections[current].append(line)
+        return sections
+
+    minor_special = os.path.join(_LATIN_HORAS, "Psalterium", "Special", "Minor Special.txt")
+    ms = _load_txt_sections_local(minor_special) if os.path.exists(minor_special) else {}
+
+    hymn_text = "\n".join(ms.get("Hymnus Completorium", []))
+    # Standard Completorium oratio
+    oratio_text = (
+        "Vísita, quǽsumus, Dómine, habitátionem istam, et ómnes insídias inimíci ab ea repélle: "
+        "ángeli sancti tui custódiam præstent, et nos in pace custodíre dignéris. Per Dóminum"
+    )
+
+    COMPLEMENTUM_ROWS = [
+        (0, "Dominica"),
+        (1, "Feria II"),
+        (2, "Feria III"),
+        (3, "Feria IV"),
+        (4, "Feria V"),
+        (5, "Feria VI"),
+        (6, "Sabbato"),
+    ]
+
+    comp_inserted = 0
+    for day, day_label in COMPLEMENTUM_ROWS:
+        exists = conn.execute(
+            "SELECT COUNT(*) FROM divine_office WHERE file=? AND office_type=?",
+            (f"ferial/{day}", "Completorium"),
+        ).fetchone()[0]
+        if exists:
+            # Update matins_antiphon with Completorium antiphon from txt
+            ant = completorium_ant_by_day.get(day, "")
+            if ant:
+                conn.execute(
+                    "UPDATE divine_office SET matins_antiphon=? WHERE file=? AND office_type=?",
+                    (ant, f"ferial/{day}", "Completorium"),
+                )
+            continue
+        # Insert new Completorium row
+        ant = completorium_ant_by_day.get(day, "")
+        conn.execute(
+            """INSERT INTO divine_office
+               (file, file_type, title, office_type, hymn, matins_antiphon, oratio)
+               VALUES (?, ?, ?, ?, ?, ?, ?)""",
+            (
+                f"ferial/{day}",
+                "ferial",
+                f"{day_label} — Completorium",
+                "Completorium",
+                hymn_text,
+                ant,
+                oratio_text,
+            ),
+        )
+        comp_inserted += 1
+
+    print(f"  Completorium ferial rows: {comp_inserted} inserted, {7-comp_inserted-len(completorium_ant_by_day)} updated.")
+
 
 # ---------------------------------------------------------------------------
 # Hymn reference resolver
@@ -1993,6 +2100,9 @@ def _resolve_hymn_ref(ref: str, json_dir: str = "") -> str:
       @Psalterium/Special/Major Special:Hymnus Quad5 Laudes
       @Sancti/03-19:Hymnus Vespera:s/Scándere/Vúlnera/   → substitution
       @Sancti/03-19:Hymnus Vespera::s/SEARCH/REPLACE/    → same (empty sub-prefix OK)
+
+    json_dir is the path prefix used to resolve inline (@:) references — if
+    provided and no explicit file_part is given, Minor Special.txt is checked.
     """
     if not ref or not ref.startswith("@"):
         return ref
@@ -2015,7 +2125,20 @@ def _resolve_hymn_ref(ref: str, json_dir: str = "") -> str:
         # e.g. "Sancti/03-19", "Tempora/Pasc2-3", "Psalterium/Special/Major Special"
         file_path = os.path.join(_LATIN_HORAS, file_part + ".txt")
     else:
-        # Inline reference from current context — caller must provide json_dir
+        # Inline reference: try Minor Special.txt for Completorium hymn refs
+        minor_special = os.path.join(_LATIN_HORAS, "Psalterium", "Special", "Minor Special.txt")
+        if os.path.exists(minor_special):
+            sections = _load_txt_sections(minor_special)
+            for k, v in sections.items():
+                if k.lower() == sec_name.lower():
+                    text = "\n".join(v)
+                    return _apply_subs(text, subs) if subs else text
+            # Partial match fallback
+            sec_lower = sec_name.lower()
+            for k, v in sections.items():
+                if sec_lower in k.lower() or k.lower() in sec_lower:
+                    text = "\n".join(v)
+                    return _apply_subs(text, subs) if subs else text
         file_path = ""
 
     # Try to find the section in the target file

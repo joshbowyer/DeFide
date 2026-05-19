@@ -28,6 +28,7 @@ data class DayOffices(
     val matins: List<DivineOffice> = emptyList(),
     val laudes: List<DivineOffice> = emptyList(),
     val vespera: List<DivineOffice> = emptyList(),
+    val completorium: List<DivineOffice> = emptyList(),
     val hasData: Boolean = false,
 )
 
@@ -121,17 +122,21 @@ class DivineOfficeViewModel @Inject constructor(
             val vespera = allOffices.filter {
                 it.officeType == "Vespers" || it.officeType == "Vespera"
             }
+            val completorium = allOffices.filter {
+                it.officeType == "Completorium"
+            }
 
             // If no offices found in sancti/tempora for this date, show whatever we have
             // (empty screens for pure-ferial days without sancti entries will be addressed
             // in a future enhancement that maps tempora ferial files by liturgical week)
-            val hasAnyOffice = laudes.isNotEmpty() || vespera.isNotEmpty() || matins.isNotEmpty()
+            val hasAnyOffice = laudes.isNotEmpty() || vespera.isNotEmpty() || matins.isNotEmpty() || completorium.isNotEmpty()
 
             _dayOffices.value = DayOffices(
                 calendarEntry = calendarEntry,
                 matins = matins,
                 laudes = laudes,
                 vespera = vespera,
+                completorium = completorium,
                 hasData = allOffices.isNotEmpty(),
             )
             _isLoading.value = false
