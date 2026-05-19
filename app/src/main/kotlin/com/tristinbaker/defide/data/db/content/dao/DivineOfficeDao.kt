@@ -94,7 +94,9 @@ class DivineOfficeDao @Inject constructor(private val db: SQLiteDatabase) {
         ).mapRows { toDivineOffice() }
 
         for (ferial in ferialOffices) {
-            val ot = ferial.officeType ?: "Laudes"
+            // Normalize "Completorium" → "Compline" so the key matches the psalm table's
+            // office_type values (psalm rows use "Compline", not "Completorium").
+            val ot = (ferial.officeType ?: "Laudes").let { if (it == "Completorium") "Compline" else it }
             ferialMap[ot] = ferial
         }
 
@@ -129,7 +131,11 @@ class DivineOfficeDao @Inject constructor(private val db: SQLiteDatabase) {
         // For each sancti office with empty ant1-ant9, merge antiphons from the
         // corresponding ferial office (keyed by office type).
         val enrichedOffices = allOffices.map { office ->
-            val ot = office.officeType ?: return@map office
+            // Normalize "Completorium" → "Compline" so the key matches the psalm table's
+            // office_type values (the ferial map is keyed by normalized office type).
+            val ot = (office.officeType ?: return@map office).let {
+                if (it == "Completorium") "Compline" else it
+            }
             val ferial = ferialMap[ot] ?: return@map office
             val hasEmptyAnts = listOf(
                 office.ant1, office.ant2, office.ant3,
