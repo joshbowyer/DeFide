@@ -218,12 +218,14 @@ fun OfficeContentCard(
             // Readings — use the right field per office type
             when (officeType) {
                 "Laudes" -> {
+                    maybeShowField(label = "Capitulum", value = office.capitulum)
                     maybeShowField(label = "Reading", value = office.lectio1)
                     maybeShowField(label = "Responsory", value = office.responsory1)
                 }
                 "Vespers" -> {
-                    maybeShowField(label = "Reading", value = office.lectio2)
-                    maybeShowField(label = "Responsory", value = office.responsory2)
+                    maybeShowField(label = "Capitulum", value = office.capitulum)
+                    maybeShowField(label = "Reading", value = office.lectio1)
+                    maybeShowField(label = "Responsory", value = office.responsory1)
                 }
                 "Compline", "Completorium" -> {
                     // Completorium antiphon stored in matins_antiphon field
