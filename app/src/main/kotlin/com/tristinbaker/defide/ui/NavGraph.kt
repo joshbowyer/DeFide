@@ -7,10 +7,12 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.LibraryBooks
 import androidx.compose.material.icons.automirrored.filled.MenuBook
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Home
@@ -223,9 +225,18 @@ private fun DeFideAppContent(
                 )
                 HorizontalDivider(modifier = Modifier.padding(bottom = 8.dp))
                 drawerItems.forEach { item ->
+                    val isExternalLink = item.route == "catechism" || item.route == "loth"
                     NavigationDrawerItem(
                         icon = { Icon(item.icon, contentDescription = null) },
                         label = { Text(item.label) },
+                        badge = if (isExternalLink) ({
+                            Icon(
+                                Icons.AutoMirrored.Filled.OpenInNew,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp),
+                                tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }) else null,
                         selected = currentRoute == item.route,
                         onClick = {
                             closeDrawer()
