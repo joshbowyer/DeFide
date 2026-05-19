@@ -1,0 +1,44 @@
+[
+  {
+    "Rule": "vide C7a; 9 lectiones in 1 Nocturno Lectiones ex Commune in 1 loco"
+  },
+  {
+    "Ant Vespera": "Et concupiscet Rex * decorem tuum, quia ipse est Dominus Deus tuus. Potens in opere * et sermone, lenivit iracundiam Domini, et conciliavit cor patris ad filium. Quasi arcus refulgens * inter nebulas gloriæ, et quasi flos rosarum in diebus vernis. Quasi stella matutina * in medio nebulæ, et quasi luna plena in diebus suis."
+  },
+  {
+    "Ant Matutinum": "Elevata est * magnificentia Elisabeth super cælos Veni electa mea, * et ponam in te thronum meum, quia concupivit Rex speciem tuam Accepit benedictionem * a Domino, et misericordiam a Deo salutari suo Propter veritatem, * et mansuetudinem, et justitiam deducet te mirabiliter dextera tua Arcum conteret * et confringet arma, et scuta comburet igni Justitia * et misericordia plena est dextera tua Confessio, * et pulchritudo in conspectu ejus, sanctitas et magnificentia in sanctificatione ejus Annuntiaverunt * cæli justitiam ejus, et viderunt omnes populi gloriam ejus Judicabit * in justitia, et populos in æquitate"
+  },
+  {
+    "Nocturn 1 Versum": "V. Multæ filiæ congregaverunt divitias. R. Tu supergressa es universas."
+  },
+  {
+    "Nocturn 2 Versum": "V. Virga tua, et baculus tuus. R. Ipsa me consolata sunt."
+  },
+  {
+    "Nocturn 3 Versum": "V. Ignis ante ipsum præcedet. R. Et inflammabit in circuitu inimicos ejus."
+  },
+  {
+    "Responsory1": "R. Regali exorta progenie triumphat in cælis Elisabeth, triplici circumdata varietate meritorum: * Nam in terra in triplici vitæ gradu posteris imitanda virtutum reliquit exempla. V. Virginalem statum, conjugalem, et vidualem inoffenso pede cucurrit. R. Nam in terra in triplici vitæ gradu posteris imitanda virtutum reliquit exempla."
+  },
+  {
+    "Responsory2": "R. Os suum aperuit sapientiæ, * Et lex clementiæ in lingua ejus. V. Quoniam prævenisti eam in benedictionibus dulcedinis. R. Et lex clementiæ in lingua ejus."
+  },
+  {
+    "Responsory3": "R. Desiderium animæ ejus tribuisti ei, * Et voluntate labiorum ejus non fraudasti eam. V. Scuto bonæ voluntatis tuæ coronasti eam Domine. R. Et voluntate labiorum ejus non fraudasti eam. &Gloria R. Et voluntate labiorum ejus non fraudasti eam."
+  },
+  {
+    "Responsory4": "R. Audi, fília, et vide, et inclína aurem tuam, et oblivíscere pópulum tuum, et domum Patris tui: * Et concupíscet Rex decórem tuum. R. Et concupíscet Rex decórem tuum."
+  },
+  {
+    "Responsory5": "R. Manum suam misit ad fórtia: * Manum suam apéruit ínopi, et palmas suas exténdit ad páuperem. R. Manum suam apéruit ínopi, et palmas suas exténdit ad páuperem."
+  },
+  {
+    "Responsory6": "@Commune/C7:Responsory8"
+  },
+  {
+    "Responsory8": "R. Invocávi, et venit in me spíritus sapiéntiæ, et præpósui illam regnis et sédibus: * Et divitias nihil esse duxi in comparatióne illíus. V. Mélior est enim sapiéntia cunctis ópibus pretiosíssimis. R. Et divitias nihil esse duxi in comparatióne illíus. &Gloria R. Et divitias nihil esse duxi in comparatióne illíus."
+  },
+  {
+    "Ant Laudes": "@Commune/C7:Ant Vespera:1 s/;;109//"
+  }
+]

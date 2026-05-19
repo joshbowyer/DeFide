@@ -1,0 +1,44 @@
+[
+  {
+    "Officium": "Officium parvum Beatae Mariae Virginis Tempora Nativitatis"
+  },
+  {
+    "Rank": "Officium parvum Beatae Mariae Virginis Tempora Nativitatis"
+  },
+  {
+    "Ant Vespera": "@Sancti/01-01"
+  },
+  {
+    "Ant 1": "@Sancti/01-01:Ant 3"
+  },
+  {
+    "Oratio": "@Sancti/01-01"
+  },
+  {
+    "Minor final": "#Oratio"
+  },
+  {
+    "Ant Laudes": "@Sancti/01-01"
+  },
+  {
+    "Ant 2": "@Sancti/01-01"
+  },
+  {
+    "Special Prima": "#Psalmi &psalm(53) &psalm(84) &psalm(116) _ #Capitulum _"
+  },
+  {
+    "Special Tertia": "#Psalmi &psalm(119) &psalm(120) &psalm(121) _ #Capitulum _"
+  },
+  {
+    "Special Sexta": "#Psalmi &psalm(122) &psalm(123) &psalm(124) _ #Capitulum _"
+  },
+  {
+    "Special Nona": "#Psalmi &psalm(125) &psalm(126) &psalm(127) _ #Capitulum _"
+  },
+  {
+    "Ant 3": "@Sancti/01-01"
+  },
+  {
+    "Special Completorium": "&psalm(233) #Oratio"
+  }
+]

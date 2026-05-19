@@ -4,6 +4,8 @@ SUMMARY.md
 NEXTSTEPS.md
 *.iml
 .gradle/
+.gradle-home/
+.kotlin/
 .idea/
 local.properties
 /.DS_Store
@@ -18,3 +20,15 @@ app/build/
 pipeline.log
 porcap/
 bibles/
+*.apk
+*.pyc
+__pycache__/
+.sandbox-home/
+.claw/
+.clawd-todos.json
+chatlog.txt
+PROGRESS.md
+check_line.py
+fix_compile.py
+patch_compile.py
+divinum-officium/

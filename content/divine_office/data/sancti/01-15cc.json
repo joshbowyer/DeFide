@@ -1,0 +1,29 @@
+[
+  {
+    "Officium": "S. Mauri Abbatis (sed rubrica 1930) S. Mauri Abbatis O. N."
+  },
+  {
+    "Rank": "(sed rubrica monastica)"
+  },
+  {
+    "Rule": "vide C5b; (rubrica monastica)12 lectiones"
+  },
+  {
+    "Name": "Mauri"
+  },
+  {
+    "Versum 1": "(nisi rubrica monastica)"
+  },
+  {
+    "Ant 1": "@Commune/C4:Ant 2"
+  },
+  {
+    "Lectio93": "&teDeum"
+  },
+  {
+    "Versum 2": "(nisi rubrica monastica)"
+  },
+  {
+    "Ant 2": "@Commune/C5:Ant 1"
+  }
+]

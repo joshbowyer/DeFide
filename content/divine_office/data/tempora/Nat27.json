@@ -1,0 +1,38 @@
+[
+  {
+    "Officium": "Diei III infra Octavam Nativitatis"
+  },
+  {
+    "Rank": ";;Semiduplex;;2.1;;ex Sancti/12-25"
+  },
+  {
+    "Rank": "(rubrica 196)"
+  },
+  {
+    "Rule": "ex Sancti/12-25; 9 lectiones"
+  },
+  {
+    "Ant Vespera": "@Sancti/12-25:Ant Vespera 3"
+  },
+  {
+    "Versum 1": "@Sancti/12-25:Versum 3"
+  },
+  {
+    "Ant 1": "@Sancti/12-25:Ant 3"
+  },
+  {
+    "Ant 1": "(rubrica cisterciensis)"
+  },
+  {
+    "Versum 2": "@Sancti/12-25:Versum 2"
+  },
+  {
+    "Ant 2": "(rubrica cisterciensis)"
+  },
+  {
+    "Commemoratio 2": "(rubrica tridentina nisi rubrica altovadensis)"
+  },
+  {
+    "Commemoratio 3": "(rubrica tridentina nisi rubrica altovadensis)"
+  }
+]

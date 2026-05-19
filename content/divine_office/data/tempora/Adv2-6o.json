@@ -1,0 +1,11 @@
+[
+  {
+    "Lectio1": "@Tempora/Adv2-6::s/-4/-5/ s/$/~/"
+  },
+  {
+    "Lectio2": "@Tempora/Adv2-6::1 s/4-7/6-8/"
+  },
+  {
+    "Lectio3": "@Tempora/Adv2-6::1 s/8-/9-/"
+  }
+]
