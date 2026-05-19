@@ -221,11 +221,13 @@ fun OfficeContentCard(
                     maybeShowField(label = "Capitulum", value = office.capitulum)
                     maybeShowField(label = "Reading", value = office.lectio1)
                     maybeShowField(label = "Responsory", value = office.responsory1)
+                    maybeShowField(label = "Collect", value = office.oratio, highlighted = true)
                 }
                 "Vespers" -> {
                     maybeShowField(label = "Capitulum", value = office.capitulum)
                     maybeShowField(label = "Reading", value = office.lectio1)
                     maybeShowField(label = "Responsory", value = office.responsory1)
+                    maybeShowField(label = "Collect", value = office.oratio, highlighted = true)
                 }
                 "Compline", "Completorium" -> {
                     // Completorium antiphon stored in matins_antiphon field
