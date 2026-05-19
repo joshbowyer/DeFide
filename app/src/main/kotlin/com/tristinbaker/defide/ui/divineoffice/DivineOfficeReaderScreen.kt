@@ -134,10 +134,12 @@ fun OfficeContentCard(
     val allVersesText = psalms.map { it.parseBlocks().versesText }.filter { it.isNotBlank() }
         .joinToString("\n\n")
 
-    // For Matins: use matinsAntiphon if available
-    val matinsAntiphonDisplay = if (officeType == "Matins") {
-        office.matinsAntiphon ?: office.ferialAntiphons.firstOrNull()
-    } else null
+    // For Matins: use matinsAntiphon if available.
+    // Completorium handles its antiphon in its own screen branch (line 234) — skip here.
+    val matinsAntiphonDisplay = when (officeType) {
+        "Matins" -> office.matinsAntiphon ?: office.ferialAntiphons.firstOrNull()
+        else -> null
+    }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
