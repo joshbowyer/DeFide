@@ -380,6 +380,7 @@ def create_schema(conn: sqlite3.Connection) -> None:
             responsory_1 TEXT, responsory_2 TEXT, responsory_3 TEXT,
             versus      TEXT,
             preces      TEXT,
+            capitulum   TEXT,
             oratio      TEXT,
             conclusio   TEXT,
             matins_antiphon TEXT,
@@ -3153,7 +3154,10 @@ def compile_divine_office(conn):
                     # Also accept items with any lectio/antiphon/hymn keys
                     for key in item:
                         kl = key.lower()
-                        if kl.startswith("lectio") or kl.startswith("ant") or kl.startswith("hymn"):
+                        if (kl.startswith("lectio") or kl.startswith("ant")
+                            or kl.startswith("hymn") or kl.startswith("responsory")
+                            or kl.startswith("capitulum") or kl.startswith("versum")
+                            or kl == "invit" or kl == "invitatorium"):
                             return True
                     return False
 
@@ -3294,11 +3298,18 @@ def compile_divine_office(conn):
                         lectio2, lectio3 = None, None
                         resp1 = merged.get("Responsory1")
                         resp2, resp3 = None, None
+                        capitulum = merged.get("Capitulum Laudes")
                     elif office_type == "Vespers":
-                        lectio1, lectio3 = None, None
-                        lectio2 = merged.get("Lectio2") or merged.get("Lectio 2")
-                        resp1, resp3 = None, None
-                        resp2 = merged.get("Responsory2")
+                        lectio1 = merged.get("Lectio2") or merged.get("Lectio 2")
+                        lectio2 = merged.get("Lectio1") or merged.get("Lectio 1")
+                        lectio3 = None
+                        resp1 = (merged.get("Responsory Vespera 1")
+                                 or merged.get("Responsory Vespera")
+                                 or merged.get("Responsory2"))
+                        resp2, resp3 = None, None
+                        capitulum = merged.get("Capitulum Vespera")
+                    elif office_type == "Completorium":
+                        capitulum = merged.get("Capitulum Completorium")
                     else:
                         lectio1 = merged.get("Lectio4") or merged.get("Lectio 4") \
                                    or merged.get("Lectio94") \
@@ -3308,6 +3319,7 @@ def compile_divine_office(conn):
                         lectio3 = merged.get("Lectio6") or merged.get("Lectio 6") \
                                    or merged.get("Lectio3") or merged.get("Lectio 3")
                         resp1, resp2, resp3 = merged.get("Responsory1"), merged.get("Responsory2"), merged.get("Responsory3")
+                        capitulum = merged.get("Capitulum")
 
                     sec_title = title
                     if len(sections) > 1:
@@ -3339,15 +3351,15 @@ def compile_divine_office(conn):
                             antiphon_vespera_10, antiphon_vespera_11, antiphon_vespera_12,
                             hymn, lectio_1, lectio_2, lectio_3,
                             responsory_1, responsory_2, responsory_3,
-                            versus, preces, oratio, conclusio, matins_antiphon,
+                            versus, preces, capitulum, oratio, conclusio, matins_antiphon,
                             supplemental)
                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
                                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-                                   ?, ?, ?, ?, ?)""",
+                                   ?, ?, ?, ?, ?, ?)""",
                         (
                             rel.rsplit(".json", 1)[0], file_type, sec_title,
                             office_type if office_type else None,
-                            merged.get("Invitatorium"),
+                            merged.get("Invitatorium") or merged.get("Invit"),
                             *laudes_ants,
                             *vespera_ants,
                             hymn,
@@ -3355,10 +3367,11 @@ def compile_divine_office(conn):
                             resp1, resp2, resp3,
                             merged.get("Versum") or merged.get("Versus"),
                             merged.get("Preces"),
+                            capitulum,
                             (merged.get(f"Oratio {office_type}")
                              or merged.get(f"Oratio{office_type}")
                              or merged.get("Oratio")
-                             or (merged.get("Oratio Completorium") if office_type == "Compline" else None)),
+                             or merged.get("Oratio Completorium")),
                             merged.get("Conclusio"),
                             matins_antiphon,
                             supplemental,
