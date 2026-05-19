@@ -102,7 +102,7 @@ Builds:
 
   - versionName: 1.9.1
     versionCode: 16
-    commit: 272d428ba1ac20b79f3338f565f0f0ee2bd02a52
+    commit: caebf4961f8e0d78dbd19463fd64fb405943c551
     subdir: app
     gradle:
       - yes
