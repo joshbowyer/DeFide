@@ -1,0 +1,101 @@
+[
+  {
+    "Officium": "Officium parvum Beatae Mariae Virginis"
+  },
+  {
+    "Rank": "Officium Parvum Beatae Mariae Virginis tempore Adventus et in Annuntiationis"
+  },
+  {
+    "Rule": "Ave only Doxology=Nat Omit Suffragium Special Benedictio Votive nocturn no Te Deum"
+  },
+  {
+    "Ant Vespera": "@Sancti/03-25"
+  },
+  {
+    "Capitulum Vespera": "@:Capitulum Laudes"
+  },
+  {
+    "Versum 1": "@Commune/C6:Versum 2"
+  },
+  {
+    "Ant 1": "@Tempora/Adv1-0:Ant 2"
+  },
+  {
+    "Oratio": "@Commune/C12:Oratio 2"
+  },
+  {
+    "Commemoratio": "!Commemoratio de Sanctis Ant. Ecce Dóminus véniet, et omnes Sancti ejus cum eo: et erit in die illa lux magna, allelúja. V. Ecce apparébit Dóminus super nubem cándidam. R. Et cum eo Sanctórum míllia. $Oremus v. Consciéntias nostras, quǽsumus, Dómine, visitándo purífica: ut, véniens Jesus Christus, Fílius tuus, Dóminus noster, cum ómnibus Sanctis, parátam sibi in nobis invéniat mansiónem: $Qui tecum (sed rubrica 1955 aut rubrica 1960 omittitur)"
+  },
+  {
+    "Invit": "@Commune/C12"
+  },
+  {
+    "Ant Matutinum 9": "Ángelus Dómini * nuntiávit Maríæ, et concépit de Spíritu Sancto."
+  },
+  {
+    "Ant Matutinum": "@Commune/C11::1-3 s/7/6/"
+  },
+  {
+    "Nocturn 1 Versum": "@Commune/C6:Versum 2"
+  },
+  {
+    "Nocturn 2 Versum": "@Commune/C6:Versum 2"
+  },
+  {
+    "Nocturn 3 Versum": "@Commune/C6:Versum 2"
+  },
+  {
+    "Lectio1": "!Luc 1:26-28 26 Missus est Angelus Gabriel a Deo in civitatem Galilaeae, cui nomen Nazareth, 27 Ad virginem desponsatam viro, cui nomen erat Joseph, de domo David: et nomen virginis Maria. 28 Et ingressus Angelus ad eam dixit: Ave gratia plena: Dominus tecum: benedicta tu in mulieribus."
+  },
+  {
+    "Responsory1": "@Sancti/03-25"
+  },
+  {
+    "Lectio2": "!Luc 1:29-33 29 Quae cum audisset, turbata est in sermone ejus, et cogitabat qualis esset ista salutatio. 30 Et ait Angelus ei: Ne timeas, Maria: invenisti enim gratiam apud Deum: 31 Ecce concipies in utero, et paries filium, et vocabis nomen ejus Jesum: 32 Hic erit magnus, et Filius Altissimi vocabitur, et dabit illi Dominus Deus sedem David patris ejus: et regnabit in domo Jacob in aeternum, 33 Et regni ejus non erit finis."
+  },
+  {
+    "Responsory2": "@Sancti/03-25"
+  },
+  {
+    "Lectio3": "!Luc 1:34-38 34 Dixit autem Maria ad Angelum: Quomodo fiet istud, quoniam virum non cognosco? 35 Et respondens Angelus dixit ei: Spiritus Sanctus superveniet in te, et virtus Altissimi obumbrabit tibi. Ideoque et quod nascetur ex te Sanctum, vocabitur Filius Dei. 36 Et ecce Elisabeth cognata tua, et ipsa concepit filium in senectute sua: et hic mensis sextus est illi, quae vocatur sterilis: 37 Quia non erit impossibile apud Deum omne verbum. 38 Dixit autem Maria: Ecce ancilla Domini: fiat mihi secundum verbum tuum."
+  },
+  {
+    "Responsory3": "@Tempora/Adv1-1:Responsory1"
+  },
+  {
+    "Minor final": "#Oratio"
+  },
+  {
+    "Ant Laudes": "@Sancti/03-25:Ant Vespera:s/;;.*//g"
+  },
+  {
+    "Capitulum Laudes": "$Deo gratias"
+  },
+  {
+    "Versum 2": "@Commune/C10"
+  },
+  {
+    "Ant 2": "@Tempora/Adv1-0:Ant 2"
+  },
+  {
+    "Special Prima": "#Psalmi &psalm(53) &psalm(84) &psalm(116) _ #Capitulum _"
+  },
+  {
+    "Special Tertia": "#Psalmi &psalm(119) &psalm(120) &psalm(121) _ #Capitulum $Deo gratias _"
+  },
+  {
+    "Special Sexta": "#Psalmi &psalm(122) &psalm(123) &psalm(124) _ #Capitulum _"
+  },
+  {
+    "Special Nona": "#Psalmi &psalm(125) &psalm(126) &psalm(127) _ #Capitulum _"
+  },
+  {
+    "Versum 3": "@:Versum 1"
+  },
+  {
+    "Ant 3": "@:Ant 1"
+  },
+  {
+    "Special Completorium": "_ #Canticum: Nunc dimittis &psalm(233) #Oratio"
+  }
+]
