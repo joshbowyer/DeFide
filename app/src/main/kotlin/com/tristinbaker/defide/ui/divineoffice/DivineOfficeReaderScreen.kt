@@ -225,6 +225,12 @@ fun OfficeContentCard(
                     maybeShowField(label = "Reading", value = office.lectio2)
                     maybeShowField(label = "Responsory", value = office.responsory2)
                 }
+                "Completorium" -> {
+                    // Completorium antiphon stored in matins_antiphon field
+                    maybeShowField(label = "Antiphon", value = office.matinsAntiphon)
+                    maybeShowField(label = "Hymn", value = office.hymn)
+                    maybeShowField(label = "Collect", value = office.oratio, highlighted = true)
+                }
                 else -> {
                     maybeShowField(label = "First Reading", value = office.lectio1)
                     maybeShowField(label = "Second Reading", value = office.lectio2)

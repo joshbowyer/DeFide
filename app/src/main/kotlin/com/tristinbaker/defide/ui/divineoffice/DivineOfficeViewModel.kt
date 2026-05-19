@@ -91,8 +91,10 @@ class DivineOfficeViewModel @Inject constructor(
     fun selectOffice(office: DivineOffice) {
         _selectedOffice.value = office
         viewModelScope.launch {
-            // officeType from DB: "Laudes", "Vespers", "Matins", "" (for ferial with no specific type)
-            val ot = office.officeType?.takeIf { it.isNotBlank() } ?: "Laudes"
+            // officeType from DB: "Laudes", "Vespers", "Matins", "Completorium"
+            // Psalm rows use "Compline" instead of "Completorium"
+            val rawOt = office.officeType?.takeIf { it.isNotBlank() } ?: "Laudes"
+            val ot = if (rawOt == "Completorium") "Compline" else rawOt
 
             // Load psalms from the ferial row keyed by day-of-week + office type.
             // The antiphons are already merged into office.ferialAntiphons by the DAO.
