@@ -31,4 +31,6 @@ PROGRESS.md
 check_line.py
 fix_compile.py
 patch_compile.py
-divinum-officium/
+# Compiled content DB (built by scripts/compile_content.py)
+*.db
+databases/
