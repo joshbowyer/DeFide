@@ -225,10 +225,9 @@ fun OfficeContentCard(
                     maybeShowField(label = "Reading", value = office.lectio2)
                     maybeShowField(label = "Responsory", value = office.responsory2)
                 }
-                "Completorium" -> {
+                "Compline", "Completorium" -> {
                     // Completorium antiphon stored in matins_antiphon field
                     maybeShowField(label = "Antiphon", value = office.matinsAntiphon)
-                    maybeShowField(label = "Hymn", value = office.hymn)
                     maybeShowField(label = "Collect", value = office.oratio, highlighted = true)
                 }
                 else -> {
@@ -243,7 +242,6 @@ fun OfficeContentCard(
 
             maybeShowField(label = "Versicle", value = office.versus)
             maybeShowField(label = "Preces", value = office.preces)
-            maybeShowField(label = "Collect", value = office.oratio, highlighted = true)
             maybeShowField(label = "Conclusion", value = office.conclusio)
         }
     }

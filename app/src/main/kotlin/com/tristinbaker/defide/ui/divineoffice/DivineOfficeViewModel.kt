@@ -125,7 +125,7 @@ class DivineOfficeViewModel @Inject constructor(
                 it.officeType == "Vespers" || it.officeType == "Vespera"
             }
             val completorium = allOffices.filter {
-                it.officeType == "Completorium"
+                it.officeType == "Completorium" || it.officeType == "Compline"
             }
 
             // If no offices found in sancti/tempora for this date, show whatever we have
