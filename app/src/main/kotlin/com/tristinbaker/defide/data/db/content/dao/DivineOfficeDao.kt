@@ -151,16 +151,13 @@ class DivineOfficeDao @Inject constructor(private val db: SQLiteDatabase) {
             }
         }
 
-        // Add any ferial offices that don't overlap with sancti
-        for ((ot, ferial) in ferialMap) {
-            val hasSancti = allOffices.any { it.officeType == ot }
-            if (!hasSancti) {
-                allOffices.add(ferial)
-            }
+        // Add ferial offices that don't overlap with sancti/tempora/commune entries.
+        // Check against enrichedOffices (sancti with ferial antiphons merged in) so we
+        // don't double-count when a sancti row already has ferial antiphons attached.
+        val ferialToAdd = ferialMap.values.filter { ferial ->
+            enrichedOffices.none { it.officeType == ferial.officeType }
         }
-
-        return enrichedOffices + allOffices.filter { it.file.startsWith("ferial/") }
-            .filter { ferial -> enrichedOffices.none { it.officeType == ferial.officeType } }
+        return enrichedOffices + ferialToAdd
     }
 
     fun getOfficeCount(): Int {
