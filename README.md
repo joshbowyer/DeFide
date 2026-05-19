@@ -5,7 +5,8 @@ A free, open-source Catholic app for Android. No tracking, no accounts, no inter
 ## Features
 
 - **Bible** — Douay-Rheims (1899), World English Bible (Catholic), Latin Vulgate, Latin Vulgate (English Translation), Bíblia Ave-Maria (pt-BR), and Bíblia dos Capuchinhos (pt-PT)
-- **Catechism** — Links to the Catechism of the Catholic Church on the USCCB website (opens in browser)
+- **Catechism** — Catechism of the Catholic Church (online via browser) and Baltimore Catechism (offline)
+- **Divine Office / Breviary** — Latin Divine Office from the [DivinumOfficium project](https://github.com/DivinumOfficium/divinum-officium), with antiphons, hymns, psalms, readings, and prayers for Lauds, Vespers, and Matins
 - **Rosary** — Guided sessions for all four mysteries with bead indicator and scripture references
 - **Prayers** — Traditional Catholic prayers with tag-based browsing
 - **Novenas** — Nine-day prayer tracker with progress persistence
@@ -25,16 +26,13 @@ De Fide is built on three principles:
 Requires Android Studio or the Android SDK with Gradle.
 
 ```bash
+git clone https://github.com/joshbowyer/DeFide.git
+cd DeFide
+git submodule update --init --recursive  # clone the DivinumOfficium source
 ./gradlew assembleDebug
 ```
 
-To recompile the content database from source JSON files:
-
-```bash
-python scripts/compile_content.py
-```
-
-Then bump `CONTENT_VERSION` in `ContentDatabase.kt` and rebuild.
+The build automatically runs `scripts/compile_content.py` (which pulls from the DivinumOfficium submodule) before assembling, so no manual steps are needed.
 
 ## Tech Stack
 

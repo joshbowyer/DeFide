@@ -79,6 +79,57 @@ android {
     }
 }
 
+// ---------------------------------------------------------------------------
+// Pre-build: compile content DB from source JSON + DivinumOfficium submodule
+// Run with: ./gradlew compileContent
+// Automatically runs before assembleDebug / assembleRelease
+// ---------------------------------------------------------------------------
+val compileContent by tasks.registering {
+    group = "build"
+    description = "Compile content databases from source JSON and DivinumOfficium submodule"
+
+    doLast {
+        val script = file("scripts/compile_content.py")
+        if (!script.exists()) {
+            logger.warn("compile_content.py not found — skipping content compilation")
+            return@doLast
+        }
+
+        val dbFile = file("app/src/main/assets/databases/defide_content.db")
+        val submoduleDir = file("divinum-officium")
+        if (!submoduleDir.exists() || !submoduleDir.resolve("web").exists()) {
+            logger.warn(
+                "DivinumOfficium submodule not found at divinum-officium/. " +
+                "Run: git submodule update --init --recursive"
+            )
+        }
+
+        val result = exec {
+            commandLine("python3", script.absolutePath)
+            workingDir(rootProject.projectDir)
+            isIgnoreExitValue = false
+        }
+        if (result.exitValue != 0) {
+            throw GradleException("compile_content.py failed with exit code ${result.exitValue}")
+        }
+
+        if (!dbFile.exists()) {
+            throw GradleException(
+                "compile_content.py ran but did not produce $dbFile. " +
+                "Check scripts/compile_content.py output for errors."
+            )
+        }
+        logger.lifecycle("Content DB compiled: ${dbFile.length() / 1024 / 1024} MB")
+    }
+}
+
+// Register compileContent as a dependency of all assemble variants
+android.applicationVariants.all {
+    tasks.getByName("assemble${name.replaceFirstChar { it.uppercase() }}") {
+        dependsOn(compileContent)
+    }
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
