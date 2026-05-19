@@ -65,3 +65,4 @@ cd /home/josh/claw-code/DeFide && python3 scripts/compile_content.py > /tmp/comp
 - Upstream: `git@github.com:tristinbaker/DeFide.git`
 - Work on feature branches, PR into main
 - Do NOT commit binary DB files
+- **Push requires**: `GIT_SSH_COMMAND="ssh -i ~/.ssh/id_ed25519_minimax" git push`
