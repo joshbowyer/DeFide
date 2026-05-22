@@ -16,66 +16,66 @@ import javax.inject.Singleton
 class DivineOfficeDao @Inject constructor(private val db: SQLiteDatabase) {
 
     /**
-     * Returns the calendar entry for a date.
+     * Returns the calendar entry for a date + language.
      * First tries exact key (e.g. "05-18"), then falls back to the n-suffix variant
      * (e.g. "05-21n") if no exact entry exists — this handles optional memorials that
      * use the "n" suffix when there's no base entry.
      */
-    fun getCalendarEntry(mmDd: String): DivineOfficeCalendar? {
+    fun getCalendarEntry(mmDd: String, language: String): DivineOfficeCalendar? {
         // 1. Try exact key
         var result = db.rawQuery(
-            "SELECT * FROM divine_office_calendar WHERE key = ? LIMIT 1",
-            arrayOf(mmDd),
+            "SELECT * FROM divine_office_calendar WHERE key = ? AND language = ? LIMIT 1",
+            arrayOf(mmDd, language),
         ).firstOrNull { toDivineOfficeCalendar() }
         if (result != null) return result
 
         // 2. Fall back: try any n-suffix / letter-suffix variant (e.g. "05-21n", "05-21o")
         result = db.rawQuery(
-            "SELECT * FROM divine_office_calendar WHERE key LIKE ? LIMIT 1",
-            arrayOf("$mmDd%"),
+            "SELECT * FROM divine_office_calendar WHERE key LIKE ? AND language = ? LIMIT 1",
+            arrayOf("$mmDd%", language),
         ).firstOrNull { toDivineOfficeCalendar() }
         return result
     }
 
-    fun getAllCalendarEntries(): List<DivineOfficeCalendar> =
+    fun getAllCalendarEntries(language: String): List<DivineOfficeCalendar> =
         db.rawQuery(
-            "SELECT * FROM divine_office_calendar ORDER BY key",
-            null,
+            "SELECT * FROM divine_office_calendar WHERE language = ? ORDER BY key",
+            arrayOf(language),
         ).mapRows { toDivineOfficeCalendar() }
 
-    fun getOfficeByFileAndType(file: String, officeType: String): DivineOffice? =
+    fun getOfficeByFileAndType(file: String, officeType: String, language: String): DivineOffice? =
         db.rawQuery(
-            "SELECT * FROM divine_office WHERE file = ? AND office_type = ? LIMIT 1",
-            arrayOf(file, officeType),
+            "SELECT * FROM divine_office WHERE file = ? AND office_type = ? AND language = ? LIMIT 1",
+            arrayOf(file, officeType, language),
         ).firstOrNull { toDivineOffice() }
 
-    fun getOfficesByFile(file: String): List<DivineOffice> =
+    fun getOfficesByFile(file: String, language: String): List<DivineOffice> =
         db.rawQuery(
-            "SELECT * FROM divine_office WHERE file = ? ORDER BY office_type",
-            arrayOf(file),
+            "SELECT * FROM divine_office WHERE file = ? AND language = ? ORDER BY office_type",
+            arrayOf(file, language),
         ).mapRows { toDivineOffice() }
 
     /** Returns all office sections for a list of files, in display order. */
-    fun getOfficesByFiles(files: List<String>): List<DivineOffice> {
+    fun getOfficesByFiles(files: List<String>, language: String): List<DivineOffice> {
         if (files.isEmpty()) return emptyList()
         val placeholders = files.joinToString(",") { "?" }
         return db.rawQuery(
-            "SELECT * FROM divine_office WHERE file IN ($placeholders) ORDER BY file, office_type",
-            files.toTypedArray(),
+            "SELECT * FROM divine_office WHERE file IN ($placeholders) AND language = ? ORDER BY file, office_type",
+            files.toTypedArray() + language,
         ).mapRows { toDivineOffice() }
     }
 
-    fun getPsalmsForDayAndType(day: Int, officeType: String): List<DivineOfficePsalm> =
+    fun getPsalmsForDayAndType(day: Int, officeType: String, language: String): List<DivineOfficePsalm> =
         db.rawQuery(
-            "SELECT * FROM divine_office_psalms WHERE day = ? AND office_type = ? ORDER BY id",
-            arrayOf(day.toString(), officeType),
+            "SELECT * FROM divine_office_psalms WHERE day = ? AND office_type = ? AND language = ? ORDER BY id",
+            arrayOf(day.toString(), officeType, language),
         ).mapRows { toDivineOfficePsalm() }
 
     /** Get ferial psalms by day-of-week (0=Sun…6=Sat) and office type. */
-    fun getFerialPsalms(dayOfWeek: Int, officeType: String): List<DivineOfficePsalm> =
+    fun getFerialPsalms(dayOfWeek: Int, officeType: String, language: String): List<DivineOfficePsalm> =
         db.rawQuery(
-            "SELECT * FROM divine_office_psalms WHERE day = ? AND office_type = ? ORDER BY id",
-            arrayOf(dayOfWeek.toString(), officeType),
+            "SELECT * FROM divine_office_psalms WHERE day = ? AND office_type = ? AND language = ? ORDER BY id",
+            arrayOf(dayOfWeek.toString(), officeType, language),
         ).mapRows { toDivineOfficePsalm() }
 
     /**
@@ -85,12 +85,12 @@ class DivineOfficeDao @Inject constructor(private val db: SQLiteDatabase) {
      * office type, so feast days show feast Laudes/Vespers and ferial days show ferial.
      * Antiphons from ferial psalm rows are merged into the returned office objects.
      */
-    fun getAllOfficesForDay(dayOfWeek: Int, sanctiFiles: List<String>): List<DivineOffice> {
+    fun getAllOfficesForDay(dayOfWeek: Int, sanctiFiles: List<String>, language: String): List<DivineOffice> {
         val ferialMap: MutableMap<String, DivineOffice> = mutableMapOf()
         // Load all ferial offices for this day-of-week
         val ferialOffices = db.rawQuery(
-            "SELECT * FROM divine_office WHERE file = ? ORDER BY office_type",
-            arrayOf("ferial/$dayOfWeek"),
+            "SELECT * FROM divine_office WHERE file = ? AND language = ? ORDER BY office_type",
+            arrayOf("ferial/$dayOfWeek", language),
         ).mapRows { toDivineOffice() }
 
         for (ferial in ferialOffices) {
@@ -102,8 +102,8 @@ class DivineOfficeDao @Inject constructor(private val db: SQLiteDatabase) {
 
         // Load ferial antiphons from psalm_text JSON
         val ferialPsalmRows = db.rawQuery(
-            "SELECT * FROM divine_office_psalms WHERE day = ? ORDER BY office_type",
-            arrayOf(dayOfWeek.toString()),
+            "SELECT * FROM divine_office_psalms WHERE day = ? AND language = ? ORDER BY office_type",
+            arrayOf(dayOfWeek.toString(), language),
         ).mapRows { toDivineOfficePsalm() }
         for (row in ferialPsalmRows) {
             val ot = row.officeType
@@ -127,8 +127,8 @@ class DivineOfficeDao @Inject constructor(private val db: SQLiteDatabase) {
             val placeholders = sanctiFiles.joinToString(",") { "?" }
             allOffices.addAll(
                 db.rawQuery(
-                    "SELECT * FROM divine_office WHERE file IN ($placeholders) ORDER BY file, office_type",
-                    sanctiFiles.toTypedArray(),
+                    "SELECT * FROM divine_office WHERE file IN ($placeholders) AND language = ? ORDER BY file, office_type",
+                    sanctiFiles.toTypedArray() + language,
                 ).mapRows { toDivineOffice() }
             )
         }

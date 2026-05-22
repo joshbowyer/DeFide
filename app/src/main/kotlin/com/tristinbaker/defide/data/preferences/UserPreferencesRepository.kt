@@ -14,6 +14,15 @@ enum class AppTheme { SYSTEM, LIGHT, DARK, AMOLED, DYNAMIC }
 enum class AppFont { SERIF, SYSTEM, SANS_SERIF }
 enum class RosaryOrder { DOMINICAN, FATIMA }
 enum class BackupFrequency { OFF, DAILY, WEEKLY, MONTHLY }
+enum class AppRite { MODERN, TRADITIONAL, LATIN }
+
+/** Maps the user's rite preference to the database `language` column value. */
+val AppRite.language: String
+    get() = when (this) {
+        AppRite.MODERN      -> "en"
+        AppRite.TRADITIONAL -> "la"
+        AppRite.LATIN       -> "la"
+    }
 
 data class UserPreferences(
     val theme: AppTheme = AppTheme.SYSTEM,
@@ -31,6 +40,7 @@ data class UserPreferences(
     val autoBackupFrequency: BackupFrequency = BackupFrequency.OFF,
     val autoBackupFolderUri: String = "",
     val rosaryIntentions: List<String> = List(5) { "" },
+    val appRite: AppRite = AppRite.MODERN,
 )
 
 @Singleton
@@ -57,6 +67,7 @@ class UserPreferencesRepository @Inject constructor(
         private val KEY_ROSARY_INTENTION_2 = stringPreferencesKey("rosary_intention_2")
         private val KEY_ROSARY_INTENTION_3 = stringPreferencesKey("rosary_intention_3")
         private val KEY_ROSARY_INTENTION_4 = stringPreferencesKey("rosary_intention_4")
+        private val KEY_APP_RITE         = stringPreferencesKey("app_rite")
     }
 
     val preferences: Flow<UserPreferences> = dataStore.data.map { prefs ->
@@ -82,6 +93,7 @@ class UserPreferencesRepository @Inject constructor(
                 prefs[KEY_ROSARY_INTENTION_3] ?: "",
                 prefs[KEY_ROSARY_INTENTION_4] ?: "",
             ),
+            appRite = prefs[KEY_APP_RITE]?.let { runCatching { AppRite.valueOf(it) }.getOrNull() } ?: AppRite.MODERN,
         )
     }
 
@@ -127,6 +139,10 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun setAutoBackupFolderUri(uri: String) {
         dataStore.edit { it[KEY_AUTO_BACKUP_FOLDER_URI] = uri }
+    }
+
+    suspend fun setAppRite(rite: AppRite) {
+        dataStore.edit { it[KEY_APP_RITE] = rite.name }
     }
 
     suspend fun setBibleLastPosition(translationId: String, bookNumber: Int, chapter: Int) {
