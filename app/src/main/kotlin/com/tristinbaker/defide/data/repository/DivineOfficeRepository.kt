@@ -96,4 +96,18 @@ class DivineOfficeRepository @Inject constructor(
      */
     fun getOfficesByFilesSync(files: List<String>, language: String): List<DivineOffice> =
         dao.getOfficesByFiles(files, language)
+    /**
+     * Returns the same offices as getOfficesByFiles but in Latin.
+     * Used in Traditional mode to display antiphons/prayers in Latin alongside English hymns/psalms.
+     */
+    suspend fun getOfficesByFilesLatin(files: List<String>): List<DivineOffice> =
+        withContext(Dispatchers.IO) { dao.getOfficesByFiles(files, "la") }
+
+    /**
+     * Returns ferial psalms in Latin.
+     * Used in Traditional mode for antiphons.
+     */
+    suspend fun getFerialPsalmsLatin(dayOfWeek: Int, officeType: String): List<DivineOfficePsalm> =
+        withContext(Dispatchers.IO) { dao.getFerialPsalms(dayOfWeek, officeType, "la") }
+
 }

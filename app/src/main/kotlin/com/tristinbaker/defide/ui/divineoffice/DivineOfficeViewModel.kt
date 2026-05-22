@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.tristinbaker.defide.data.model.DivineOffice
 import com.tristinbaker.defide.data.model.DivineOfficeCalendar
 import com.tristinbaker.defide.data.model.DivineOfficePsalm
+import com.tristinbaker.defide.data.preferences.AppRite
 import com.tristinbaker.defide.data.preferences.UserPreferencesRepository
 import com.tristinbaker.defide.data.preferences.language
 import com.tristinbaker.defide.data.repository.DivineOfficeRepository
@@ -49,6 +50,11 @@ class DivineOfficeViewModel @Inject constructor(
         .map { it.appRite.language }
         .stateIn(viewModelScope, SharingStarted.Eagerly, "en")
 
+    /** Exposed for UI to determine content language for Traditional mode. */
+    val currentRite: StateFlow<AppRite> = prefsRepository.preferences
+        .map { it.appRite }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, AppRite.MODERN)
+
     // ── Shared state ──────────────────────────────────────────────────────────
 
     private val _selectedDate = MutableStateFlow(LocalDate.now())
@@ -69,6 +75,14 @@ class DivineOfficeViewModel @Inject constructor(
     /** The psalms for the selected office (based on day-of-week + office type). */
     private val _selectedPsalms = MutableStateFlow<List<DivineOfficePsalm>>(emptyList())
     val selectedPsalms: StateFlow<List<DivineOfficePsalm>> = _selectedPsalms.asStateFlow()
+
+    /** Latin psalms for antiphons — used in Traditional mode. */
+    private val _selectedPsalmsLatin = MutableStateFlow<List<DivineOfficePsalm>>(emptyList())
+    val selectedPsalmsLatin: StateFlow<List<DivineOfficePsalm>> = _selectedPsalmsLatin.asStateFlow()
+
+    /** Latin office (for hymn + prayer fields in Traditional mode). */
+    private val _selectedOfficeLatin = MutableStateFlow<DivineOffice?>(null)
+    val selectedOfficeLatin: StateFlow<DivineOffice?> = _selectedOfficeLatin.asStateFlow()
 
     // ── Init ─────────────────────────────────────────────────────────────────
 
@@ -109,20 +123,38 @@ class DivineOfficeViewModel @Inject constructor(
         _selectedOffice.value = office
         viewModelScope.launch {
             val lang = language.value
+            val rite = currentRite.value
             // officeType from DB: "Laudes", "Vespers", "Matins", "Completorium"
             // Psalm rows use "Compline" instead of "Completorium"
             val rawOt = office.officeType?.takeIf { it.isNotBlank() } ?: "Laudes"
             val ot = if (rawOt == "Completorium") "Compline" else rawOt
 
-            // Load psalms from the ferial row keyed by day-of-week + office type.
-            // The antiphons are already merged into office.ferialAntiphons by the DAO.
+            // Load English psalms (hymns/psalms/readings).
             _selectedPsalms.value = repository.getFerialPsalms(dayOfWeek, ot, lang)
+
+            // In Traditional mode, also load Latin psalms for antiphons and Latin office for hymn/prayers.
+            if (rite == AppRite.TRADITIONAL) {
+                _selectedPsalmsLatin.value = repository.getFerialPsalmsLatin(dayOfWeek, ot)
+                // Fetch Latin version of the same office for hymn + antiphons + oratio
+                val laOffices = repository.getOfficesByFilesLatin(
+                    listOfNotNull(cal?.temporaFile, cal?.sanctiFile, cal?.communeFile)
+                )
+                _selectedOfficeLatin.value = laOffices.find {
+                    it.officeType == office.officeType ||
+                    (office.officeType == null && it.officeType == null)
+                }
+            } else {
+                _selectedPsalmsLatin.value = emptyList()
+                _selectedOfficeLatin.value = null
+            }
         }
     }
 
     fun clearSelection() {
         _selectedOffice.value = null
+        _selectedOfficeLatin.value = null
         _selectedPsalms.value = emptyList()
+        _selectedPsalmsLatin.value = emptyList()
     }
 
     // ── Data loading ─────────────────────────────────────────────────────────
