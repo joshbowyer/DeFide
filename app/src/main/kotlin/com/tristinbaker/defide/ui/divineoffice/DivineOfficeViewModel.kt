@@ -5,17 +5,22 @@ import androidx.lifecycle.viewModelScope
 import com.tristinbaker.defide.data.model.DivineOffice
 import com.tristinbaker.defide.data.model.DivineOfficeCalendar
 import com.tristinbaker.defide.data.model.DivineOfficePsalm
+import com.tristinbaker.defide.data.preferences.UserPreferencesRepository
+import com.tristinbaker.defide.data.preferences.language
 import com.tristinbaker.defide.data.repository.DivineOfficeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
 
 /**
- * Groups offices available for a date into the canonical canonical offices of the day.
+ * Groups offices available for a date into the canonical offices of the day.
  *
  * Matins  – office_type = NULL (reading sections with lectio + responsory, no antiphons)
  * Laudes  – office_type = "Laudes"
@@ -35,7 +40,14 @@ data class DayOffices(
 @HiltViewModel
 class DivineOfficeViewModel @Inject constructor(
     private val repository: DivineOfficeRepository,
+    private val prefsRepository: UserPreferencesRepository,
 ) : ViewModel() {
+
+    // ── Rite / language ──────────────────────────────────────────────────────
+    // The DB language to query, derived from the user's rite preference.
+    private val language: StateFlow<String> = prefsRepository.preferences
+        .map { it.appRite.language }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, "en")
 
     // ── Shared state ──────────────────────────────────────────────────────────
 
@@ -61,7 +73,12 @@ class DivineOfficeViewModel @Inject constructor(
     // ── Init ─────────────────────────────────────────────────────────────────
 
     init {
-        loadForDate(_selectedDate.value)
+        // Re-load whenever the language changes (user toggled rite setting)
+        viewModelScope.launch {
+            language.collect { lang ->
+                loadForDate(_selectedDate.value, lang)
+            }
+        }
     }
 
     // ── Date navigation ──────────────────────────────────────────────────────
@@ -74,7 +91,7 @@ class DivineOfficeViewModel @Inject constructor(
         _selectedDate.value = date
         _selectedOffice.value = null
         _selectedPsalms.value = emptyList()
-        loadForDate(date)
+        loadForDate(date, language.value)
     }
 
     fun showDatePicker(): Boolean = true  // caller opens system date picker; then calls setDate
@@ -91,6 +108,7 @@ class DivineOfficeViewModel @Inject constructor(
     fun selectOffice(office: DivineOffice) {
         _selectedOffice.value = office
         viewModelScope.launch {
+            val lang = language.value
             // officeType from DB: "Laudes", "Vespers", "Matins", "Completorium"
             // Psalm rows use "Compline" instead of "Completorium"
             val rawOt = office.officeType?.takeIf { it.isNotBlank() } ?: "Laudes"
@@ -98,7 +116,7 @@ class DivineOfficeViewModel @Inject constructor(
 
             // Load psalms from the ferial row keyed by day-of-week + office type.
             // The antiphons are already merged into office.ferialAntiphons by the DAO.
-            _selectedPsalms.value = repository.getFerialPsalms(dayOfWeek, ot)
+            _selectedPsalms.value = repository.getFerialPsalms(dayOfWeek, ot, lang)
         }
     }
 
@@ -109,13 +127,13 @@ class DivineOfficeViewModel @Inject constructor(
 
     // ── Data loading ─────────────────────────────────────────────────────────
 
-    private fun loadForDate(date: LocalDate) {
+    private fun loadForDate(date: LocalDate, lang: String) {
         viewModelScope.launch {
             _isLoading.value = true
 
             val mmDd = "%02d-%02d".format(date.monthValue, date.dayOfMonth)
-            val calendarEntry = repository.getCalendarEntry(mmDd)
-            val allOffices = repository.getAllOfficesForDate(date)
+            val calendarEntry = repository.getCalendarEntry(mmDd, lang)
+            val allOffices = repository.getAllOfficesForDate(date, lang)
 
             val matins = allOffices.filter {
                 it.officeType == null || it.officeType == "Matins"

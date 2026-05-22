@@ -352,19 +352,22 @@ def create_schema(conn: sqlite3.Connection) -> None:
         CREATE INDEX IF NOT EXISTS idx_saints_language ON saints(language, name);
 -- Divine Office
         CREATE TABLE IF NOT EXISTS divine_office_calendar (
-            key           TEXT PRIMARY KEY,
+            key           TEXT NOT NULL,
+            language      TEXT NOT NULL,
             title         TEXT NOT NULL,
             rank          TEXT,
             grade         INTEGER NOT NULL DEFAULT 0,
             tempora_file  TEXT,
             sancti_file   TEXT,
-            commune_file  TEXT
+            commune_file  TEXT,
+            PRIMARY KEY (key, language)
         );
 
         CREATE TABLE IF NOT EXISTS divine_office (
             id          INTEGER PRIMARY KEY,
             file        TEXT NOT NULL,
             file_type   TEXT NOT NULL,
+            language    TEXT NOT NULL DEFAULT 'la',
             title       TEXT NOT NULL,
             office_type TEXT,
             invitatorium TEXT,
@@ -391,10 +394,13 @@ def create_schema(conn: sqlite3.Connection) -> None:
             id          INTEGER PRIMARY KEY,
             day         INTEGER NOT NULL,
             office_type TEXT NOT NULL,
+            language    TEXT NOT NULL DEFAULT 'la',
             antiphon    TEXT,
             psalms      TEXT NOT NULL,
             psalm_text  TEXT
         );
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_divine_office_psalms_dedup
+            ON divine_office_psalms(day, office_type, language);
 
         -- Indexes for fast chapter / book lookups
         CREATE INDEX IF NOT EXISTS idx_verses_book_chapter ON verses(book_id, chapter);
@@ -2352,10 +2358,11 @@ def _normalize_office_type(office_type):
     return office_type
 
 
-def _load_txt_file(filename):
-    psalterium = os.path.join(
-        REPO_ROOT, "divinum-officium", "web", "www", "horas", "Latin", "Psalterium", "Psalmi"
+def _load_txt_file(filename, horas_dir=""):
+    base = horas_dir if horas_dir else os.path.join(
+        REPO_ROOT, "divinum-officium", "web", "www", "horas", "Latin"
     )
+    psalterium = os.path.join(base, "Psalterium", "Psalmi")
     path = os.path.join(psalterium, filename)
     if not os.path.exists(path):
         return {}
@@ -2554,13 +2561,12 @@ def _apply_subs(text: str, subs: str) -> str:
     return text
 
 
-def _build_hymn_lookup() -> dict[str, str]:
+def _build_hymn_lookup(horas_dir: str) -> dict[str, str]:
     """
     Scan Major Special.txt and Minor Special.txt and return a flat
     {section_key -> full_hymn_text} map for all hymn sections.
     """
-    latin_dir = os.path.join(REPO_ROOT, "divinum-officium", "web", "www", "horas", "Latin")
-    special_dir = os.path.join(latin_dir, "Psalterium", "Special")
+    special_dir = os.path.join(horas_dir, "Psalterium", "Special")
     lookup: dict[str, str] = {}
 
     for fname in ("Major Special.txt", "Minor Special.txt"):
@@ -2640,9 +2646,9 @@ def _build_hymn_lookup() -> dict[str, str]:
     return lookup
 
 
-def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[str, str]):
+def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[str, str], tag_to_text: dict[str, str], lang: str = "la", horas_dir: str = ""):
     print("  Loading Matins antiphons from matutinum.txt...")
-    mat_secs = _load_txt_file("Psalmi matutinum.txt")
+    mat_secs = _load_txt_file("Psalmi matutinum.txt", horas_dir)
     matins_ant_by_day = {}
     for sec_key, sec_rows in mat_secs.items():
         if not sec_key.startswith("Day"):
@@ -2659,7 +2665,7 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
                 matins_ant_by_day[day] = srow["antiphon"]
                 break
 
-    major_secs = _load_txt_file("Psalmi major.txt")
+    major_secs = _load_txt_file("Psalmi major.txt", horas_dir)
     laudes_ant_by_day = {}
     vespers_ant_by_day = {}
     for sec_key, sec_rows in major_secs.items():
@@ -2681,8 +2687,7 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
 
     print("  Loading Completorium antiphons from Psalmi minor.txt...")
     minor_txt_path = os.path.join(
-        REPO_ROOT, "divinum-officium", "web", "www", "horas", "Latin",
-        "Psalterium", "Psalmi", "Psalmi minor.txt"
+        horas_dir, "Psalterium", "Psalmi", "Psalmi minor.txt"
     )
     day_map = {"Dominica": 0, "Feria II": 1, "Feria III": 2, "Feria IV": 3,
                "Feria V": 4, "Feria VI": 5, "Sabbato": 6}
@@ -2717,8 +2722,8 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
     for day, ant in matins_ant_by_day.items():
         n = conn.execute(
             "UPDATE divine_office SET matins_antiphon=? "
-            "WHERE office_type='Matins' AND matins_antiphon IS NULL",
-            (ant,),
+            "WHERE language=? AND office_type='Matins' AND matins_antiphon IS NULL",
+            (ant, lang),
         ).rowcount
         matins_updated += n
     print(f"  Updated matins_antiphon for {matins_updated} Matins rows.")
@@ -2770,11 +2775,37 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
          "Laudáte Dóminum, ómnes géntes: et collaudáte eum, ómnes pópuli. $Quóniam confirmáta est."),
     ]
 
+    # English ferial oratios keyed by (day, office_type)
+    EN_ORATIOS = {
+        (0, "Laudes"):  "Grant us, we pray, almighty God, that we who recognize our frailty may, mindful of our dignity, devote ourselves to your service. $Through the same Lord.",
+        (0, "Vespers"): "Grant, we pray, Lord, a steadfast hope and solid charity to your servants and handmaids, that in every place and at all times they may be able to give you thanks through their merits. $Through the same Lord.",
+        (0, "Matins"):  "Create in me, O God, a right spirit, and renew a steadfast spirit within me. $O God, from whom orphans.",
+        (1, "Laudes"):  "Let our prayer rise before you, O Lord, like incense, and the lifting up of our hands like the evening sacrifice. $Through the same Lord.",
+        (1, "Vespers"): "O Lord, shine your face upon us and hide us in the shelter of your wings. $Through the same Lord.",
+        (1, "Matins"):  "In your hands, O Lord, is my strength: you have given me your mercy as my sure foundation. $O God, from whom orphans.",
+        (2, "Laudes"):  "Blessed are you, O Lord; teach me your statutes, and give me life in them. $Through the same Lord.",
+        (2, "Vespers"): "May your mercy be upon us, O Lord, as we have hoped in you; and may we be praised in the midst of your temple. $Through the same Lord.",
+        (2, "Matins"):  "In the morning I will think of you, O Lord, for you have been my helper. $O God, from whom orphans.",
+        (3, "Laudes"):  "The Lord has lifted up my heart that I may hear and keep all his songs. $Through the same Lord.",
+        (3, "Vespers"): "Remember your name, O Lord, and deliver us in your truth, for great is your mercy toward us. $Through the same Lord.",
+        (3, "Matins"):  "Wash away our iniquities, O Lord, and cleanse us from all our sins. $O God, from whom orphans.",
+        (4, "Laudes"):  "O God, come to my aid; O Lord, make haste to help me, that those who threaten my soul may be quickly confounded. $Through the same Lord.",
+        (4, "Vespers"): "Then you shall call upon me, and I will answer you; you shall bring me back and gather me together. $Through the same Lord.",
+        (4, "Matins"):  "I have heard, O Lord, that you hear the voice of my soul; for in you have I hoped. $O God, from whom orphans.",
+        (5, "Laudes"):  "I have greatly rejoiced in what was said to me: we shall go up to the house of the Lord. $Through the same Lord.",
+        (5, "Vespers"): "You have set a light in my heart, O Lord, which does not appear to the world; to your name, O Lord, be praise and thanks. $Through the same Lord.",
+        (5, "Matins"):  "Direct my steps according to your word, O Lord, that no iniquity may gain dominion over me. $O God, from whom orphans.",
+        (6, "Laudes"):  "Let Israel hope in the Lord, for in him is mercy and plenteous redemption. $Through the same Lord.",
+        (6, "Vespers"): "Let your loins be girt and your lamps burning, for the Lord himself is about to come. $Who lives with you.",
+        (6, "Matins"):  "O praise the Lord, all you nations: and magnify him, all you peoples. $For his mercy has been confirmed.",
+    }
+
     inserted = 0
     for day, ot, title, oratio in FERIAL_ROWS:
+        oratio = EN_ORATIOS[(day, ot)] if lang == "en" else oratio
         exists = conn.execute(
-            "SELECT COUNT(*) FROM divine_office WHERE file=? AND office_type=?",
-            (f"ferial/{day}", ot),
+            "SELECT COUNT(*) FROM divine_office WHERE file=? AND office_type=? AND language=?",
+            (f"ferial/{day}", ot, lang),
         ).fetchone()[0]
         if exists:
             continue
@@ -2793,17 +2824,29 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
             ant_list.append("")
         ant_list = ant_list[:9]
 
+        # Look up hymn from hymn_lookup (contains per-language hymn text)
+        # English keys: "Hymnus Day0 Laudes", "Hymnus Day0 Vespera", "Hymnus Completorium"
+        # DB office_type uses "Vespers" but English file keys use Latin "Vespera"
+        # For Matins there is no specific English key; use "Vespers" key as fallback (same Sunday hymn)
+        ot_key = "Vespera" if ot in ("Vespers", "Matins") else ot
+        hymn_key = f"Hymnus Day{day} {ot_key}"
+        # Fallbacks: Day6 Vespera may not exist in English → use Day0 Vespera
+        hymn_text = (
+            hymn_lookup.get(hymn_key)
+            or (hymn_lookup.get(f"Hymnus Day0 {ot_key}") if ot in ("Vespers", "Matins") else None)
+            or hymn_lookup.get(f"Hymnus {ot_key}")
+        )
         conn.execute(
             """INSERT INTO divine_office
-               (file, file_type, title, office_type, oratio,
+               (file, file_type, language, title, office_type, oratio,
                 antiphon_1, antiphon_2, antiphon_3, antiphon_4, antiphon_5,
                 antiphon_6, antiphon_7, antiphon_8, antiphon_9,
                 hymn, matins_antiphon)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
-                f"ferial/{day}", "ferial", title, ot, oratio,
+                f"ferial/{day}", "ferial", lang, title, ot, oratio,
                 *ant_list[:9],
-                None,
+                hymn_text,
                 antiphon,
             ),
         )
@@ -2818,13 +2861,13 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
         blocks = matins_map.get(day) if ot == "Matins" else ferial_map.get((day, ot))
         if blocks:
             conn.execute(
-                "INSERT INTO divine_office_psalms (day, office_type, antiphon, psalms, psalm_text) VALUES (?, ?, ?, ?, ?)",
-                (day, ot, antiphon, "[]", json.dumps(blocks, ensure_ascii=False)),
+                "INSERT INTO divine_office_psalms (day, office_type, language, antiphon, psalms, psalm_text) VALUES (?, ?, ?, ?, ?, ?)",
+                (day, ot, lang, antiphon, "[]", json.dumps(blocks, ensure_ascii=False)),
             )
         else:
             conn.execute(
-                "INSERT INTO divine_office_psalms (day, office_type, antiphon, psalms) VALUES (?, ?, ?, ?)",
-                (day, ot, antiphon, "[]"),
+                "INSERT INTO divine_office_psalms (day, office_type, language, antiphon, psalms) VALUES (?, ?, ?, ?, ?)",
+                (day, ot, lang, antiphon, "[]"),
             )
 
     print(f"  Inserted {inserted} ferial fallback rows into divine_office.")
@@ -2832,8 +2875,6 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
     # -----------------------------------------------------------------------
     # Completorium ferial rows — not covered by JSON files, built from txt
     # -----------------------------------------------------------------------
-    _LATIN_HORAS = os.path.join(REPO_ROOT, "divinum-officium", "web", "www", "horas", "Latin")
-
     def _load_txt_sections_local(path):
         sections = {}
         current = None
@@ -2847,7 +2888,7 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
                     sections[current].append(line)
         return sections
 
-    minor_special = os.path.join(_LATIN_HORAS, "Psalterium", "Special", "Minor Special.txt")
+    minor_special = os.path.join(horas_dir, "Psalterium", "Special", "Minor Special.txt")
     ms = _load_txt_sections_local(minor_special) if os.path.exists(minor_special) else {}
 
     hymn_text = "\n".join(ms.get("Hymnus Completorium", []))
@@ -2855,6 +2896,10 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
     oratio_text = (
         "Vísita, quǽsumus, Dómine, habitátionem istam, et ómnes insídias inimíci ab ea repélle: "
         "ángeli sancti tui custódiam præstent, et nos in pace custodíre dignéris. Per Dóminum"
+    ) if lang == "la" else (
+        "Visit, we pray, Lord, this dwelling, and drive away from it all the snares of the enemy: "
+        "may your holy angels dwell in it to guard us, and may you in your mercy keep us in peace. "
+        "Through Christ our Lord."
     )
 
     COMPLEMENTUM_ROWS = [
@@ -2870,27 +2915,28 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
     comp_inserted = 0
     for day, day_label in COMPLEMENTUM_ROWS:
         exists = conn.execute(
-            "SELECT COUNT(*) FROM divine_office WHERE file=? AND office_type=?",
-            (f"ferial/{day}", "Completorium"),
+            "SELECT COUNT(*) FROM divine_office WHERE file=? AND office_type=? AND language=?",
+            (f"ferial/{day}", "Completorium", lang),
         ).fetchone()[0]
         if exists:
             # Update matins_antiphon with Completorium antiphon from txt
             ant = completorium_ant_by_day.get(day, "")
             if ant:
                 conn.execute(
-                    "UPDATE divine_office SET matins_antiphon=? WHERE file=? AND office_type=?",
-                    (ant, f"ferial/{day}", "Completorium"),
+                    "UPDATE divine_office SET matins_antiphon=? WHERE language=? AND file=? AND office_type=?",
+                    (ant, lang, f"ferial/{day}", "Completorium"),
                 )
             continue
         # Insert new Completorium row
         ant = completorium_ant_by_day.get(day, "")
         conn.execute(
             """INSERT INTO divine_office
-               (file, file_type, title, office_type, hymn, matins_antiphon, oratio)
-               VALUES (?, ?, ?, ?, ?, ?, ?)""",
+               (file, file_type, language, title, office_type, hymn, matins_antiphon, oratio)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 f"ferial/{day}",
                 "ferial",
+                lang,
                 f"{day_label} — Completorium",
                 "Completorium",
                 hymn_text,
@@ -3009,10 +3055,12 @@ def _resolve_hymn_ref(ref: str, json_dir: str = "") -> str:
     file_path: str
     if file_part:
         # e.g. "Sancti/03-19", "Tempora/Pasc2-3", "Psalterium/Special/Major Special"
-        file_path = os.path.join(_LATIN_HORAS, file_part + ".txt")
+        base = json_dir if json_dir else _LATIN_HORAS  # json_dir == json_dir param
+        file_path = os.path.join(base, file_part + ".txt")
     else:
         # Inline reference: try Minor Special.txt for Completorium hymn refs
-        minor_special = os.path.join(_LATIN_HORAS, "Psalterium", "Special", "Minor Special.txt")
+        base = json_dir if json_dir else _LATIN_HORAS
+        minor_special = os.path.join(base, "Psalterium", "Special", "Minor Special.txt")
         if os.path.exists(minor_special):
             sections = _load_txt_sections(minor_special)
             for k, v in sections.items():
@@ -3063,7 +3111,7 @@ def _resolve_hymn_ref(ref: str, json_dir: str = "") -> str:
     return ref  # unresolved
 
 
-def _post_resolve_hymns(conn):
+def _post_resolve_hymns(conn, horas_dir: str = ""):
     """After all divine_office rows are inserted, resolve any remaining @ hymn refs."""
     cu = conn.execute(
         "SELECT id, hymn FROM divine_office WHERE hymn LIKE '@%'"
@@ -3073,7 +3121,7 @@ def _post_resolve_hymns(conn):
         return 0
     resolved = 0
     for row_id, hymn_ref in rows:
-        resolved_text = _resolve_hymn_ref(hymn_ref)
+        resolved_text = _resolve_hymn_ref(hymn_ref, horas_dir)
         if resolved_text != hymn_ref:
             conn.execute(
                 "UPDATE divine_office SET hymn=? WHERE id=?",
@@ -3102,12 +3150,16 @@ def compile_baltimore_catechism(conn: sqlite3.Connection) -> None:
     print(f"  Baltimore Catechism: {len(entries)} entries indexed.")
 
 
-def compile_divine_office(conn):
+def compile_divine_office(conn, lang: str = "la"):
+    horas_dir = os.path.join(
+        REPO_ROOT, "divinum-officium", "web", "www", "horas",
+        "Latin" if lang == "la" else "English",
+    )
     do_dir = os.path.join(CONTENT_DIR, "divine_office", "data")
-    print(f"  DEBUG: CONTENT_DIR={CONTENT_DIR}")
-    print(f"  DEBUG: do_dir={do_dir} isdir={os.path.isdir(do_dir)}")
+    print(f"  [{lang}] Compiling Divine Office from {horas_dir} ...")
+    print(f"  [{lang}] Content dir: {do_dir} isdir={os.path.isdir(do_dir)}")
     if not os.path.isdir(do_dir):
-        print("  SKIP: content/divine_office/data not found.")
+        print(f"  SKIP: content/divine_office/data not found.")
         return
 
     CALENDAR_FILE_TYPES = {"tempora", "sancti", "commune", "extra",
@@ -3222,10 +3274,10 @@ def compile_divine_office(conn):
                 if file_type in CALENDAR_FILE_TYPES:
                     conn.execute(
                         """INSERT OR REPLACE INTO divine_office_calendar
-                           (key, title, rank, grade, tempora_file, sancti_file, commune_file)
-                           VALUES (?, ?, ?, ?, ?, ?, ?)""",
+                           (key, language, title, rank, grade, tempora_file, sancti_file, commune_file)
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
                         (
-                            file_stem, title, rank, merged.get("Grade", 0),
+                            file_stem, lang, title, rank, merged.get("Grade", 0),
                             f"{file_type}/{file_stem}" if file_type == "tempora" else None,
                             f"{file_type}/{file_stem}" if file_type == "sancti" else None,
                             f"{file_type}/{file_stem}" if file_type == "commune" else None,
@@ -3342,7 +3394,7 @@ def compile_divine_office(conn):
 
                     conn.execute(
                         """INSERT INTO divine_office
-                           (file, file_type, title, office_type, invitatorium,
+                           (file, file_type, language, title, office_type, invitatorium,
                             antiphon_1, antiphon_2, antiphon_3, antiphon_4, antiphon_5,
                             antiphon_6, antiphon_7, antiphon_8, antiphon_9,
                             antiphon_vespera_1, antiphon_vespera_2, antiphon_vespera_3,
@@ -3353,11 +3405,11 @@ def compile_divine_office(conn):
                             responsory_1, responsory_2, responsory_3,
                             versus, preces, capitulum, oratio, conclusio, matins_antiphon,
                             supplemental)
-                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
                                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-                                   ?, ?, ?, ?, ?, ?)""",
+                                   ?, ?, ?, ?, ?)""",
                         (
-                            rel.rsplit(".json", 1)[0], file_type, sec_title,
+                            rel.rsplit(".json", 1)[0], file_type, lang, sec_title,
                             office_type if office_type else None,
                             merged.get("Invitatorium") or merged.get("Invit"),
                             *laudes_ants,
@@ -3407,11 +3459,12 @@ def compile_divine_office(conn):
                         continue  # Skip rows without a usable office type
                     conn.execute(
                         """INSERT OR IGNORE INTO divine_office_psalms
-                           (day, office_type, antiphon, psalms)
-                           VALUES (?, ?, ?, ?)""",
+                           (day, office_type, language, antiphon, psalms)
+                           VALUES (?, ?, ?, ?, ?)""",
                         (
                             day,
                             norm_ot,
+                            lang,
                             val.get("antiphon") if isinstance(val, dict) else None,
                             json.dumps(val.get("psalms", []) if isinstance(val, dict) else []),
                         ),
@@ -3421,8 +3474,8 @@ def compile_divine_office(conn):
     print(f"  Divine Office: {office_rows} offices, {calendar_rows} calendar entries, {psalm_rows} psalm rows.")
 
     print("  Pre-expanding psalm texts from Latin Psalmi txt files...")
-    major_secs = _load_txt_file("Psalmi major.txt")
-    mat_secs = _load_txt_file("Psalmi matutinum.txt")
+    major_secs = _load_txt_file("Psalmi major.txt", horas_dir)
+    mat_secs = _load_txt_file("Psalmi matutinum.txt", horas_dir)
 
     ferial_map = {}
     for sec_key, sec_rows in major_secs.items():
@@ -3474,24 +3527,23 @@ def compile_divine_office(conn):
     print(f"  Expanded {expanded} psalm rows with antiphon text and verse text.")
 
     print("  Building hymn lookup from Major/Minor Special.txt...")
-    hymn_lookup = _build_hymn_lookup()
+    hymn_lookup = _build_hymn_lookup(horas_dir)
     hymn_keys_found = len(hymn_lookup)
-    _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup)
 
     print("  Resolving hymn @-references...")
-    hymn_resolved = _post_resolve_hymns(conn)
+    hymn_resolved = _post_resolve_hymns(conn, horas_dir)
     print(f"  Resolved {hymn_resolved} hymn @-references.")
 
     print("  Post-processing hymns (tag expansion, @-ref resolution, ferial hymns)...")
     _HYMN_TAG_PAT = re.compile(r"^\{:H-([^:}]+):\}")
-    LATIN_HORAS = os.path.join(REPO_ROOT, "divinum-officium", "web", "www", "horas", "Latin")
+    HYMN_HORAS = horas_dir  # language-specific horas dir
 
     def _strip_tag(line: str) -> str:
         return _HYMN_TAG_PAT.sub("", line)
 
-    # Build comprehensive tag -> text lookup from ALL Latin horas .txt files
+    # Build comprehensive tag -> text lookup from ALL language-specific horas .txt files
     tag_to_text: dict[str, str] = {}
-    for root, _dirs, files in os.walk(LATIN_HORAS):
+    for root, _dirs, files in os.walk(HYMN_HORAS):
         for fn in sorted(files):
             if not fn.endswith(".txt"):
                 continue
@@ -3522,6 +3574,9 @@ def compile_divine_office(conn):
                     tag_to_text[pending_tag] = "\n".join(lines)
     print(f"    Loaded {len(tag_to_text)} hymn tag definitions.")
 
+    # Now call _do_divine_office_backfill with tag_to_text available
+    _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup, tag_to_text, lang, horas_dir)
+
     def _resolve_hymn_ref(ref: str) -> str:
         """Resolve a hymn @-reference string to its full text."""
         if not ref or not ref.startswith("@"):
@@ -3531,7 +3586,7 @@ def compile_divine_office(conn):
         core = text_part.lstrip("@")
         if ":" in core:
             file_part, sec_name = core.split(":", 1)
-            fp = os.path.join(LATIN_HORAS, file_part + ".txt")
+            fp = os.path.join(HYMN_HORAS, file_part + ".txt")
         else:
             fp = ""
             sec_name = core
@@ -3647,7 +3702,7 @@ def compile_divine_office(conn):
     # complete file index keyed by filename -> {section_name: [lines]}.
     hymn_file_index: dict[str, dict[str, list[str]]] = {}
     for subdir in ("Sancti", "Commune", "Tempora"):
-        subdir_path = os.path.join(LATIN_HORAS, subdir)
+        subdir_path = os.path.join(HYMN_HORAS, subdir)
         if not os.path.isdir(subdir_path):
             continue
         for fn in os.listdir(subdir_path):
@@ -3817,6 +3872,7 @@ def main() -> None:
 
         print("Compiling Prayers...")
         compile_prayers(conn, "en")
+        compile_prayers(conn, "la")
         compile_prayers(conn, "pt-BR")
         compile_prayers(conn, "pt-PT")
         compile_prayers(conn, "fr")
@@ -3832,6 +3888,7 @@ def main() -> None:
 
         print("Compiling Rosary...")
         compile_rosary(conn, "en")
+        compile_rosary(conn, "la")
         compile_rosary(conn, "pt-BR")
         compile_rosary(conn, "pt-PT")
         compile_rosary(conn, "pt-PT", variant="fatima")
@@ -3850,6 +3907,7 @@ def main() -> None:
 
         compile_baltimore_catechism(conn)
         compile_divine_office(conn)
+        compile_divine_office(conn, lang="en")
         conn.commit()
 
         print("Optimizing FTS indexes...")

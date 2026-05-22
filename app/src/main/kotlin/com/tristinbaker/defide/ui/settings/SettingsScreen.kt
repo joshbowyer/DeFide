@@ -54,6 +54,7 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.tristinbaker.defide.R
 import com.tristinbaker.defide.data.preferences.AppFont
+import com.tristinbaker.defide.data.preferences.AppRite
 import com.tristinbaker.defide.data.preferences.AppTheme
 import com.tristinbaker.defide.data.preferences.RosaryOrder
 
@@ -232,6 +233,50 @@ fun SettingsScreen(
                         .clickable { uriHandler.openUri("https://hosted.weblate.org/projects/de-fide/app-strings/") },
                 )
                 HorizontalDivider(modifier = Modifier.padding(top = 4.dp))
+            }
+            item {
+                SectionHeader(stringResource(R.string.section_rite))
+            }
+            item {
+                Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
+                    AppRite.entries.forEach { rite ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            RadioButton(
+                                selected = prefs.appRite == rite,
+                                onClick = { viewModel.setAppRite(rite) },
+                            )
+                            Column(modifier = Modifier.padding(start = 8.dp)) {
+                                Text(
+                                    text = stringResource(when (rite) {
+                                        AppRite.MODERN      -> R.string.rite_modern
+                                        AppRite.TRADITIONAL -> R.string.rite_traditional
+                                        AppRite.LATIN       -> R.string.rite_latin
+                                    }),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                )
+                                Text(
+                                    text = stringResource(when (rite) {
+                                        AppRite.MODERN      -> R.string.rite_modern_desc
+                                        AppRite.TRADITIONAL -> R.string.rite_traditional_desc
+                                        AppRite.LATIN       -> R.string.rite_latin_desc
+                                    }),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        }
+                    }
+                }
+                Text(
+                    text = stringResource(R.string.rite_explanatory),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                )
+                HorizontalDivider(modifier = Modifier.padding(top = 8.dp))
             }
             item {
                 SectionHeader(stringResource(R.string.section_bible_translation))

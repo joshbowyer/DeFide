@@ -5,6 +5,7 @@ import androidx.compose.runtime.Immutable
 @Immutable
 data class DivineOfficeCalendar(
     val key: String,        // "MM-DD"
+    val language: String,    // 'la' or 'en'
     val title: String,
     val rank: String?,
     val grade: Int,
@@ -18,6 +19,7 @@ data class DivineOffice(
     val id: Int,
     val file: String,
     val fileType: String,
+    val language: String,   // 'la' = Latin, 'en' = English
     val title: String,
     val officeType: String?,
     val invitatorium: String?,
@@ -74,6 +76,7 @@ data class DivineOfficePsalm(
     val id: Int,
     val day: Int,           // 0=Sunday … 6=Saturday
     val officeType: String,
+    val language: String,   // 'la' or 'en'
     val antiphon: String?,  // short antiphon set at DB row level (rarely used)
     val psalms: String,     // comma-separated refs: "1,50,117,62,220"
     /** Pre-expanded antiphon + verse blocks from the Psalmi txt files. */

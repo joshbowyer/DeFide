@@ -9,6 +9,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.tristinbaker.defide.data.backup.BackupManager
 import com.tristinbaker.defide.data.preferences.AppFont
+import com.tristinbaker.defide.data.preferences.AppRite
 import com.tristinbaker.defide.data.preferences.AppTheme
 import com.tristinbaker.defide.data.preferences.RosaryOrder
 import com.tristinbaker.defide.data.preferences.UserPreferences
@@ -152,5 +153,9 @@ class SettingsViewModel @Inject constructor(
 
     fun setRosaryHapticFeedback(enabled: Boolean) {
         viewModelScope.launch { prefsRepository.setRosaryHapticFeedback(enabled) }
+    }
+
+    fun setAppRite(rite: AppRite) {
+        viewModelScope.launch { prefsRepository.setAppRite(rite) }
     }
 }

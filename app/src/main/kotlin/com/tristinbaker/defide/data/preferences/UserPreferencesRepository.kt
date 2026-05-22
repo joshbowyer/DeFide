@@ -13,6 +13,15 @@ import javax.inject.Singleton
 enum class AppTheme { SYSTEM, LIGHT, DARK, AMOLED, DYNAMIC }
 enum class AppFont { SERIF, SYSTEM, SANS_SERIF }
 enum class RosaryOrder { DOMINICAN, FATIMA }
+enum class AppRite { MODERN, TRADITIONAL, LATIN }
+
+/** Maps the user's rite preference to the database `language` column value. */
+val AppRite.language: String
+    get() = when (this) {
+        AppRite.MODERN      -> "en"
+        AppRite.TRADITIONAL -> "la"
+        AppRite.LATIN       -> "la"
+    }
 
 data class UserPreferences(
     val theme: AppTheme = AppTheme.SYSTEM,
@@ -27,6 +36,7 @@ data class UserPreferences(
     val keepScreenOn: Boolean = false,
     val rosaryOrder: RosaryOrder = RosaryOrder.DOMINICAN,
     val rosaryHapticFeedback: Boolean = true,
+    val appRite: AppRite = AppRite.MODERN,
 )
 
 @Singleton
@@ -46,6 +56,7 @@ class UserPreferencesRepository @Inject constructor(
         private val KEY_KEEP_SCREEN_ON = androidx.datastore.preferences.core.booleanPreferencesKey("keep_screen_on")
         private val KEY_ROSARY_ORDER     = stringPreferencesKey("rosary_order")
         private val KEY_ROSARY_HAPTIC    = androidx.datastore.preferences.core.booleanPreferencesKey("rosary_haptic_feedback")
+        private val KEY_APP_RITE         = stringPreferencesKey("app_rite")
     }
 
     val preferences: Flow<UserPreferences> = dataStore.data.map { prefs ->
@@ -62,6 +73,7 @@ class UserPreferencesRepository @Inject constructor(
             keepScreenOn = prefs[KEY_KEEP_SCREEN_ON] ?: false,
             rosaryOrder = prefs[KEY_ROSARY_ORDER]?.let { runCatching { RosaryOrder.valueOf(it) }.getOrNull() } ?: RosaryOrder.DOMINICAN,
             rosaryHapticFeedback = prefs[KEY_ROSARY_HAPTIC] ?: true,
+            appRite = prefs[KEY_APP_RITE]?.let { runCatching { AppRite.valueOf(it) }.getOrNull() } ?: AppRite.MODERN,
         )
     }
 
@@ -99,6 +111,10 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun setRosaryHapticFeedback(enabled: Boolean) {
         dataStore.edit { it[KEY_ROSARY_HAPTIC] = enabled }
+    }
+
+    suspend fun setAppRite(rite: AppRite) {
+        dataStore.edit { it[KEY_APP_RITE] = rite.name }
     }
 
     suspend fun setBibleLastPosition(translationId: String, bookNumber: Int, chapter: Int) {

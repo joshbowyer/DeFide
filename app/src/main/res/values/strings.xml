@@ -40,6 +40,14 @@
     <string name="section_language">Language</string>
     <string name="translate_cta">Want to add or improve a translation? Contribute on Weblate.</string>
     <string name="section_bible_translation">Bible Translation</string>
+    <string name="section_rite">Rite</string>
+    <string name="rite_modern">Modern</string>
+    <string name="rite_modern_desc">Local language, current rubrics</string>
+    <string name="rite_traditional">Traditional</string>
+    <string name="rite_traditional_desc">Prayers in local language, antiphons and hymns in Latin</string>
+    <string name="rite_latin">Latin</string>
+    <string name="rite_latin_desc">All Latin, 1962 rubrics</string>
+    <string name="rite_explanatory">Affects Divine Office, Rosary, and prayers.</string>
     <string name="keep_screen_on_label">Keep screen on while using app</string>
     <string name="section_notifications">Notifications</string>
     <string name="novena_reminder_label">Novena reminder</string>
