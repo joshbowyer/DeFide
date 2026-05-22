@@ -55,6 +55,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.tristinbaker.defide.ui.bible.BibleBookmarksScreen
 import com.tristinbaker.defide.ui.catechism.BaltimoreCatechismScreen
+import com.tristinbaker.defide.ui.catechism.CompendiumCatechismScreen
 import com.tristinbaker.defide.ui.bible.BibleChapterScreen
 import com.tristinbaker.defide.ui.bible.BibleHomeScreen
 import com.tristinbaker.defide.ui.bible.BibleReaderScreen
@@ -193,6 +194,7 @@ private fun DeFideAppContent(
     val catechismText = stringResource(R.string.catechism_dialog_text)
     val catechismOptionCcc = stringResource(R.string.catechism_option_ccc)
     val catechismOptionBaltimore = stringResource(R.string.catechism_option_baltimore)
+    val catechismOptionCompendium = stringResource(R.string.catechism_option_compendium)
     val lothTitle = stringResource(R.string.loth_dialog_title)
     val lothText = stringResource(R.string.loth_dialog_text)
     val lothOptionOnline = stringResource(R.string.loth_option_online)
@@ -215,6 +217,20 @@ private fun DeFideAppContent(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text(catechismOptionCcc)
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedButton(
+                        onClick = {
+                            onShowCatechismDialog(false)
+                            navController.navigate("compendium_catechism") {
+                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(catechismOptionCompendium)
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedButton(
@@ -612,6 +628,14 @@ private fun DeFideNavHost(
             BaltimoreCatechismScreen(
                 onBack = { navController.popBackStack() },
                 onQuestionClick = { /* TODO: navigate to detail */ },
+            )
+        }
+
+        // Compendium of the Catechism
+        composable("compendium_catechism") {
+            CompendiumCatechismScreen(
+                onBack = { navController.popBackStack() },
+                onQuestionClick = { },
             )
         }
 

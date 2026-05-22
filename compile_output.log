@@ -1,0 +1,21 @@
+ERROR: disk I/O error
+Building /home/josh/claw-code/DeFide/app/src/main/assets/databases/defide_content.db ...
+Traceback (most recent call last):
+  File "/home/josh/claw-code/DeFide/scripts/compile_content.py", line 3982, in <module>
+    main()
+    ~~~~^^
+  File "/home/josh/claw-code/DeFide/scripts/compile_content.py", line 3888, in main
+    create_schema(conn)
+    ~~~~~~~~~~~~~^^^^^^
+  File "/home/josh/claw-code/DeFide/scripts/compile_content.py", line 227, in create_schema
+        conn.executescript("""
+        ~~~~~~~~~~~~~~~~~~^^^^
+            PRAGMA journal_mode=WAL;
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<207 lines>...
+            CREATE INDEX IF NOT EXISTS idx_novena_days_novena ON novena_days(novena_id, day_number);
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        """)
+        ^^^^
+sqlite3.OperationalError: disk I/O error
+DONE:1
