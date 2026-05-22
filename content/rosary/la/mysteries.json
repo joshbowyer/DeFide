@@ -1,0 +1,150 @@
+[
+  {
+    "id": "joyful",
+    "name": "Mysteria Gaudiósa",
+    "traditional_days": "Feria secunda, Sabbato",
+    "mysteries": [
+      {
+        "number": 1,
+        "title": "Annuntiatio B. Mariae V.",
+        "scripture": "Luke 1:26–38",
+        "meditation": "Angelus Gábriel Deum annuntiábat beátae Maríae Vírgini, quod incarnabitur et Fílius Dei nascerétur. María humíliter accépit voluntátem Dei: «Ecce ancílla Dómini; fiat mihi secúndum verbum tuum.» Ora pro virtúte humilitátis."
+      },
+      {
+        "number": 2,
+        "title": "Visitatio B. Mariae V.",
+        "scripture": "Luke 1:39–56",
+        "meditation": "María festínans vadt ad visitándam sorórem suam Elísabeth, quae Spíritu Sancto repléta exclámat: «Benedícta tu inter mulíeres, et benedíctus fructus véntris tui!» Infans Ioánnes in útero exsúltat. Ora pro virtúte caritátis."
+      },
+      {
+        "number": 3,
+        "title": "Nativitas Dómini",
+        "scripture": "Luke 2:1–20",
+        "meditation": "Jesus in presépe Bethlehem nascitur, pannis invoLútus et in praesépe pósitus, quia non erat locus in diversório. Angeli pastóribus nuntium bonum annuntiánt. Ora pro virtúte paupertátis spiritus."
+      },
+      {
+        "number": 4,
+        "title": "Praesentátio Dómini",
+        "scripture": "Luke 2:22–38",
+        "meditation": "María et Ioseph párvulum Iesum in Templum offérunt secúndum Legem Móysi. Símeon sanctus púerum in bráchiis súis accépit et prophetávit eum lumen natiónum futúrum. Ora pro virtúte oboediéntiae."
+      },
+      {
+        "number": 5,
+        "title": "Invéntio Dómini in templo",
+        "scripture": "Luke 2:41–52",
+        "meditation": "Iesus duódecim annórum remánsit in Ierúsalem, et invéntus est a María et Ioseph post tres dies in Templo, sedens inter magístros, audiens et interrogans eos. Dicit eis: «Oportet me esse in iis quae Pátris mei sunt.» Ora pro zelo rerum divinarum."
+      }
+    ]
+  },
+  {
+    "id": "sorrowful",
+    "name": "Mysteria Dolorósa",
+    "traditional_days": "Feria tertia, Feria sexta",
+    "mysteries": [
+      {
+        "number": 1,
+        "title": "Agonia in horto",
+        "scripture": "Luke 22:39–46",
+        "meditation": "Iesus in horto Gethsemáni précatur patróne máxima, sudans sánguinem, et Ángelus de caelo appáruit eum corroborans. Venit ad discípulos suos et invénit eos dormiéntes. Ora pro virtúte oboediéntiae et fortitúdinis."
+      },
+      {
+        "number": 2,
+        "title": "Flagellátio Dómini",
+        "scripture": "John 19:1; Isaiah 53:5",
+        "meditation": "Iesus a Piláto flagéllis caéditur, et milítes eum coróna spinéa coronánt et vestiunt púrpura. «Ecce homo!» exclámat Pilátus. Ora pro virtúte castigatiónis carnis."
+      },
+      {
+        "number": 3,
+        "title": "Coronátio Spíneae Corónae",
+        "scripture": "Matthew 27:28–29",
+        "meditation": "Milítes caput Iesu spinéa coróna coronánt et arúndine percutiébant. «Ave, Rex Iudaeórum!» exclámant. Iesus dicit: «Ecce, Video caelos apértos.» Ora pro virtúte martýrii."
+      },
+      {
+        "number": 4,
+        "title": "Baiulátio Crucis",
+        "scripture": "John 19:17; Luke 23:26–31",
+        "meditation": "Iesus crucem báijulat et exit in locum qui vocátur Gólgotha. Simón Cyrenaeus cómpellitur a milítibus ut báijulet crucem post eum. Ora pro virtúte patiéntiae in sufférentiis."
+      },
+      {
+        "number": 5,
+        "title": "Crucifixio Dómini",
+        "scripture": "John 19:18–30",
+        "meditation": "Iesus crucifígitur inter duos latrónes, láudans Dóminum in médio eórum. Clamans voce magna: «Pater, in manus tuas comméndo spíritum meum.» Terra mota est et petrae scissae sunt. Ora pro virtúte iustítiae et misericórdiae."
+      }
+    ]
+  },
+  {
+    "id": "glorious",
+    "name": "Mysteria Gloriósa",
+    "traditional_days": "Feria quarta, Dominica",
+    "mysteries": [
+      {
+        "number": 1,
+        "title": "Resurréctio Dómini",
+        "scripture": "Mark 16:1–8; John 20:1–18",
+        "meditation": "Angelus Dómini appáruit Maríae Magdalénae et áliis discípulis, dicens: «Surrexit Dóminus!» Iesus appáruit eis múltiplíciter per dies quadragínta. Ora pro virtúte speris."
+      },
+      {
+        "number": 2,
+        "title": "Ascénsio Dómini",
+        "scripture": "Luke 24:50–51; Acts 1:9–11",
+        "meditation": "Iesus elevátus est in caelum, et nubes eum suscépit ab óculis eórum. Angeli discípulis dixérunt: «Viri Galilaei, quid statis aspiciéntes in caelum?» Ora pro virtúte fiduciae in caeléstia."
+      },
+      {
+        "number": 3,
+        "title": "Descénsus Spíritus S.",
+        "scripture": "Acts 2:1–11",
+        "meditation": "Spíritus Sanctus descéndit super discípulos in linguis ignéis in die Pentecósten. Omnes repléti sunt Spíritu Sancto et coeperunt loqui linguis variis. Ora pro virtúte timóris Dei et sapiéntiae."
+      },
+      {
+        "number": 4,
+        "title": "Assúmptio B. Mariae V.",
+        "scripture": "Revelation 12:1; (traditional)",
+        "meditation": "María, Mater Iesu, corpóre et ánima ad caelum assúmpta est. A María Coróna Regis caeléstis descendit super nos. Ora pro devotióne erga Sanctíssimam Vírginem."
+      },
+      {
+        "number": 5,
+        "title": "Coroátio B. Mariae V.",
+        "scripture": "Revelation 12:1; Judith 15:9",
+        "meditation": "María, gloriósa Regína caeli et terrae, coróna stellárum coronátur a Fílio suo Iesu Christo. «Omnes genua flectántur in caelis, in terris et in inferis!» Ora pro devotióne ad Regínam pacis."
+      }
+    ]
+  },
+  {
+    "id": "luminous",
+    "name": "Mysteria Luminósa",
+    "traditional_days": "Feria quinta",
+    "mysteries": [
+      {
+        "number": 1,
+        "title": "Baptísma Dómini in Iordane",
+        "scripture": "Matthew 3:13–17",
+        "meditation": "Iesus a Ioánne in Iordane baptizátur. Spíritus Sanctus descendit super eum in spécie colúmbae, et vox de caelo audíta est: «Tu es Fílius meus diléctus.» Ora pro virtúte purificatonis."
+      },
+      {
+        "number": 2,
+        "title": "Nuptiae in Cana Galilaeae",
+        "scripture": "John 2:1–11",
+        "meditation": "María, intercedénte, Iesus aquam in vínum convértit in núptiis Caée Gálilaeae. Hoc signum Iesu, et discípuli eius credidérunt in eum. Ora pro virtúte intercessiónis Maríae."
+      },
+      {
+        "number": 3,
+        "title": "Annuntiátio Regni Dei",
+        "scripture": "Mark 1:14–15; Matthew 5–7",
+        "meditation": "IesusEvangelium Regni annúntiat, dicens: «Poeniténtiam agite, appropinquávit enim Regnum caelórum.» Infírmi curántur et daemonia expellúntur. Ora pro zelo animárum."
+      },
+      {
+        "number": 4,
+        "title": "Transfigurátio Dómini",
+        "scripture": "Luke 9:28–36",
+        "meditation": "Iesus transfigurátus est in monte coram Petro, Iacobo et Ioánne. Fácies eius resplénduit sicut sol, et vestiménta eius facta sunt sicut nix. Vox de caelo: «Hic est Fílius meus diléctus.» Ora pro conversióne cordis."
+      },
+      {
+        "number": 5,
+        "title": "Eucharistía Dómini",
+        "scripture": "Matthew 26:26–28; Luke 22:19–20",
+        "meditation": "Iesus in Cena novíssima panem et vínum in Corpus et Sánguinem suum convértit, et discípulis tradidit. «Hoc est corpus meum, quod pro vobis tradétur.» Ora proúdo et memória Passiónis Dómini."
+      }
+    ]
+  }
+]

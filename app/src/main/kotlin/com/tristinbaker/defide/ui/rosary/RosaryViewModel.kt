@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tristinbaker.defide.data.model.Mystery
 import com.tristinbaker.defide.data.model.MysteryBead
+import com.tristinbaker.defide.data.preferences.AppRite
 import com.tristinbaker.defide.data.preferences.RosaryOrder
 import com.tristinbaker.defide.data.preferences.UserPreferencesRepository
 import com.tristinbaker.defide.data.preferences.language
@@ -41,6 +42,14 @@ class RosaryViewModel @Inject constructor(
 
     private val _mysteries = MutableStateFlow<List<Mystery>>(emptyList())
     val mysteries: StateFlow<List<Mystery>> = _mysteries.asStateFlow()
+
+    /** English mysteries — used for mystery titles/scripture in Traditional mode. */
+    private val _englishMysteries = MutableStateFlow<List<Mystery>>(emptyList())
+    val englishMysteries: StateFlow<List<Mystery>> = _englishMysteries.asStateFlow()
+
+    /** Currently active mystery ID (set when a session starts). */
+    private val _currentMysteryId = MutableStateFlow<String?>(null)
+    val currentMysteryId: StateFlow<String?> = _currentMysteryId.asStateFlow()
 
     val todaysMysteryId: String = suggestedMysteryId()
 
@@ -126,6 +135,11 @@ class RosaryViewModel @Inject constructor(
     private val _completing = MutableStateFlow(false)
     val completing: StateFlow<Boolean> = _completing.asStateFlow()
 
+    /** Current rite — used by screen to determine which language to show for mystery titles. */
+    val currentRite: StateFlow<AppRite> = prefsRepository.preferences
+        .map { it.appRite }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, AppRite.MODERN)
+
     init {
         // React to appRite changes — the Rite setting controls prayer/mystery language
         viewModelScope.launch {
@@ -134,6 +148,12 @@ class RosaryViewModel @Inject constructor(
                 .collectLatest { prefs ->
                     currentLanguage = prefs.appRite.language
                     _mysteries.value = repository.getMysteries(currentLanguage)
+                    // Traditional mode needs English titles/scripture for mysteries
+                    if (prefs.appRite == AppRite.TRADITIONAL) {
+                        _englishMysteries.value = repository.getMysteries("en")
+                    } else {
+                        _englishMysteries.value = emptyList()
+                    }
                     val prayers = prayerRepository.getAll(currentLanguage)
                     _prayerTexts.value = prayers.associate { it.id to it.body }
                     _prayerTitles.value = prayers.associate { it.id to it.title }
@@ -159,6 +179,7 @@ class RosaryViewModel @Inject constructor(
                 _beads.value = repository.getBeads(mysteryId, currentLanguage, "dominican")
             }
             _currentPosition.value = 0
+            _currentMysteryId.value = mysteryId
             _sessionId.value = repository.startSession(mysteryId)
         }
     }

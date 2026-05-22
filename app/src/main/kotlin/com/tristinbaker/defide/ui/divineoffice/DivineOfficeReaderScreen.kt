@@ -34,12 +34,28 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.tristinbaker.defide.R
 import com.tristinbaker.defide.data.model.DivineOffice
+import com.tristinbaker.defide.data.preferences.AppRite
 import com.tristinbaker.defide.data.model.DivineOfficePsalm
 import java.time.format.DateTimeFormatter
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  Static text for Compline
 // ─────────────────────────────────────────────────────────────────────────────
+private const val EXAMINATION_OF_CONSCIENCE_LATIN = """Confíteor Deo omnipoténti
+et vobis, fratres et soróres,
+quóniam peccávi nimis
+cogitatóne, verbo et ópere:
+mea culpa, mea culpa, mea máxima culpa.
+Ideo precor beátam Maríam semper Vírginem,
+omnes Angelos et Sanctos,
+et vos, fratres et soróres,
+oráre pro me ad Dóminum Deum nostrum.
+
+Misereátur nostri omnípotens Deus,
+et dimíssis peccátis nostris,
+perdúcat nos ad vitam ætérnam.
+Amen."""
+
 private const val EXAMINATION_OF_CONSCIENCE = """I confess to almighty God
 and to you, my brothers and sisters,
 that I have greatly sinned,
@@ -78,6 +94,17 @@ Alleluia.
 Pray for us to God,
 Alleluia."""
 
+private const val OUR_FATHER_LATIN = """Pater noster, qui es in cælis,
+sanctificétur nomen tuum;
+advéniat régnum tuum;
+fiat volúntas tua, sicut in cælo et in terra.
+Panem nostrum quotidiánum da nobis hódie;
+et dimítte nobis débita nostra,
+sicut et nos dimíttimus debitóribus nostris;
+et ne nos indúcas in tentatiónem;
+sed líbera nos a malo.
+Amen."""
+
 private const val OUR_FATHER = """Our Father, who art in heaven,
 hallowed be thy name;
 thy kingdom come;
@@ -98,8 +125,11 @@ fun DivineOfficeReaderScreen(
     onBack: () -> Unit,
 ) {
     val office by viewModel.selectedOffice.collectAsState()
+    val officeLatin by viewModel.selectedOfficeLatin.collectAsState()
     val psalms by viewModel.selectedPsalms.collectAsState()
+    val psalmsLatin by viewModel.selectedPsalmsLatin.collectAsState()
     val selectedDate by viewModel.selectedDate.collectAsState()
+    val currentRite by viewModel.currentRite.collectAsState()
 
     val dateFormatter = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy")
 
@@ -159,7 +189,13 @@ fun DivineOfficeReaderScreen(
 
                 office?.let { o ->
                     item {
-                        OfficeContentCard(office = o, psalms = psalms)
+                        OfficeContentCard(
+        office = o,
+        psalms = psalms,
+        psalmsLatin = psalmsLatin,
+        officeLatin = officeLatin,
+        rite = currentRite,
+    )
                         Spacer(modifier = Modifier.height(32.dp))
                     }
                 }
@@ -175,13 +211,16 @@ fun DivineOfficeReaderScreen(
 fun OfficeContentCard(
     office: DivineOffice,
     psalms: List<DivineOfficePsalm>,
+    psalmsLatin: List<DivineOfficePsalm>,
+    officeLatin: DivineOffice?,
+    rite: AppRite,
 ) {
     when (office.officeType) {
-        "Laudes"   -> LaudesContent(office, psalms)
-        "Vespers"  -> VespersContent(office, psalms)
-        "Matins"   -> MatinsContent(office, psalms)
-        "Compline", "Completorium" -> CompletoriumContent(office, psalms)
-        else        -> DefaultOfficeContent(office, psalms)
+        "Laudes"   -> LaudesContent(office, psalms, psalmsLatin, officeLatin, rite)
+        "Vespers"  -> VespersContent(office, psalms, psalmsLatin, officeLatin, rite)
+        "Matins"   -> MatinsContent(office, psalms, psalmsLatin, officeLatin, rite)
+        "Compline", "Completorium" -> CompletoriumContent(office, psalms, psalmsLatin, officeLatin, rite)
+        else        -> DefaultOfficeContent(office, psalms, psalmsLatin, officeLatin, rite)
     }
 }
 
@@ -202,41 +241,62 @@ fun OfficeContentCard(
 //   12. Conclusion
 // ─────────────────────────────────────────────────────────────────────────────
 @Composable
-private fun LaudesContent(office: DivineOffice, psalms: List<DivineOfficePsalm>) {
+private fun LaudesContent(
+    office: DivineOffice,
+    psalms: List<DivineOfficePsalm>,
+    psalmsLatin: List<DivineOfficePsalm>,
+    officeLatin: DivineOffice?,
+    rite: AppRite,
+) {
     OfficeCard {
-        // 1. Invitatorium
-        InvitatoriumSection(office.invitatorium)
+        // 1. Invitatorium — always Latin in Traditional mode
+        val invitText = if (rite == AppRite.TRADITIONAL) officeLatin?.invitatorium ?: office.invitatorium else office.invitatorium
+        InvitatoriumSection(invitText)
 
-        // 2. Hymn
-        HymnSection(office.hymn)
+        // 2. Hymn — Latin in Traditional
+        val hymnText = if (rite == AppRite.TRADITIONAL) officeLatin?.hymn ?: office.hymn else office.hymn
+        HymnSection(hymnText)
 
-        // 3–5. Psalms 1–3
+        // 3–5. Psalms 1–3 — Latin antiphons in Traditional
         val laudPsalms = psalms.filter { it.officeType == "Laudes" }
-        val laudAntiphons = listOfNotNull(office.ant1, office.ant2, office.ant3)
-        Psalm1Section(laudPsalms.getOrNull(0), laudAntiphons.getOrNull(0))
-        Psalm2Section(laudPsalms.getOrNull(1), laudAntiphons.getOrNull(1))
-        Psalm3Section(laudPsalms.getOrNull(2), laudAntiphons.getOrNull(2))
+        val getAnt = { idx: Int ->
+            if (rite == AppRite.TRADITIONAL) {
+                officeLatin?.let {
+                    when (idx) { 0 -> it.ant1; 1 -> it.ant2; 2 -> it.ant3; else -> null }
+                } ?: when (idx) { 0 -> office.ant1; 1 -> office.ant2; 2 -> office.ant3; else -> null }
+            } else {
+                when (idx) { 0 -> office.ant1; 1 -> office.ant2; 2 -> office.ant3; else -> null }
+            }
+        }
+        Psalm1Section(laudPsalms.getOrNull(0), getAnt(0))
+        Psalm2Section(laudPsalms.getOrNull(1), getAnt(1))
+        Psalm3Section(laudPsalms.getOrNull(2), getAnt(2))
 
-        // 6. Scripture Reading
+        // 6. Scripture Reading — English in Traditional
         ScriptureReadingSection(office.lectio1)
 
-        // 7. Short Responsory
-        ShortResponsorySection(office.responsory1)
+        // 7. Short Responsory — Latin in Traditional
+        val respText = if (rite == AppRite.TRADITIONAL) officeLatin?.responsory1 ?: office.responsory1 else office.responsory1
+        ShortResponsorySection(respText)
 
-        // 8. Canticle Benedictus
-        CanticleBenedictusSection(office.ant1)
+        // 8. Canticle Benedictus — Latin antiphon in Traditional
+        val cantAnt = if (rite == AppRite.TRADITIONAL) officeLatin?.ant1 ?: office.ant1 else office.ant1
+        CanticleBenedictusSection(cantAnt)
 
-        // 9. Prayers and Intercessions
-        PrayersSection(office.preces)
+        // 9. Prayers and Intercessions — Latin in Traditional
+        val precesText = if (rite == AppRite.TRADITIONAL) officeLatin?.preces ?: office.preces else office.preces
+        PrayersSection(precesText)
 
         // 10. Our Father
-        OurFatherSection()
+        OurFatherSection(rite)
 
-        // 11. Collect
-        CollectSection(office.oratio)
+        // 11. Collect — Latin in Traditional
+        val oratioText = if (rite == AppRite.TRADITIONAL) officeLatin?.oratio ?: office.oratio else office.oratio
+        CollectSection(oratioText)
 
-        // 12. Conclusion
-        ConclusionSection(office.conclusio)
+        // 12. Conclusion — Latin in Traditional
+        val conclusioText = if (rite == AppRite.TRADITIONAL) officeLatin?.conclusio ?: office.conclusio else office.conclusio
+        ConclusionSection(conclusioText)
     }
 }
 
@@ -256,40 +316,52 @@ private fun LaudesContent(office: DivineOffice, psalms: List<DivineOfficePsalm>)
 //   11. Conclusion
 // ─────────────────────────────────────────────────────────────────────────────
 @Composable
-private fun VespersContent(office: DivineOffice, psalms: List<DivineOfficePsalm>) {
+private fun VespersContent(
+    office: DivineOffice,
+    psalms: List<DivineOfficePsalm>,
+    psalmsLatin: List<DivineOfficePsalm>,
+    officeLatin: DivineOffice?,
+    rite: AppRite,
+) {
     OfficeCard {
-        // 1. Hymn
-        HymnSection(office.hymn)
+        // 1. Hymn — Latin in Traditional
+        val hymnText = if (rite == AppRite.TRADITIONAL) officeLatin?.hymn ?: office.hymn else office.hymn
+        HymnSection(hymnText)
 
-        // 2–4. Psalms 1–3 — prefer Vespers antiphons, fall back to ant1-ant3
-        val vespAnt1 = office.antVespera1 ?: office.ant1
-        val vespAnt2 = office.antVespera2 ?: office.ant2
-        val vespAnt3 = office.antVespera3 ?: office.ant3
+        // 2–4. Psalms 1–3 — Latin antiphons in Traditional
+        val vespAnt1 = if (rite == AppRite.TRADITIONAL) officeLatin?.antVespera1 ?: officeLatin?.ant1 ?: office.antVespera1 ?: office.ant1 else office.antVespera1 ?: office.ant1
+        val vespAnt2 = if (rite == AppRite.TRADITIONAL) officeLatin?.antVespera2 ?: officeLatin?.ant2 ?: office.antVespera2 ?: office.ant2 else office.antVespera2 ?: office.ant2
+        val vespAnt3 = if (rite == AppRite.TRADITIONAL) officeLatin?.antVespera3 ?: officeLatin?.ant3 ?: office.antVespera3 ?: office.ant3 else office.antVespera3 ?: office.ant3
         val vespPsalms = psalms.filter { it.officeType == "Vespers" }
         Psalm1Section(vespPsalms.getOrNull(0), vespAnt1)
         Psalm2Section(vespPsalms.getOrNull(1), vespAnt2)
         Psalm3Section(vespPsalms.getOrNull(2), vespAnt3)
 
-        // 5. Scripture Reading
+        // 5. Scripture Reading — English in Traditional
         ScriptureReadingSection(office.lectio1)
 
-        // 6. Short Responsory
-        ShortResponsorySection(office.responsory1)
+        // 6. Short Responsory — Latin in Traditional
+        val respText = if (rite == AppRite.TRADITIONAL) officeLatin?.responsory1 ?: office.responsory1 else office.responsory1
+        ShortResponsorySection(respText)
 
-        // 7. Canticle Magnificat
-        CanticleMagnificatSection(office.antVespera1 ?: office.ant1)
+        // 7. Canticle Magnificat — Latin antiphon in Traditional
+        val magnAnt = if (rite == AppRite.TRADITIONAL) officeLatin?.antVespera1 ?: officeLatin?.ant1 ?: office.antVespera1 ?: office.ant1 else office.antVespera1 ?: office.ant1
+        CanticleMagnificatSection(magnAnt)
 
-        // 8. Prayers and Intercessions
-        PrayersSection(office.preces)
+        // 8. Prayers and Intercessions — Latin in Traditional
+        val precesText = if (rite == AppRite.TRADITIONAL) officeLatin?.preces ?: office.preces else office.preces
+        PrayersSection(precesText)
 
         // 9. Our Father
-        OurFatherSection()
+        OurFatherSection(rite)
 
-        // 10. Collect
-        CollectSection(office.oratio)
+        // 10. Collect — Latin in Traditional
+        val oratioText = if (rite == AppRite.TRADITIONAL) officeLatin?.oratio ?: office.oratio else office.oratio
+        CollectSection(oratioText)
 
-        // 11. Conclusion
-        ConclusionSection(office.conclusio)
+        // 11. Conclusion — Latin in Traditional
+        val conclusioText = if (rite == AppRite.TRADITIONAL) officeLatin?.conclusio ?: office.conclusio else office.conclusio
+        ConclusionSection(conclusioText)
     }
 }
 
@@ -311,46 +383,60 @@ private fun VespersContent(office: DivineOffice, psalms: List<DivineOfficePsalm>
 //   13. Collect
 // ─────────────────────────────────────────────────────────────────────────────
 @Composable
-private fun MatinsContent(office: DivineOffice, psalms: List<DivineOfficePsalm>) {
+private fun MatinsContent(
+    office: DivineOffice,
+    psalms: List<DivineOfficePsalm>,
+    psalmsLatin: List<DivineOfficePsalm>,
+    officeLatin: DivineOffice?,
+    rite: AppRite,
+) {
     OfficeCard {
-        // 1. Invitatorium
-        InvitatoriumSection(office.invitatorium)
+        // 1. Invitatorium — Latin in Traditional
+        val invitText = if (rite == AppRite.TRADITIONAL) officeLatin?.invitatorium ?: office.invitatorium else office.invitatorium
+        InvitatoriumSection(invitText)
 
-        // 2. Hymn
-        HymnSection(office.hymn)
+        // 2. Hymn — Latin in Traditional
+        val hymnText = if (rite == AppRite.TRADITIONAL) officeLatin?.hymn ?: office.hymn else office.hymn
+        HymnSection(hymnText)
 
         // 3. Psalm 1
         val matinsPsalms = psalms.filter { it.officeType == "Matins" }
-        MatinsPsalm1Section(matinsPsalms.getOrNull(0), office.ant1)
+        val matAnt1 = if (rite == AppRite.TRADITIONAL) officeLatin?.ant1 ?: office.ant1 else office.ant1
+        MatinsPsalm1Section(matinsPsalms.getOrNull(0), matAnt1)
 
-        // 4. First Reading
+        // 4. First Reading — English in Traditional
         FirstReadingSection(office.lectio1)
 
-        // 5. Responsory 1
-        Responsory1Section(office.responsory1)
+        // 5. Responsory 1 — Latin in Traditional
+        val r1Text = if (rite == AppRite.TRADITIONAL) officeLatin?.responsory1 ?: office.responsory1 else office.responsory1
+        Responsory1Section(r1Text)
 
         // 6. Psalm 2
-        MatinsPsalm2Section(matinsPsalms.getOrNull(1), office.ant2)
+        val matAnt2 = if (rite == AppRite.TRADITIONAL) officeLatin?.ant2 ?: office.ant2 else office.ant2
+        MatinsPsalm2Section(matinsPsalms.getOrNull(1), matAnt2)
 
-        // 7. Second Reading
+        // 7. Second Reading — English in Traditional
         SecondReadingSection(office.lectio2)
 
-        // 8. Responsory 2
-        Responsory2Section(office.responsory2)
+        // 8. Responsory 2 — Latin in Traditional
+        val r2Text = if (rite == AppRite.TRADITIONAL) officeLatin?.responsory2 ?: office.responsory2 else office.responsory2
+        Responsory2Section(r2Text)
 
         // 9. Psalm 3 — only if lectio3 is present (feast/commemoratio format)
         if (!office.lectio3.isNullOrBlank()) {
             MatinsPsalm3Section(matinsPsalms.getOrNull(2), office.ant3)
         }
 
-        // 10. Third Reading
+        // 10. Third Reading — English in Traditional
         ThirdReadingSection(office.lectio3)
 
-        // 11. Responsory 3
-        Responsory3Section(office.responsory3)
+        // 11. Responsory 3 — Latin in Traditional
+        val r3Text = if (rite == AppRite.TRADITIONAL) officeLatin?.responsory3 ?: office.responsory3 else office.responsory3
+        Responsory3Section(r3Text)
 
-        // 12. Collect
-        CollectSection(office.oratio)
+        // 12. Collect — Latin in Traditional
+        val oratioText = if (rite == AppRite.TRADITIONAL) officeLatin?.oratio ?: office.oratio else office.oratio
+        CollectSection(oratioText)
     }
 }
 
@@ -368,13 +454,20 @@ private fun MatinsContent(office: DivineOffice, psalms: List<DivineOfficePsalm>)
 //    9. Antiphon to Mary (Regina Caeli)
 // ─────────────────────────────────────────────────────────────────────────────
 @Composable
-private fun CompletoriumContent(office: DivineOffice, psalms: List<DivineOfficePsalm>) {
+private fun CompletoriumContent(
+    office: DivineOffice,
+    psalms: List<DivineOfficePsalm>,
+    psalmsLatin: List<DivineOfficePsalm>,
+    officeLatin: DivineOffice?,
+    rite: AppRite,
+) {
     OfficeCard {
-        // 1. Examination of Conscience
-        ExaminationOfConscienceSection()
+        // 1. Examination of Conscience — Latin in Traditional
+        ExaminationOfConscienceSection(rite)
 
-        // 2. Hymn
-        HymnSection(office.hymn)
+        // 2. Hymn — Latin in Traditional
+        val hymnText = if (rite == AppRite.TRADITIONAL) officeLatin?.hymn ?: office.hymn else office.hymn
+        HymnSection(hymnText)
 
         // 3. Antiphon + Psalm
         val complineAntiphon = office.matinsAntiphon ?: office.ant1
@@ -397,7 +490,7 @@ private fun CompletoriumContent(office: DivineOffice, psalms: List<DivineOfficeP
         FinalBlessingSection()
 
         // 9. Antiphon to Mary
-        AntiphonToMarySection()
+        AntiphonToMarySection(rite)
     }
 }
 
@@ -405,10 +498,18 @@ private fun CompletoriumContent(office: DivineOffice, psalms: List<DivineOfficeP
 //  Default fallback for unknown office types
 // ─────────────────────────────────────────────────────────────────────────────
 @Composable
-private fun DefaultOfficeContent(office: DivineOffice, psalms: List<DivineOfficePsalm>) {
+private fun DefaultOfficeContent(
+    office: DivineOffice,
+    psalms: List<DivineOfficePsalm>,
+    psalmsLatin: List<DivineOfficePsalm>,
+    officeLatin: DivineOffice?,
+    rite: AppRite,
+) {
     OfficeCard {
-        InvitatoriumSection(office.invitatorium)
-        HymnSection(office.hymn)
+        val invitText = if (rite == AppRite.TRADITIONAL) officeLatin?.invitatorium ?: office.invitatorium else office.invitatorium
+        InvitatoriumSection(invitText)
+        val hymnText = if (rite == AppRite.TRADITIONAL) officeLatin?.hymn ?: office.hymn else office.hymn
+        HymnSection(hymnText)
         listOfNotNull(
             office.ant1, office.ant2, office.ant3,
             office.ant4, office.ant5, office.ant6,
@@ -525,11 +626,12 @@ private fun DefaultOfficeContent(office: DivineOffice, psalms: List<DivineOffice
 @Composable private fun PrayersSection(value: String?) =
     OfficeField(label = "Prayers and Intercessions", value = value ?: "(empty)")
 
-@Composable private fun OurFatherSection() {
+@Composable private fun OurFatherSection(rite: AppRite) {
     SectionHeader("Our Father")
     Spacer(modifier = Modifier.height(4.dp))
+    val fatherText = if (rite == AppRite.TRADITIONAL) OUR_FATHER_LATIN else OUR_FATHER
     Text(
-        text = OUR_FATHER,
+        text = fatherText,
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
@@ -647,11 +749,12 @@ private fun DefaultOfficeContent(office: DivineOffice, psalms: List<DivineOffice
 // ─────────────────────────────────────────────────────────────────────────────
 //  COMPLETORY
 // ─────────────────────────────────────────────────────────────────────────────
-@Composable private fun ExaminationOfConscienceSection() {
+@Composable private fun ExaminationOfConscienceSection(rite: AppRite) {
     SectionHeader("Examination of Conscience")
     Spacer(modifier = Modifier.height(4.dp))
+    val examText = if (rite == AppRite.TRADITIONAL) EXAMINATION_OF_CONSCIENCE_LATIN else EXAMINATION_OF_CONSCIENCE
     Text(
-        text = EXAMINATION_OF_CONSCIENCE,
+        text = examText,
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
@@ -707,11 +810,14 @@ private fun DefaultOfficeContent(office: DivineOffice, psalms: List<DivineOffice
     SectionDivider()
 }
 
-@Composable private fun AntiphonToMarySection() {
+@Composable private fun AntiphonToMarySection(rite: AppRite) {
     SectionHeader("Antiphon to Mary (Regina Caeli)")
     Spacer(modifier = Modifier.height(4.dp))
-    Text(
-        text = REGINA_CAELI_ENGLISH,
+    // Traditional mode: Latin only; other modes: English first then Latin
+    val showLatinOnly = rite == AppRite.TRADITIONAL
+    if (!showLatinOnly) {
+        Text(
+            text = REGINA_CAELI_ENGLISH,
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
