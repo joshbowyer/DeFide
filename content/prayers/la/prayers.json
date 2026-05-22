@@ -1,0 +1,341 @@
+[
+  {
+    "id": "apostles-creed",
+    "title": "Credo Apostolórum",
+    "category": "rosary",
+    "body": "Credo in Deum Patrem omnipoténtem, Creatórem caeli et terrae.\nEt in Iesum Christum, Fílium eius únicum, Dóminum nostrum,\nqui concéptus est de Spíritu Sancto, natus ex María Virgine,\npassus sub Póntio Piláto, crucifíxus, mórtuus, et sepúltus,\ndescéndit ad inféros, tértia die resurréxit a mórtuis,\nascéndit ad caelos, sedet ad déxteram Dei Patris omnipoténtis,\ninde ventúrus est iudicáre vivos et mórtuos.\nCredo in Spíritum Sanctum, sanctam Ecclésiam cathólicam,\nsanctórum communiónem, remissiónem peccatórum,\ncarnis resurrectiónem, vitam aetérnam.\nAmen.",
+    "source": null,
+    "tags": [
+      "rosary",
+      "creed",
+      "faith"
+    ]
+  },
+  {
+    "id": "our-father",
+    "title": "Pater Noster",
+    "category": "rosary",
+    "body": "Pater noster, qui es in caelis,\nsanctificétur nomen tuum;\nadvéniat regnum tuum;\nfiat volúntas tua, sicut in caelo et in terra.\nPanem nostrum cotidiánum da nobis hódie;\net dimítte nobis débita nostra,\nsicut et nos dimíttimus debitóribus nostris;\net ne indúcas nos in tentatiónem;\nsed líbera nos a malo.\nAmen.",
+    "source": "Matthew 6:9–13",
+    "tags": [
+      "rosary",
+      "morning",
+      "evening",
+      "meals"
+    ]
+  },
+  {
+    "id": "hail-mary",
+    "title": "Ave María",
+    "category": "rosary",
+    "body": "Ave María, grátia pléna,\nDóminus tecum;\nbenedícta tu in muliéribus,\net benedíctus fructus véntris tui, Iesus.\nSancta María, Mater Dei,\nora pro nobis peccatóribus,\nnunc et in hora mortis nostrae.\nAmen.",
+    "source": "Luke 1:28, 42",
+    "tags": [
+      "rosary",
+      "marian"
+    ]
+  },
+  {
+    "id": "glory-be",
+    "title": "Glória Patri",
+    "category": "rosary",
+    "body": "Glória Patri et Fílio\net Spirítui Sancto.\nSicut erat in princípio et nunc et semper\net in saécula saeculórum.\nAmen.",
+    "source": null,
+    "tags": [
+      "rosary",
+      "morning",
+      "evening"
+    ]
+  },
+  {
+    "id": "fatima-prayer",
+    "title": "Orátio Fatimaénsis",
+    "category": "rosary",
+    "body": "O mi Iesu, qui es in abscónditis,\ndimítte nobis peccáta nostra,\nnosque a nobis ípsismet custódi\nab omni iniúria,\net assúme nos in caeléstem glóriam tuam.\nAmen.",
+    "source": "Given by Our Lady of Fatima, 1917",
+    "tags": [
+      "rosary",
+      "marian",
+      "mercy"
+    ]
+  },
+  {
+    "id": "hail-holy-queen",
+    "title": "Salve Regína",
+    "category": "rosary",
+    "body": "Salve, Regína, mater misericórdiae,\nvita, dulcédo et spes nostra, salve.\nAd teclamámus, éxsules, filii Hevae.\nAd te suspirámus, geméntes et flentes\nin hac lacrimárum valle.\nEia ergo, Advocáta nostra,\nillos tuos misericórdes óculos ad nos convérte.\nEt Iesum, benedíctum fructum véntris tui,\nnobis, post hoc exsílium, osténde.\nO clemens, o pia, o dulcis Virgo María.",
+    "source": null,
+    "tags": [
+      "rosary",
+      "marian"
+    ]
+  },
+  {
+    "id": "morning-offering",
+    "title": "Offérimur matutínum",
+    "category": "morning",
+    "body": "Dómine Deus omnipotens, in unitáte Spíritus Sancti, accípiat offeréndam tibi et in me,\net in ómnibus meis, quae hódie factúrus sum, in honórem et glóriam tui nóminis.\nPer Christum Dóminum nostrum.\nAmen.",
+    "source": null,
+    "tags": [
+      "morning",
+      "offering",
+      "daily"
+    ]
+  },
+  {
+    "id": "act-of-contrition",
+    "title": "Actus Contritionis",
+    "category": "penitential",
+    "body": "Deus meus, ex toto corde paenitet me ómnium meórum peccatórum;\npeccávi, peccávi, nimis peccávi;\nofféndi te, Deum meum, quem debeo amáre super ómnia.\nPropterea doleo de ómnibus meis peccátis,\net detéstor eos inimi animo;\nproptérea firmum propósitum habeo,\nadjuvánte grátia tua, eis deínceps non offensúrum\net a peccáto recéssurum esse.\nAmen.",
+    "source": null,
+    "tags": [
+      "penitential",
+      "confession",
+      "evening",
+      "contrition"
+    ]
+  },
+  {
+    "id": "act-of-faith",
+    "title": "Actus Fidei",
+    "category": "devotional",
+    "body": "Mi Deus, firmíssimam fidem hábeo in ómnibus, quae sancta cathólica et apostólica Ecclésia credénda propónit,\nquia tu, qui es infallibilis veritas, ea mihi revelásti.\nHabeo quoque spem certíssimam in te, Dómine,\net caritátem perfectam in te et in próximo.\nHoc autem credens, spero et amo, et me totum tibi trado.\nAmen.",
+    "source": null,
+    "tags": [
+      "faith",
+      "daily",
+      "devotional"
+    ]
+  },
+  {
+    "id": "act-of-hope",
+    "title": "Actus Spei",
+    "category": "devotional",
+    "body": "Mi Deus, firmíssimam spem hábens te, per promíssa tua et per grátiam tuam,\nme in vitam aetérnam intraturum esse,\nquandoquidem tu, qui es summa fidélitas et summa poténtia,\nid míseris et Maríae et Sanctis tuis promísisti.\nHoc in te spero; hoc a te exspécto.\nAmen.",
+    "source": null,
+    "tags": [
+      "hope",
+      "daily",
+      "devotional",
+      "anxiety",
+      "depression"
+    ]
+  },
+  {
+    "id": "act-of-love",
+    "title": "Actus Caritátis",
+    "category": "devotional",
+    "body": "Mi Deus, qui bonus es valde et in ómnibus amábilis,\namo te ex toto corde meo, imo plus quam meípsum;\namo te plus quam omnem creatúram, quia tu bonus es super omnem bonitátem.\nEt próximo meo caritátem exhibitám, et ipsum sicut meípsum amábilis propter te.\nAmen.",
+    "source": null,
+    "tags": [
+      "love",
+      "charity",
+      "daily",
+      "devotional",
+      "forgiveness"
+    ]
+  },
+  {
+    "id": "memorare",
+    "title": "Memeráre",
+    "category": "marian",
+    "body": "Meménto, o Virgo María, numquam esse audítum,\na quoquam ad tua templa confugiéntem,\ntua súpplicia fléntem,\nauxílium implorántem,\na te esse derelíctum.\nEgo ígitur, o Mater Verbi, ad te recurro,\net, te fléns, oro,\net, affligéndi causam agéndo, confúgio.\nNoli, Mater, preces meas révocáre.\nAmen.",
+    "source": "Attributed to St. Bernard of Clairvaux",
+    "tags": [
+      "marian",
+      "intercession",
+      "anxiety",
+      "grief",
+      "hope"
+    ]
+  },
+  {
+    "id": "anima-christi",
+    "title": "Anima Christi",
+    "category": "devotional",
+    "body": "Anima Christi, sanctífica me.\nCorpus Christi, salvífica me.\nSanguis Christi, inébria me.\nAqua láteris Christi, lava me.\nPassio Christi, conforta me.\nO bone Iesu, exáudi me.\nIntra tua vúlnera abscónde me.\nNe permíttas me a te separári.\nAb hoste malígno defénde me.\nIn hora mortis meae voca me.\nEt iube me veníre ad te,\nut cum Sanctis tuis laudem te\nin saécula saeculórum.\nAmen.",
+    "source": "14th century, attributed to various",
+    "tags": [
+      "eucharist",
+      "passion",
+      "devotional",
+      "after-communion"
+    ]
+  },
+  {
+    "id": "prayer-before-meals",
+    "title": "Benedíctio mensae",
+    "category": "meals",
+    "body": "Benedíc, Dómine, nos et haec tua dona,\nquae ex largitáte tua súmpturi sumus,\nper Christum Dóminum nostrum.\nAmen.",
+    "source": null,
+    "tags": [
+      "meals",
+      "gratitude",
+      "daily"
+    ]
+  },
+  {
+    "id": "grace-after-meals",
+    "title": "Gratiarum actio",
+    "category": "meals",
+    "body": "Agimus tibi grátias, omnipotens Deus,\npro universis benefíciis tuis,\nqui vivis et regnas in saécula saeculórum.\nAmen.",
+    "source": null,
+    "tags": [
+      "meals",
+      "gratitude",
+      "daily"
+    ]
+  },
+  {
+    "id": "guardian-angel",
+    "title": "Orátio ad Angelum Custodem",
+    "category": "morning",
+    "body": "Angele meus custos, qui me ex útero matérno tuéndum suscepísti,\ngrátias ago tibi de omni bono, quod per te mihi a Deo collátum est.\nCustódi me in ómnibus viis meis, et diríge gressus meos.\nAmen.",
+    "source": null,
+    "tags": [
+      "morning",
+      "guardian-angel",
+      "protection",
+      "daily",
+      "children"
+    ]
+  },
+  {
+    "id": "prayer-st-michael",
+    "title": "Orátio ad Sanctum Michaélem Archangelum",
+    "category": "saints",
+    "body": "Sancte Michaél Archangele, defénde nos in proélio;\ncontra nequitiam et insídias diaboli esto praesídium.\nImperet ei Deus, súpplices deprecámur:\nut ipse Deus pauperum imperet illi\net in inferum redigat.\nCélites ángeli, pugnáte fortíssimo pro Deo!\nPraecláre Princeps militiae caeléstis, in virtúte Dei,\nprecibus tuis et armis nostrae impietátis ímitamini.\nRegína Angelórum, María, adiuvá nos!\nExércitus caeléstis, veníte in adiutórium nóminis Dómini!\nAmen.",
+    "source": "Pope Leo XIII, 1886",
+    "tags": [
+      "spiritual-warfare",
+      "protection",
+      "saints",
+      "evening"
+    ]
+  },
+  {
+    "id": "eternal-rest",
+    "title": "De Profúndis",
+    "category": "devotional",
+    "body": "De profúndis clamo ad te, Dómine;\nDómine, exáudi vocem meam.\nFiant aures tuae intendéntes\nin vocem deprecatiónis meae.\nSi iniquitátes observáveris, Dómine,\nDómine, quis sustinébit?\nQuia apud te propitiátio est.\nAmen.",
+    "source": null,
+    "tags": [
+      "dead",
+      "grief",
+      "mourning",
+      "purgatory",
+      "mercy"
+    ]
+  },
+  {
+    "id": "prayer-for-the-sick",
+    "title": "Orátio pro aegrotántibus",
+    "category": "devotional",
+    "body": "Dómine Iesu, qui inúlti morbo laborántibus solátium praebes,\nte súpplices rogámus, ut huic famulo tuo/grátiam sanitátis concédas,\net ei, qui eum curat, prudéntiam et patiéntiam donétur.\nQui vivis et regnas in saécula saeculórum.\nAmen.",
+    "source": null,
+    "tags": [
+      "sick",
+      "healing",
+      "suffering",
+      "hospital"
+    ]
+  },
+  {
+    "id": "prayer-for-vocations",
+    "title": "Orátio pro vocatiónibus",
+    "category": "devotional",
+    "body": "Dómine, pastor bonus, qui ovíle tuum custódis,\nmitte óperários in messem tuam\net concéde fidélibus tuis,\nut ad sacra offícia et vitaevocátionem recte respondéndo\nglóriam tuam múltiples.\nPer Christum Dóminum nostrum.\nAmen.",
+    "source": null,
+    "tags": [
+      "vocations",
+      "priesthood",
+      "religious-life",
+      "discernment"
+    ]
+  },
+  {
+    "id": "prayer-in-anxiety",
+    "title": "Orátio in angóre",
+    "category": "devotional",
+    "body": "Dómine Iesu, qui in hórti Gethsemáni ánimam tuam nóbis tristítia mortis configurásti,\nte deprecámur: concéde nobis, in angóribus nostris, fortitúdinem spíritus\net fidúciam in misericórdiam tuam.\nAmen.",
+    "source": "cf. 1 Peter 5:7; Philippians 4:7",
+    "tags": [
+      "anxiety",
+      "peace",
+      "trust",
+      "suffering",
+      "mental-health"
+    ]
+  },
+  {
+    "id": "prayer-in-grief",
+    "title": "Orátio in luctu",
+    "category": "devotional",
+    "body": "Dómine, qui lacrimas nostras in gaúdium convértis,\nréspice benígnus ad dolórem nostrum\net concéde nobis, per resurrectiónem tuam,\nspem certam resurrectiónis et vitam aetérnam.\nAmen.",
+    "source": "cf. John 11:35; 1 Thessalonians 4:13–14",
+    "tags": [
+      "grief",
+      "mourning",
+      "loss",
+      "death",
+      "suffering"
+    ]
+  },
+  {
+    "id": "prayer-in-depression",
+    "title": "Orátio in ténebris ánimi",
+    "category": "devotional",
+    "body": "Dómine, qui es lumen vera, quae in ténebris lúcent,\nlústras ánimam meam,\net da mihi, in hodierna tristítia, lucem Spíritus tui,\nut in te confidam et spem habeam.\nAmen.",
+    "source": "cf. Psalm 22; Psalm 130",
+    "tags": [
+      "depression",
+      "suffering",
+      "darkness",
+      "mental-health",
+      "loneliness"
+    ]
+  },
+  {
+    "id": "prayer-for-the-family",
+    "title": "Orátio pro família",
+    "category": "devotional",
+    "body": "Dómine Deus, qui famíliam tuam uníre et benedícere dignáris,\nbenedíc et custódi hanc família nostram,\net concéde nobis, in mutua caritáte, te sancte servíre,\nin hoc saeculo et in aetérno.\nAmen.",
+    "source": null,
+    "tags": [
+      "family",
+      "marriage",
+      "home",
+      "children",
+      "peace"
+    ]
+  },
+  {
+    "id": "prayer-compline",
+    "title": "Orátio Completória",
+    "category": "evening",
+    "body": "Dómine, qui nos indiégnae sub tegímine noctis recéptas,\ncustódi nos sub tegímine alárum tuárum,\netiéndat a nocte et a peccáto.\nConsérva nos in oratióne et in bono,\ndonec dies illúceat.\nAmen.",
+    "source": "From the Divine Office",
+    "tags": [
+      "evening",
+      "night",
+      "protection",
+      "daily"
+    ]
+  },
+  {
+    "id": "prayer-st-joseph",
+    "title": "Orátio ad Sanctum Ioseph",
+    "category": "saints",
+    "body": "Sancte Ioseph, fidélis servus et provídus,\ncuius fidéle tutamén fámulas Dei fámilias recépit,\nte humíliter deprecámur,\nut nobis in vita et in morte\npraeclárum exémplum et patrónum praebeas.\nAmen.",
+    "source": null,
+    "tags": [
+      "st-joseph",
+      "saints",
+      "fathers",
+      "workers",
+      "protection",
+      "family",
+      "vocations"
+    ]
+  }
+]

@@ -1,0 +1,1258 @@
+[
+  {
+    "id": 1,
+    "group": "Part I",
+    "title": "The Creed",
+    "number": 1,
+    "question": "What does the Creed begin with?",
+    "answer": "The Creed begins with the words 'I believe' or 'We believe.'"
+  },
+  {
+    "id": 2,
+    "group": "Part I",
+    "title": "The Creed",
+    "number": 2,
+    "question": "Why does faith in God demand that we freely acknowledge him and give witness to him?",
+    "answer": "Because God is the origin and final end of all things, every person is required to freely acknowledge him and to give public witness to him."
+  },
+  {
+    "id": 3,
+    "group": "Part I",
+    "title": "The Creed",
+    "number": 3,
+    "question": "What is the first thing to be believed?",
+    "answer": "The first thing to be believed is that there is one God, who cares for us and rewards us."
+  },
+  {
+    "id": 4,
+    "group": "Part I",
+    "title": "The Creed",
+    "number": 4,
+    "question": "Why can God be known with certainty from created things?",
+    "answer": "Because, starting from created things, God can be known with certainty through the natural use of human reason."
+  },
+  {
+    "id": 5,
+    "group": "Part I",
+    "title": "The Creed",
+    "number": 5,
+    "question": "How do we speak about God?",
+    "answer": "We speak about God in human language, which was assumed by the divine Word in his Incarnation."
+  },
+  {
+    "id": 6,
+    "group": "Part I",
+    "title": "The Creed",
+    "number": 6,
+    "question": "What does God reveal to us about himself?",
+    "answer": "God reveals that he is a Trinity of Persons: the Father, the Son, and the Holy Spirit."
+  },
+  {
+    "id": 7,
+    "group": "Part I",
+    "title": "The Creed",
+    "number": 7,
+    "question": "Is the Trinity a doctrine of reason or of faith?",
+    "answer": "The Trinity is a doctrine of divine Revelation. It surpasses the capacities of human reason."
+  },
+  {
+    "id": 8,
+    "group": "Part I",
+    "title": "The Creed",
+    "number": 8,
+    "question": "What does the name 'God' mean?",
+    "answer": "The name 'God' means he who is the fullness of Being, from whom all things receive their existence."
+  },
+  {
+    "id": 9,
+    "group": "Part I",
+    "title": "The Creed",
+    "number": 9,
+    "question": "Is Jesus truly God?",
+    "answer": "Yes, Jesus is truly God. He is the Only Begotten Son of the Father, one in being with the Father."
+  },
+  {
+    "id": 10,
+    "group": "Part I",
+    "title": "The Creed",
+    "number": 10,
+    "question": "Who is Jesus Christ?",
+    "answer": "Jesus Christ is the Eternal Son of God, who became man and is our Lord and Savior."
+  },
+  {
+    "id": 11,
+    "group": "Part I",
+    "title": "The Creed",
+    "number": 11,
+    "question": "What does 'Only Begotten Son of God' mean?",
+    "answer": "It means that Jesus is the natural Son of God, begotten by the Father from all eternity, not made."
+  },
+  {
+    "id": 12,
+    "group": "Part I",
+    "title": "The Creed",
+    "number": 12,
+    "question": "What do we mean when we say that Jesus is 'consubstantial' with the Father?",
+    "answer": "We mean that the Son is of the same substance as the Father, fully divine like the Father."
+  },
+  {
+    "id": 13,
+    "group": "Part I",
+    "title": "The Creed",
+    "number": 13,
+    "question": "Who is the Holy Spirit?",
+    "answer": "The Holy Spirit is the Third Person of the Blessed Trinity, equal to the Father and the Son, who proceeds from both."
+  },
+  {
+    "id": 14,
+    "group": "Part I",
+    "title": "The Creed",
+    "number": 14,
+    "question": "What does the Holy Spirit do in the world?",
+    "answer": "The Holy Spirit, who is the giver of life, sanctifies the world and guides it toward the salvation of souls."
+  },
+  {
+    "id": 15,
+    "group": "Part I",
+    "title": "The Creed",
+    "number": 15,
+    "question": "What does the church mean by 'the economy of salvation'?",
+    "answer": "It means the loving plan of God for the creation and redemption of the world."
+  },
+  {
+    "id": 16,
+    "group": "Part I",
+    "title": "The Creed",
+    "number": 16,
+    "question": "What are the divine 'attributes'?",
+    "answer": "The divine attributes are qualities we attribute to God in human language: life, love, truth, goodness, omnipotence, eternity."
+  },
+  {
+    "id": 17,
+    "group": "Part I",
+    "title": "The Creed",
+    "number": 17,
+    "question": "What does it mean that God is 'all-powerful'?",
+    "answer": "It means that God can do all things that are possible for him, that is, everything that is not contrary to his nature."
+  },
+  {
+    "id": 18,
+    "group": "Part I",
+    "title": "The Creed",
+    "number": 18,
+    "question": "Why does God permit evil?",
+    "answer": "God permits evil in order to respect the freedom he gave to his creatures, and to draw greater goods from the evil."
+  },
+  {
+    "id": 19,
+    "group": "Part I",
+    "title": "The Angels",
+    "number": 19,
+    "question": "What are angels?",
+    "answer": "Angels are pure, non-embodied spiritual beings who honor God and serve him as messengers."
+  },
+  {
+    "id": 20,
+    "group": "Part I",
+    "title": "The Angels",
+    "number": 20,
+    "question": "What is the angelic mission?",
+    "answer": "The mission of angels is to serve Christ and to be ministers of God's plan for salvation."
+  },
+  {
+    "id": 21,
+    "group": "Part I",
+    "title": "The Angels",
+    "number": 21,
+    "question": "Are angels present in the life of the church?",
+    "answer": "Yes, the church honors the angels and invokes their intercession."
+  },
+  {
+    "id": 22,
+    "group": "Part I",
+    "title": "The Angels",
+    "number": 22,
+    "question": "What are the fallen angels called?",
+    "answer": "The fallen angels are called demons or evil spirits."
+  },
+  {
+    "id": 23,
+    "group": "Part I",
+    "title": "The Angels",
+    "number": 23,
+    "question": "How did the fall of the angels come about?",
+    "answer": "They fell through a free and rebellious choice of evil, made by the angel who was created good."
+  },
+  {
+    "id": 24,
+    "group": "Part I",
+    "title": "The Human Being",
+    "number": 25,
+    "question": "Why is the human being created in the image of God?",
+    "answer": "The human being is created in the image of God to know, love, and serve God in this life, and to be happy with him forever in the next."
+  },
+  {
+    "id": 25,
+    "group": "Part I",
+    "title": "The Human Being",
+    "number": 26,
+    "question": "What does it mean to have an immortal soul?",
+    "answer": "It means that the soul, which is the spiritual principle of the human being, does not die with the body."
+  },
+  {
+    "id": 26,
+    "group": "Part I",
+    "title": "The Human Being",
+    "number": 27,
+    "question": "What is the human destiny?",
+    "answer": "The human destiny is to see God and to share in his eternal beatitude."
+  },
+  {
+    "id": 27,
+    "group": "Part I",
+    "title": "The Human Being",
+    "number": 28,
+    "question": "What does it mean that man is created male and female?",
+    "answer": "It means that the human being is ordered to God in a unique way, and that the communion of persons is the foundation of social life."
+  },
+  {
+    "id": 28,
+    "group": "Part I",
+    "title": "The Fall",
+    "number": 29,
+    "question": "What was the state of original justice?",
+    "answer": "Original justice was the state of friendship and sanctifying grace in which Adam and Eve were created."
+  },
+  {
+    "id": 29,
+    "group": "Part I",
+    "title": "The Fall",
+    "number": 30,
+    "question": "What was the sin of our first parents?",
+    "answer": "The sin was disobedience against God by eating the forbidden fruit."
+  },
+  {
+    "id": 30,
+    "group": "Part I",
+    "title": "The Fall",
+    "number": 31,
+    "question": "What were the consequences of the sin of our first parents?",
+    "answer": "Our first parents lost original holiness and justice, and became subject to death, concupiscence, and evil tendencies."
+  },
+  {
+    "id": 31,
+    "group": "Part I",
+    "title": "The Fall",
+    "number": 32,
+    "question": "What is original sin?",
+    "answer": "Original sin is the sin inherited from our first parents, which makes us deprived of original holiness and justice."
+  },
+  {
+    "id": 32,
+    "group": "Part I",
+    "title": "The Fall",
+    "number": 33,
+    "question": "What does 'Concupiscence' mean?",
+    "answer": "Concupiscence means the disordered movements of the sensitive appetite, which inclines us to evil."
+  },
+  {
+    "id": 33,
+    "group": "Part I",
+    "title": "The Fall",
+    "number": 34,
+    "question": "Did God abandon man after the fall?",
+    "answer": "No, God did not abandon man. In his mercy, God promised a Redeemer and called man to conversion."
+  },
+  {
+    "id": 34,
+    "group": "Part I",
+    "title": "God the Son Incarnate",
+    "number": 35,
+    "question": "Why did the Son of God become incarnate?",
+    "answer": "The Son of God became incarnate to save us from sin and to show us the love of God."
+  },
+  {
+    "id": 35,
+    "group": "Part I",
+    "title": "God the Son Incarnate",
+    "number": 36,
+    "question": "How is the Virgin Mary connected to the Incarnation?",
+    "answer": "The Virgin Mary, by the power of the Holy Spirit, conceived Jesus in her womb."
+  },
+  {
+    "id": 36,
+    "group": "Part I",
+    "title": "God the Son Incarnate",
+    "number": 37,
+    "question": "What does the name 'Jesus' mean?",
+    "answer": "'Jesus' means 'God saves.' It expresses his identity and his mission."
+  },
+  {
+    "id": 37,
+    "group": "Part I",
+    "title": "God the Son Incarnate",
+    "number": 38,
+    "question": "Why is Jesus called 'Christ'?",
+    "answer": "'Christ' means 'Anointed.' It indicates that Jesus was sent by the Father to be the Messiah."
+  },
+  {
+    "id": 38,
+    "group": "Part I",
+    "title": "God the Son Incarnate",
+    "number": 39,
+    "question": "What does 'Only Begotten Son of God' mean?",
+    "answer": "It means that Jesus is the Son of God in a unique way, born of the Father from all eternity."
+  },
+  {
+    "id": 39,
+    "group": "Part I",
+    "title": "God the Son Incarnate",
+    "number": 40,
+    "question": "What does 'Incarnation' mean?",
+    "answer": "Incarnation means that the Son of God truly became man, without ceasing to be God."
+  },
+  {
+    "id": 40,
+    "group": "Part I",
+    "title": "The Mysteries of the Life of Christ",
+    "number": 41,
+    "question": "What are the Mysteries of the Life of Christ?",
+    "answer": "They are the events of the earthly life of Jesus from his Incarnation to his Ascension."
+  },
+  {
+    "id": 41,
+    "group": "Part I",
+    "title": "The Mysteries of the Life of Christ",
+    "number": 42,
+    "question": "What does the Annunciation celebrate?",
+    "answer": "The Angel Gabriel announced to the Virgin Mary that she would bear the Son of God."
+  },
+  {
+    "id": 42,
+    "group": "Part I",
+    "title": "The Mysteries of the Life of Christ",
+    "number": 43,
+    "question": "What does the Nativity celebrate?",
+    "answer": "The Nativity celebrates the birth of Jesus in Bethlehem, where he was born of the Virgin Mary."
+  },
+  {
+    "id": 43,
+    "group": "Part I",
+    "title": "The Mysteries of the Life of Christ",
+    "number": 44,
+    "question": "Why did Jesus undergo the Passion?",
+    "answer": "Jesus underwent the Passion to suffer and die for our sins, as the Lamb of God."
+  },
+  {
+    "id": 44,
+    "group": "Part I",
+    "title": "The Mysteries of the Life of Christ",
+    "number": 45,
+    "question": "What is the Paschal Mystery?",
+    "answer": "The Paschal Mystery is the mystery of the Passion, Death, Resurrection, and Ascension of Christ."
+  },
+  {
+    "id": 45,
+    "group": "Part I",
+    "title": "The Mysteries of the Life of Christ",
+    "number": 46,
+    "question": "What does Christ's Ascension mean?",
+    "answer": "Christ ascended into heaven in his glorified humanity, to sit at the right hand of the Father."
+  },
+  {
+    "id": 46,
+    "group": "Part I",
+    "title": "The Holy Spirit and the Church",
+    "number": 47,
+    "question": "What is the Church?",
+    "answer": "The Church is the People of God, the Temple of the Holy Spirit, and the Mystical Body of Christ."
+  },
+  {
+    "id": 47,
+    "group": "Part I",
+    "title": "The Holy Spirit and the Church",
+    "number": 48,
+    "question": "Who founded the Church?",
+    "answer": "Jesus Christ founded the Church by preaching the Gospel and sending the Holy Spirit."
+  },
+  {
+    "id": 48,
+    "group": "Part I",
+    "title": "The Holy Spirit and the Church",
+    "number": 49,
+    "question": "What are the marks of the Church?",
+    "answer": "The marks of the Church are that she is One, Holy, Catholic, and Apostolic."
+  },
+  {
+    "id": 49,
+    "group": "Part I",
+    "title": "The Holy Spirit and the Church",
+    "number": 50,
+    "question": "What does 'Apostolic' mean?",
+    "answer": "'Apostolic' means that the Church was founded on the apostles and continues their teaching."
+  },
+  {
+    "id": 50,
+    "group": "Part I",
+    "title": "The Holy Spirit and the Church",
+    "number": 51,
+    "question": "What is the role of the Pope and the bishops?",
+    "answer": "The Pope, as successor of Peter, and the bishops, as successors of the apostles, govern the Church."
+  },
+  {
+    "id": 51,
+    "group": "Part I",
+    "title": "The Holy Spirit and the Church",
+    "number": 52,
+    "question": "What is the communion of saints?",
+    "answer": "The communion of saints is the sharing of spiritual goods among all members of the Church."
+  },
+  {
+    "id": 52,
+    "group": "Part I",
+    "title": "The Holy Spirit and the Church",
+    "number": 53,
+    "question": "What is the Assumption of Mary?",
+    "answer": "The Assumption of Mary is the dogma that the Virgin Mary was taken up body and soul into heaven."
+  },
+  {
+    "id": 53,
+    "group": "Part I",
+    "title": "The Holy Spirit and the Church",
+    "number": 54,
+    "question": "What does 'Mary, Mother of the Church' mean?",
+    "answer": "Mary is the Mother of the Church because she is the Mother of Christ and of his body, the Church."
+  },
+  {
+    "id": 54,
+    "group": "Part I",
+    "title": "The Last Things",
+    "number": 55,
+    "question": "What does 'the Last Things' mean?",
+    "answer": "The Last Things are the events that conclude the history of the world: Death, Judgment, Heaven, Hell."
+  },
+  {
+    "id": 55,
+    "group": "Part I",
+    "title": "The Last Things",
+    "number": 56,
+    "question": "What is death?",
+    "answer": "Death is the separation of the soul from the body, after which each person stands before God for judgment."
+  },
+  {
+    "id": 56,
+    "group": "Part I",
+    "title": "The Last Things",
+    "number": 57,
+    "question": "What is the particular judgment?",
+    "answer": "The particular judgment is the immediate judgment of each soul by God at the moment of death."
+  },
+  {
+    "id": 57,
+    "group": "Part I",
+    "title": "The Last Things",
+    "number": 58,
+    "question": "What is heaven?",
+    "answer": "Heaven is the state of eternal life in which the saints see God face to face and share in his happiness."
+  },
+  {
+    "id": 58,
+    "group": "Part I",
+    "title": "The Last Things",
+    "number": 59,
+    "question": "What is hell?",
+    "answer": "Hell is the state of eternal separation from God, suffered by those who die in mortal sin."
+  },
+  {
+    "id": 59,
+    "group": "Part I",
+    "title": "The Last Things",
+    "number": 60,
+    "question": "What is purgatory?",
+    "answer": "Purgatory is the state of purification for those who die in God's grace but need to be cleansed before entering heaven."
+  },
+  {
+    "id": 60,
+    "group": "Part I",
+    "title": "The Last Things",
+    "number": 61,
+    "question": "What is the resurrection of the dead?",
+    "answer": "The resurrection is the reunion, at the end of time, of body and soul for those who have died."
+  },
+  {
+    "id": 61,
+    "group": "Part I",
+    "title": "The Last Things",
+    "number": 62,
+    "question": "What is the Last Judgment?",
+    "answer": "The Last Judgment is the public judgment of all humanity by Christ at the end of the world."
+  },
+  {
+    "id": 62,
+    "group": "Part II",
+    "title": "The Paschal Mystery",
+    "number": 63,
+    "question": "What is the Paschal Mystery?",
+    "answer": "The Paschal Mystery is the work of salvation accomplished by Jesus Christ through his Passion, Death, Resurrection, and Ascension."
+  },
+  {
+    "id": 63,
+    "group": "Part II",
+    "title": "The Paschal Mystery",
+    "number": 64,
+    "question": "How is the Paschal Mystery celebrated in the liturgy?",
+    "answer": "The Paschal Mystery is celebrated in the Sacraments, especially the Eucharist, and in the liturgical year."
+  },
+  {
+    "id": 64,
+    "group": "Part II",
+    "title": "The Paschal Mystery",
+    "number": 65,
+    "question": "What is the liturgical year?",
+    "answer": "The liturgical year is the unfolding of the mystery of Christ from his Incarnation to his return in glory."
+  },
+  {
+    "id": 65,
+    "group": "Part II",
+    "title": "The Sacraments",
+    "number": 66,
+    "question": "What is a Sacrament?",
+    "answer": "A Sacrament is a sensible sign instituted by Christ to give grace and communicate divine life."
+  },
+  {
+    "id": 66,
+    "group": "Part II",
+    "title": "The Sacraments",
+    "number": 67,
+    "question": "How many Sacraments are there?",
+    "answer": "There are seven Sacraments: Baptism, Confirmation, Eucharist, Penance, Anointing of the Sick, Holy Orders, and Matrimony."
+  },
+  {
+    "id": 67,
+    "group": "Part II",
+    "title": "The Sacraments",
+    "number": 68,
+    "question": "What are the Sacraments of Christian Initiation?",
+    "answer": "They are Baptism, Confirmation, and Eucharist, which lay the foundation of Christian life."
+  },
+  {
+    "id": 68,
+    "group": "Part II",
+    "title": "The Sacraments",
+    "number": 69,
+    "question": "What are the Sacraments of Healing?",
+    "answer": "They are Penance (Reconciliation) and Anointing of the Sick, which heal spiritual and physical illnesses."
+  },
+  {
+    "id": 69,
+    "group": "Part II",
+    "title": "The Sacraments",
+    "number": 70,
+    "question": "What are the Sacraments at the Service of Communion?",
+    "answer": "They are Holy Orders and Matrimony, which serve the mission of the Church and the salvation of others."
+  },
+  {
+    "id": 70,
+    "group": "Part II",
+    "title": "Baptism",
+    "number": 71,
+    "question": "What is Baptism?",
+    "answer": "Baptism is the Sacrament of new life, which washes away original sin and gives sanctifying grace."
+  },
+  {
+    "id": 71,
+    "group": "Part II",
+    "title": "Baptism",
+    "number": 72,
+    "question": "Who can receive Baptism?",
+    "answer": "Any person who has not yet been baptized can receive Baptism, including infants."
+  },
+  {
+    "id": 72,
+    "group": "Part II",
+    "title": "Baptism",
+    "number": 73,
+    "question": "Is Baptism necessary for salvation?",
+    "answer": "Baptism is necessary for salvation for those who can hear the Gospel and have the possibility of asking for it."
+  },
+  {
+    "id": 73,
+    "group": "Part II",
+    "title": "Confirmation",
+    "number": 74,
+    "question": "What is Confirmation?",
+    "answer": "Confirmation is the Sacrament that strengthens the grace of Baptism and imprints a permanent seal."
+  },
+  {
+    "id": 74,
+    "group": "Part II",
+    "title": "Confirmation",
+    "number": 75,
+    "question": "What is the effect of Confirmation?",
+    "answer": "Confirmation increases sanctifying grace, unites us more firmly with Christ, and gives us the Holy Spirit."
+  },
+  {
+    "id": 75,
+    "group": "Part II",
+    "title": "Confirmation",
+    "number": 76,
+    "question": "Who administers Confirmation?",
+    "answer": "The ordinary minister of Confirmation is the bishop; a priest can delegate to administer it in certain cases."
+  },
+  {
+    "id": 76,
+    "group": "Part II",
+    "title": "Eucharist",
+    "number": 77,
+    "question": "What is the Eucharist?",
+    "answer": "The Eucharist is the Sacrament in which Jesus Christ gives his Body and Blood under the appearances of bread and wine."
+  },
+  {
+    "id": 77,
+    "group": "Part II",
+    "title": "Eucharist",
+    "number": 78,
+    "question": "What is the Transubstantiation?",
+    "answer": "Transubstantiation is the change of the entire substance of bread and wine into the Body and Blood of Christ."
+  },
+  {
+    "id": 78,
+    "group": "Part II",
+    "title": "Eucharist",
+    "number": 79,
+    "question": "When did Jesus institute the Eucharist?",
+    "answer": "Jesus instituted the Eucharist on Holy Thursday at the Last Supper, the night before he died."
+  },
+  {
+    "id": 79,
+    "group": "Part II",
+    "title": "Eucharist",
+    "number": 80,
+    "question": "What is the Mass?",
+    "answer": "The Mass is the Sacrifice of the New Covenant in which Christ offers himself to the Father through the ministry of the priest."
+  },
+  {
+    "id": 80,
+    "group": "Part II",
+    "title": "Eucharist",
+    "number": 81,
+    "question": "What are the parts of the Mass?",
+    "answer": "The Mass has two main parts: the Liturgy of the Word and the Liturgy of the Eucharist."
+  },
+  {
+    "id": 81,
+    "group": "Part II",
+    "title": "Eucharist",
+    "number": 82,
+    "question": "What is the real presence of Christ in the Eucharist?",
+    "answer": "Christ is truly, really, and substantially present under the appearances of bread and wine."
+  },
+  {
+    "id": 82,
+    "group": "Part II",
+    "title": "Penance",
+    "number": 83,
+    "question": "What is the Sacrament of Penance?",
+    "answer": "Penance is the Sacrament of forgiveness, in which sins committed after Baptism are absolved."
+  },
+  {
+    "id": 83,
+    "group": "Part II",
+    "title": "Penance",
+    "number": 84,
+    "question": "What are the essential elements of Penance?",
+    "answer": "The essential elements are contrition, confession, and satisfaction (or penance)."
+  },
+  {
+    "id": 84,
+    "group": "Part II",
+    "title": "Penance",
+    "number": 85,
+    "question": "What is mortal sin?",
+    "answer": "Mortal sin is a grave offense against God that destroys charity in the heart and causes loss of sanctifying grace."
+  },
+  {
+    "id": 85,
+    "group": "Part II",
+    "title": "Penance",
+    "number": 86,
+    "question": "What is venial sin?",
+    "answer": "Venial sin is a less serious offense that allows charity to remain, though wounded."
+  },
+  {
+    "id": 86,
+    "group": "Part II",
+    "title": "Anointing of the Sick",
+    "number": 87,
+    "question": "What is the Anointing of the Sick?",
+    "answer": "It is the Sacrament that gives grace to those suffering from illness, to unite their suffering to Christ."
+  },
+  {
+    "id": 87,
+    "group": "Part II",
+    "title": "Anointing of the Sick",
+    "number": 88,
+    "question": "Who can receive the Anointing of the Sick?",
+    "answer": "Any Catholic who is in danger of death from illness or old age can receive this Sacrament."
+  },
+  {
+    "id": 88,
+    "group": "Part II",
+    "title": "Holy Orders",
+    "number": 89,
+    "question": "What is Holy Orders?",
+    "answer": "Holy Orders is the Sacrament by which men are ordained as bishops, priests, or deacons."
+  },
+  {
+    "id": 89,
+    "group": "Part II",
+    "title": "Holy Orders",
+    "number": 90,
+    "question": "What are the three degrees of Holy Orders?",
+    "answer": "The three degrees are Deacon, Priest, and Bishop."
+  },
+  {
+    "id": 90,
+    "group": "Part II",
+    "title": "Holy Orders",
+    "number": 91,
+    "question": "What is the role of the priest?",
+    "answer": "Priests are ordained to preach the Gospel, celebrate the Sacraments, especially the Eucharist and Penance."
+  },
+  {
+    "id": 91,
+    "group": "Part II",
+    "title": "Matrimony",
+    "number": 92,
+    "question": "What is the Sacrament of Matrimony?",
+    "answer": "Matrimony is the covenant by which a man and a woman establish a partnership of the whole life, ordered to the good of the spouses and the procreation of children."
+  },
+  {
+    "id": 92,
+    "group": "Part II",
+    "title": "Matrimony",
+    "number": 93,
+    "question": "What are the properties of Christian marriage?",
+    "answer": "Christian marriage has the properties of unity and indissolubility, by which the spouses are joined forever."
+  },
+  {
+    "id": 93,
+    "group": "Part II",
+    "title": "Matrimony",
+    "number": 94,
+    "question": "What is the purpose of Matrimony?",
+    "answer": "The purposes are the good of the spouses, the procreation and education of children, and the benefit of the Church."
+  },
+  {
+    "id": 94,
+    "group": "Part III",
+    "title": "The Dignity of the Human Person",
+    "number": 95,
+    "question": "What is the source of human dignity?",
+    "answer": "Human dignity comes from God, who created man and woman in his own image and likeness."
+  },
+  {
+    "id": 95,
+    "group": "Part III",
+    "title": "The Dignity of the Human Person",
+    "number": 96,
+    "question": "What does it mean to be created in the image of God?",
+    "answer": "To be created in God's image means that man and woman have intellect and free will, and are called to share in God's divine life."
+  },
+  {
+    "id": 96,
+    "group": "Part III",
+    "title": "The Dignity of the Human Person",
+    "number": 97,
+    "question": "What is the moral conscience?",
+    "answer": "Moral conscience is the judgment of reason by which man recognizes the moral quality of an action."
+  },
+  {
+    "id": 97,
+    "group": "Part III",
+    "title": "The Dignity of the Human Person",
+    "number": 98,
+    "question": "What does freedom mean?",
+    "answer": "Freedom is the faculty of choosing what is good, acting like a son of God and attaining eternal happiness."
+  },
+  {
+    "id": 98,
+    "group": "Part III",
+    "title": "The Dignity of the Human Person",
+    "number": 99,
+    "question": "What is the relationship between freedom and truth?",
+    "answer": "Freedom is ordered to truth: when man acts without truth, he loses his freedom and becomes a slave to error and passion."
+  },
+  {
+    "id": 99,
+    "group": "Part III",
+    "title": "The Dignity of the Human Person",
+    "number": 100,
+    "question": "What is the relationship between freedom and law?",
+    "answer": "True freedom is helped by law, which directs it according to its final purpose."
+  },
+  {
+    "id": 100,
+    "group": "Part III",
+    "title": "The Human Community",
+    "number": 101,
+    "question": "What is the common good?",
+    "answer": "The common good is the sum of social conditions that allow people, either as groups or as individuals, to reach their fulfillment more fully and more easily."
+  },
+  {
+    "id": 101,
+    "group": "Part III",
+    "title": "The Human Community",
+    "number": 102,
+    "question": "What is the relationship between the common good and the person?",
+    "answer": "The common good is not an end in itself; it is ordered to the person, in whom it finds its full meaning."
+  },
+  {
+    "id": 102,
+    "group": "Part III",
+    "title": "The Human Community",
+    "number": 103,
+    "question": "What is social justice?",
+    "answer": "Social justice consists in the concrete realization of the equal dignity of all in rights and duties."
+  },
+  {
+    "id": 103,
+    "group": "Part III",
+    "title": "God's Commandments",
+    "number": 104,
+    "question": "Why is the moral law necessary?",
+    "answer": "The moral law is necessary to ensure that the choices of freedom are oriented toward the good and are not darkened by error or passion."
+  },
+  {
+    "id": 104,
+    "group": "Part III",
+    "title": "God's Commandments",
+    "number": 105,
+    "question": "What is the natural moral law?",
+    "answer": "The natural moral law is the participation of the eternal law in the rational creature, which enables reason to discern good from evil."
+  },
+  {
+    "id": 105,
+    "group": "Part III",
+    "title": "God's Commandments",
+    "number": 106,
+    "question": "What is the relationship between the Old Law and the New Law?",
+    "answer": "The Old Law is the first stage of Revelation; the New Law (the law of the Gospel) is the law of the Holy Spirit."
+  },
+  {
+    "id": 106,
+    "group": "Part III",
+    "title": "The First Commandment",
+    "number": 107,
+    "question": "What does 'I am the Lord your God' mean?",
+    "answer": "It means that God has revealed his name and his nature to us, and we belong to him."
+  },
+  {
+    "id": 107,
+    "group": "Part III",
+    "title": "The First Commandment",
+    "number": 108,
+    "question": "What is required by faith?",
+    "answer": "Faith requires accepting and confessing the name of Jesus Christ, and living according to his Gospel."
+  },
+  {
+    "id": 108,
+    "group": "Part III",
+    "title": "The First Commandment",
+    "number": 109,
+    "question": "What is the sin of idolatry?",
+    "answer": "Idolatry is the worship of a creature in place of God, denying the one true God."
+  },
+  {
+    "id": 109,
+    "group": "Part III",
+    "title": "The First Commandment",
+    "number": 110,
+    "question": "What is superstition?",
+    "answer": "Superstition is the deviation of religious sentiment in practices that dishonor God."
+  },
+  {
+    "id": 110,
+    "group": "Part III",
+    "title": "The First Commandment",
+    "number": 111,
+    "question": "What is the sin of irreligion?",
+    "answer": "The sins of irreligion are blasphemy, perjury, sacrilege, and witchcraft."
+  },
+  {
+    "id": 111,
+    "group": "Part III",
+    "title": "The First Commandment",
+    "number": 112,
+    "question": "What is hope?",
+    "answer": "Hope is the theological virtue by which we desire the kingdom of heaven and eternal life as our happiness."
+  },
+  {
+    "id": 112,
+    "group": "Part III",
+    "title": "The First Commandment",
+    "number": 113,
+    "question": "What are the theological virtues?",
+    "answer": "The theological virtues are Faith, Hope, and Charity, which are directly infused by God into our souls."
+  },
+  {
+    "id": 113,
+    "group": "Part III",
+    "title": "The First Commandment",
+    "number": 114,
+    "question": "What is charity?",
+    "answer": "Charity is the theological virtue by which we love God above all things and our neighbor as ourselves."
+  },
+  {
+    "id": 114,
+    "group": "Part III",
+    "title": "The First Commandment",
+    "number": 115,
+    "question": "Why is charity the greatest of the theological virtues?",
+    "answer": "Because charity unites us to God and is the form of all the virtues; without charity, faith and hope are lifeless."
+  },
+  {
+    "id": 115,
+    "group": "Part III",
+    "title": "The Second Commandment",
+    "number": 116,
+    "question": "What does 'You shall not take the name of the Lord your God in vain' mean?",
+    "answer": "It means that we must use God's name with reverence and never abuse it."
+  },
+  {
+    "id": 116,
+    "group": "Part III",
+    "title": "The Second Commandment",
+    "number": 117,
+    "question": "What are violations of the Second Commandment?",
+    "answer": "They include blasphemy, perjury, and any disrespectful use of God's name."
+  },
+  {
+    "id": 117,
+    "group": "Part III",
+    "title": "The Third Commandment",
+    "number": 118,
+    "question": "What does 'Remember to keep holy the Sabbath day' mean?",
+    "answer": "It means that we must sanctify Sunday, the day of the Resurrection, as the Lord's Day."
+  },
+  {
+    "id": 118,
+    "group": "Part III",
+    "title": "The Third Commandment",
+    "number": 119,
+    "question": "What is the Sunday obligation?",
+    "answer": "On Sundays and holy days of obligation, the faithful are obliged to participate at Mass and to refrain from servile work."
+  },
+  {
+    "id": 119,
+    "group": "Part III",
+    "title": "The Fourth Commandment",
+    "number": 120,
+    "question": "What does 'Honor your father and your mother' mean?",
+    "answer": "It means to love and respect our parents and all those whom God has put in authority over us."
+  },
+  {
+    "id": 120,
+    "group": "Part III",
+    "title": "The Fourth Commandment",
+    "number": 121,
+    "question": "What do children owe their parents?",
+    "answer": "Children owe their parents love, respect, obedience, and practical support in times of need."
+  },
+  {
+    "id": 121,
+    "group": "Part III",
+    "title": "The Fourth Commandment",
+    "number": 122,
+    "question": "What do parents owe their children?",
+    "answer": "Parents owe their children spiritual and material formation, including education, discipline, and good example."
+  },
+  {
+    "id": 122,
+    "group": "Part III",
+    "title": "The Fourth Commandment",
+    "number": 123,
+    "question": "What is the domestic church?",
+    "answer": "The family is called the domestic church, where the faith is first learned and lived."
+  },
+  {
+    "id": 123,
+    "group": "Part III",
+    "title": "The Fifth Commandment",
+    "number": 124,
+    "question": "What does 'You shall not kill' mean?",
+    "answer": "It means that we must respect human life and not harm our neighbor in body or soul."
+  },
+  {
+    "id": 124,
+    "group": "Part III",
+    "title": "The Fifth Commandment",
+    "number": 125,
+    "question": "What are the grave sins against life?",
+    "answer": "Grave sins against life include murder, genocide, abortion, euthanasia, and suicide."
+  },
+  {
+    "id": 125,
+    "group": "Part III",
+    "title": "The Fifth Commandment",
+    "number": 126,
+    "question": "What is the duty to protect the innocent?",
+    "answer": "We have a duty to protect the lives of the innocent, especially the unborn and the most vulnerable."
+  },
+  {
+    "id": 126,
+    "group": "Part III",
+    "title": "The Fifth Commandment",
+    "number": 127,
+    "question": "What is the right to self-defense?",
+    "answer": "A person has the right to defend his own life, but not to kill except in cases of legitimate defense."
+  },
+  {
+    "id": 127,
+    "group": "Part III",
+    "title": "The Fifth Commandment",
+    "number": 128,
+    "question": "What is the duty to care for one's health?",
+    "answer": "We have a duty to care for our physical and spiritual health, avoiding excess and harm."
+  },
+  {
+    "id": 128,
+    "group": "Part III",
+    "title": "The Fifth Commandment",
+    "number": 129,
+    "question": "What are violence and abuse?",
+    "answer": "Violence and abuse are grave sins that wound human dignity and are condemned by the Gospel."
+  },
+  {
+    "id": 129,
+    "group": "Part III",
+    "title": "The Sixth and Ninth Commandments",
+    "number": 130,
+    "question": "What does 'You shall not commit adultery' mean?",
+    "answer": "It means that marriage is sacred and exclusive, and that sexual morality must be respected."
+  },
+  {
+    "id": 130,
+    "group": "Part III",
+    "title": "The Sixth and Ninth Commandments",
+    "number": 131,
+    "question": "What is the virtue of chastity?",
+    "answer": "Chastity is the moral virtue that moderates the desire for pleasure and regulates the use of sexuality."
+  },
+  {
+    "id": 131,
+    "group": "Part III",
+    "title": "The Sixth and Ninth Commandments",
+    "number": 132,
+    "question": "What are sins against chastity?",
+    "answer": "They include fornication, pornography, prostitution, adultery, homosexuality, and lust."
+  },
+  {
+    "id": 132,
+    "group": "Part III",
+    "title": "The Sixth and Ninth Commandments",
+    "number": 133,
+    "question": "What is the purpose of sexuality?",
+    "answer": "Sexuality is ordered to the love of husband and wife and to the procreation and education of children."
+  },
+  {
+    "id": 133,
+    "group": "Part III",
+    "title": "The Sixth and Ninth Commandments",
+    "number": 134,
+    "question": "What does the Church teach about homosexuality?",
+    "answer": "Homosexual acts are contrary to the natural law and are not approved; persons with homosexual tendencies must be treated with respect."
+  },
+  {
+    "id": 134,
+    "group": "Part III",
+    "title": "The Seventh and Tenth Commandments",
+    "number": 135,
+    "question": "What does 'You shall not steal' mean?",
+    "answer": "It means that we must respect the goods of our neighbor and not take what does not belong to us."
+  },
+  {
+    "id": 135,
+    "group": "Part III",
+    "title": "The Seventh and Tenth Commandments",
+    "number": 136,
+    "question": "What is the social doctrine of the Church?",
+    "answer": "The social doctrine of the Church is the coherent set of teachings on social, economic, and political questions."
+  },
+  {
+    "id": 136,
+    "group": "Part III",
+    "title": "The Seventh and Tenth Commandments",
+    "number": 137,
+    "question": "What is the principle of the universal destination of goods?",
+    "answer": "God intended the earth and all that is in it for all people, so that all may share in its goods."
+  },
+  {
+    "id": 137,
+    "group": "Part III",
+    "title": "The Seventh and Tenth Commandments",
+    "number": 138,
+    "question": "What is the duty to pay just wages?",
+    "answer": "Workers have a right to wages that are sufficient to support themselves and their families in dignity."
+  },
+  {
+    "id": 138,
+    "group": "Part III",
+    "title": "The Seventh and Tenth Commandments",
+    "number": 139,
+    "question": "What is the duty to protect the environment?",
+    "answer": "We have a duty to protect the environment for ourselves and for future generations."
+  },
+  {
+    "id": 139,
+    "group": "Part III",
+    "title": "The Eighth Commandment",
+    "number": 140,
+    "question": "What does 'You shall not bear false witness' mean?",
+    "answer": "It means that we must always tell the truth and protect the good name of our neighbor."
+  },
+  {
+    "id": 140,
+    "group": "Part III",
+    "title": "The Eighth Commandment",
+    "number": 141,
+    "question": "What are violations of the Eighth Commandment?",
+    "answer": "They include lying, detraction, calumny (slander), and rash judgment."
+  },
+  {
+    "id": 141,
+    "group": "Part III",
+    "title": "The Eighth Commandment",
+    "number": 142,
+    "question": "What is the duty to seek truth?",
+    "answer": "Every person has the duty to seek the truth, especially about God and his Church."
+  },
+  {
+    "id": 142,
+    "group": "Part IV",
+    "title": "Prayer",
+    "number": 143,
+    "question": "What is prayer?",
+    "answer": "Prayer is the raising of the heart and mind to God in praise, petition, contrition, and thanksgiving."
+  },
+  {
+    "id": 143,
+    "group": "Part IV",
+    "title": "Prayer",
+    "number": 144,
+    "question": "What are the forms of prayer?",
+    "answer": "The forms of prayer are blessing, adoration, petition, intercession, thanksgiving, and praise."
+  },
+  {
+    "id": 144,
+    "group": "Part IV",
+    "title": "Prayer",
+    "number": 145,
+    "question": "What is vocal prayer?",
+    "answer": "Vocal prayer is prayer expressed with words, whether spoken aloud or silently."
+  },
+  {
+    "id": 145,
+    "group": "Part IV",
+    "title": "Prayer",
+    "number": 146,
+    "question": "What is meditative prayer?",
+    "answer": "Meditative prayer is prayer in which the mind uses reflection on the mysteries of faith to stir the heart."
+  },
+  {
+    "id": 146,
+    "group": "Part IV",
+    "title": "Prayer",
+    "number": 147,
+    "question": "What is contemplative prayer?",
+    "answer": "Contemplative prayer is a gaze of faith fixed on God, a loving attention to him."
+  },
+  {
+    "id": 147,
+    "group": "Part IV",
+    "title": "Prayer",
+    "number": 148,
+    "question": "What is the 'Jesus Prayer'?",
+    "answer": "The Jesus Prayer is a short prayer often repeated: 'Lord Jesus Christ, Son of God, have mercy on me, a sinner.'"
+  },
+  {
+    "id": 148,
+    "group": "Part IV",
+    "title": "The Our Father",
+    "number": 149,
+    "question": "What is the 'Lord's Prayer'?",
+    "answer": "The Lord's Prayer, or 'Our Father,' is the perfect prayer that Jesus taught his disciples."
+  },
+  {
+    "id": 149,
+    "group": "Part IV",
+    "title": "The Our Father",
+    "number": 150,
+    "question": "What does 'Our Father' mean?",
+    "answer": "'Our Father' means that God is the Father of all people and especially of the baptized."
+  },
+  {
+    "id": 150,
+    "group": "Part IV",
+    "title": "The Our Father",
+    "number": 151,
+    "question": "What do we ask for in the first three petitions?",
+    "answer": "We ask that God's name be holy, that his kingdom come, and that his will be done."
+  },
+  {
+    "id": 151,
+    "group": "Part IV",
+    "title": "The Our Father",
+    "number": 152,
+    "question": "What do we ask for in the last four petitions?",
+    "answer": "We ask for our daily bread, the forgiveness of sins, protection in temptation, and delivery from evil."
+  },
+  {
+    "id": 152,
+    "group": "Part IV",
+    "title": "The Our Father",
+    "number": 153,
+    "question": "What does 'Give us this day our daily bread' mean?",
+    "answer": "It means that we ask God for everything we need in body and spirit for this day."
+  },
+  {
+    "id": 153,
+    "group": "Part IV",
+    "title": "The Our Father",
+    "number": 154,
+    "question": "What does 'Forgive us our trespasses' mean?",
+    "answer": "It means that we ask God to forgive our sins in the measure that we forgive those who sin against us."
+  },
+  {
+    "id": 154,
+    "group": "Part IV",
+    "title": "The Our Father",
+    "number": 155,
+    "question": "What does 'Lead us not into temptation' mean?",
+    "answer": "It means that we ask God not to let us be led into serious sin, especially against our faith."
+  },
+  {
+    "id": 155,
+    "group": "Part IV",
+    "title": "The Our Father",
+    "number": 156,
+    "question": "What does 'Deliver us from evil' mean?",
+    "answer": "It means that we ask God to free us from all evil, present and future, and especially from the evil of sin."
+  },
+  {
+    "id": 156,
+    "group": "Part IV",
+    "title": "The Doxology",
+    "number": 157,
+    "question": "What is the doxology of the Our Father?",
+    "answer": "The doxology is 'For the kingdom, the power, and the glory are yours, now and forever.'"
+  },
+  {
+    "id": 157,
+    "group": "Part IV",
+    "title": "The Doxology",
+    "number": 158,
+    "question": "Why do we say 'Amen' at the end of prayer?",
+    "answer": "'Amen' means 'so be it' and expresses our trust and hope that God will hear our prayer."
+  }
+]
