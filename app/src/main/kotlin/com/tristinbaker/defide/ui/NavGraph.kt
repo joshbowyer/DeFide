@@ -314,7 +314,9 @@ private fun DeFideAppContent(
                                 navController.navigate(item.route) {
                                     popUpTo(navController.graph.findStartDestination().id) { saveState = true }
                                     launchSingleTop = true
-                                    restoreState = true
+                                    // Never restore state for Rosary: always land on the mystery-picker home screen,
+                                    // even if the user previously navigated into a session mid-way.
+                                    restoreState = item.route != "rosary"
                                 }
                             }
                         },
