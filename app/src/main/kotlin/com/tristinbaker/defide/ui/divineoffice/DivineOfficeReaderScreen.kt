@@ -190,12 +190,12 @@ fun DivineOfficeReaderScreen(
                 office?.let { o ->
                     item {
                         OfficeContentCard(
-        office = o,
-        psalms = psalms,
-        psalmsLatin = psalmsLatin,
-        officeLatin = officeLatin,
-        rite = currentRite,
-    )
+                            office = o,
+                            psalms = psalms,
+                            psalmsLatin = psalmsLatin,
+                            officeLatin = officeLatin,
+                            rite = currentRite,
+                        )
                         Spacer(modifier = Modifier.height(32.dp))
                     }
                 }
@@ -629,7 +629,7 @@ private fun DefaultOfficeContent(
 @Composable private fun OurFatherSection(rite: AppRite) {
     SectionHeader("Our Father")
     Spacer(modifier = Modifier.height(4.dp))
-    val fatherText = if (rite == AppRite.TRADITIONAL) OUR_FATHER_LATIN else OUR_FATHER
+    val fatherText = if (rite != AppRite.MODERN) OUR_FATHER_LATIN else OUR_FATHER
     Text(
         text = fatherText,
         style = MaterialTheme.typography.bodyMedium,
@@ -818,9 +818,10 @@ private fun DefaultOfficeContent(
     if (!showLatinOnly) {
         Text(
             text = REGINA_CAELI_ENGLISH,
-        style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-    )
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
     Spacer(modifier = Modifier.height(8.dp))
     Text(
         text = REGINA_CAELI_LATIN,

@@ -25,6 +25,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.tristinbaker.defide.MainActivity
 import com.tristinbaker.defide.R
+import com.tristinbaker.defide.data.preferences.AppRite
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.first
 
@@ -32,7 +33,12 @@ class VotdWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val ep = EntryPointAccessors.fromApplication<VotdWidgetEntryPoint>(context)
-        val translationId = ep.prefsRepository().preferences.first().bibleTranslationId
+        val prefs = ep.prefsRepository().preferences.first()
+        val translationId = when (prefs.appRite) {
+            AppRite.LATIN       -> "vulgate"
+            AppRite.TRADITIONAL -> "dra"
+            AppRite.MODERN      -> prefs.bibleTranslationId
+        }
         val result = ep.bibleRepository().getVerseOfDay(translationId)
 
         provideContent {

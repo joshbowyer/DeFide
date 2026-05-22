@@ -106,6 +106,14 @@ class BibleViewModel @Inject constructor(
         viewModelScope.launch { repository.resetBookProgress(bookNumber) }
     }
 
+    fun setTranslationId(id: String) {
+        if (_selectedTranslationId.value == id) return
+        _selectedTranslationId.value = id
+        viewModelScope.launch {
+            _books.value = repository.getBooks(id)
+        }
+    }
+
     fun loadVerses(bookId: Int, chapter: Int) {
         viewModelScope.launch {
             _verses.value = repository.getVerses(bookId, chapter)
@@ -155,5 +163,24 @@ class BibleViewModel @Inject constructor(
         return if (prefs.bibleLastBookNumber > 0) {
             Triple(prefs.bibleLastTranslationId, prefs.bibleLastBookNumber, prefs.bibleLastChapter)
         } else null
+    }
+
+    /**
+     * Loads verses directly by bookNumber (not bookId), bypassing the books StateFlow.
+     * This is the correct method when navigating from outside the Bible section where
+     * books haven't been loaded yet (e.g. tapping the Verse of the Day from the Home screen).
+     */
+    fun loadVersesByBookNumber(translationId: String, bookNumber: Int, chapter: Int) {
+        viewModelScope.launch {
+            repository.getVersesByBookNumber(translationId, bookNumber, chapter)?.let { (book, verses) ->
+                _verses.value = verses
+                _chapterCount.value = repository.getChapterCount(book.id)
+                // Also populate books StateFlow with this book so UI can access book.fullName etc.
+                _books.value = _books.value.toMutableList().apply {
+                    removeAll { it.translationId == translationId && it.bookNumber == bookNumber }
+                    add(book)
+                }
+            }
+        }
     }
 }

@@ -96,3 +96,13 @@ data class BaltimoreCatechism(
     val question: String,
     val answer: String,
 )
+
+@Immutable
+data class CompendiumCatechism(
+    val id: Int,
+    val groupName: String,
+    val title: String,
+    val number: Int,
+    val question: String,
+    val answer: String,
+)

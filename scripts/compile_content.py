@@ -207,6 +207,22 @@ def _clean_nrsvce_verse(text: str) -> str:
     return _SUPERSCRIPT_RE.sub('', text).strip()
 
 
+def _normalize_office_text(text: str | None) -> str | None:
+    """Remove $ template markers embedded in Latin office source data.
+
+    The sancti/Latin Divine Office JSON files contain rubric markers like
+    $Qui tecum, $Per Dominum, $Oremus v., $Amen, $Credo that should not
+    appear in the rendered text. These are placeholders meant to be expanded
+    by a typesetting system, but for our plain-text display they are noise.
+    """
+    if not text:
+        return text
+    import re
+    # Strip $ prefix from rubric marker words: $Qui → Qui, $Per → Per, etc.
+    # Only matches [A-Z][a-z]+ so $O God, is NOT matched (mixed case after $)
+    text = re.sub(r'\$([A-Z][a-z]+)', r'\1', text)
+    return text
+
 def create_schema(conn: sqlite3.Connection) -> None:
     conn.executescript("""
         PRAGMA journal_mode=WAL;
@@ -270,6 +286,17 @@ def create_schema(conn: sqlite3.Connection) -> None:
         );
 
         CREATE INDEX IF NOT EXISTS idx_bc_lesson ON baltimore_catechism(lesson, number);
+
+        -- Compendium of the Catechism
+        CREATE TABLE IF NOT EXISTS compendium_catechism (
+            id       INTEGER PRIMARY KEY,
+            group_name TEXT,
+            title     TEXT,
+            number   INTEGER NOT NULL,
+            question TEXT NOT NULL,
+            answer   TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_cc_group ON compendium_catechism(group_name);
 
         -- Prayers
         CREATE TABLE IF NOT EXISTS prayers (
@@ -2183,6 +2210,14 @@ def compile_rosary(conn: sqlite3.Connection, lang: str, variant: str = "dominica
         ("hail-mary",      "Por um aumento em Caridade"),
         ("glory-be",       None),
     ]
+    INTRO_LA = [
+        ("apostles-creed", None),
+        ("our-father",     None),
+        ("hail-mary",      "Ad augendam fidem"),
+        ("hail-mary",      "Ad augendam spem"),
+        ("hail-mary",      "Ad augendam caritatem"),
+        ("glory-be",       None),
+    ]
     # Fátima opening: Deus in adjutorium + Glory Be (no Our Father or Hail Marys)
     INTRO_FATIMA_PT = [
         ("deus-in-adjutorium", None),
@@ -2200,8 +2235,16 @@ def compile_rosary(conn: sqlite3.Connection, lang: str, variant: str = "dominica
         INTRO = INTRO_FATIMA_PT
         CLOSING = CLOSING_FATIMA_PT
         EXTRA_DECADE = ["oh-maria-concebida", "fatima-prayer"]
+    elif lang == "la":
+        INTRO = INTRO_LA
+        CLOSING = [("hail-holy-queen", None)]
+        EXTRA_DECADE = ["fatima-prayer"]
+    elif lang in ("pt-BR", "pt-PT"):
+        INTRO = INTRO_PT
+        CLOSING = [("hail-holy-queen", None)]
+        EXTRA_DECADE = ["fatima-prayer"]
     else:
-        INTRO = INTRO_PT if lang in ("pt-BR", "pt-PT") else INTRO_EN
+        INTRO = INTRO_EN
         CLOSING = [("hail-holy-queen", None)]
         EXTRA_DECADE = ["fatima-prayer"]
 
@@ -2731,73 +2774,73 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
     FERIAL_ROWS = [
         (0, "Laudes",  "Dominica — Laudes",
          "Concéde nos, quǽsumus, omnípotens Deus: ut qui fragilitátis nostræ recognóscimus, "
-         "dignitátis quoque nostræ memóres, cuncta tibi devotióne reddámus. $Per Dóminum"),
+         "dignitátis quoque nostræ memóres, cuncta tibi devotióne reddámus. Per Dóminum"),
         (0, "Vespers", "Dominica — Vespera",
          "Largíre quǽsumus, Dómine, fámulis et famulábus tuis certam spem et solidam caritátem: "
-         "ut in omni loco et témpore tibi grátias ágere habéant méritis efficiéntibus. $Per Dóminum"),
+         "ut in omni loco et témpore tibi grátias ágere habéant méritis efficiéntibus. Per Dóminum"),
         (0, "Matins",  "Dominica — Matutinum",
-         "Créa in me, Deus, spíritum rectum, et novum intra viscera mea confírma. $Deus, a quo孤儿órum."),
+         "Créa in me, Deus, spíritum rectum, et novum intra viscera mea confírma. Deus, a quo orphanórum."),
         (1, "Laudes",  "Feria II — Laudes",
-         "Dirigátur, Dómine, orátio mea sicut incénsum in conspéctu tuo: et exáudi nos in tua miseratióne confidéntes. $Per Dóminum"),
+         "Dirigátur, Dómine, orátio mea sicut incénsum in conspéctu tuo: et exáudi nos in tua miseratióne confidéntes. Per Dóminum"),
         (1, "Vespers", "Feria II — Vespera",
-         "Illúmina, Dómine, fáciem tuam super servos tuos, et abscónde eos in protectione alárum tuárum. $Per Dóminum"),
+         "Illúmina, Dómine, fáciem tuam super servos tuos, et abscónde eos in protectione alárum tuárum. Per Dóminum"),
         (1, "Matins",  "Feria II — Matutinum",
-         "In manúibus tuis, Dómine, fortitúdo mea: quia confirmásti super me misericórdiam tuam. $Deus, a quo孤儿órum."),
+         "In manúibus tuis, Dómine, fortitúdo mea: quia confirmásti super me misericórdiam tuam. Deus, a quo orphanórum."),
         (2, "Laudes",  "Feria III — Laudes",
-         "Benedíctus es, Dómine, doce me justificatiónes tuas: et vivificábis me in eis. $Per Dóminum"),
+         "Benedíctus es, Dómine, doce me justificatiónes tuas: et vivificábis me in eis. Per Dóminum"),
         (2, "Vespers", "Feria III — Vespera",
-         "Sit, Dómine, misericórdia tua super nos, quemádmodum sperávimus in te: et in médio templi tui láudabimur. $Per Dóminum"),
+         "Sit, Dómine, misericórdia tua super nos, quemádmodum sperávimus in te: et in médio templi tui láudabimur. Per Dóminum"),
         (2, "Matins",  "Feria III — Matutinum",
-         "In matutínis, Dómine, meditábor in te: quia fuísti adjútor meus. $Deus, a quo孤儿órum."),
+         "In matutínis, Dómine, meditábor in te: quia fuísti adjútor meus. Deus, a quo orphanórum."),
         (3, "Laudes",  "Feria IV — Laudes",
-         "Eréxit a Dómino cor meum, ut audírem et annotárem ómnia cármina ejus. $Per Dóminum"),
+         "Eréxit a Dómino cor meum, ut audírem et annotárem ómnia cármina ejus. Per Dóminum"),
         (3, "Vespers", "Feria IV — Vespera",
-         "Meménto nóminis tui, Dómine, et líbera nos in veritáte tua: quia magna est in nós misericórdia tua. $Per Dóminum"),
+         "Meménto nóminis tui, Dómine, et líbera nos in veritáte tua: quia magna est in nós misericórdia tua. Per Dóminum"),
         (3, "Matins",  "Feria IV — Matutinum",
-         "Expúngere, Dómine, scélera nostra: et mundémur ab ómnibus peccátis nostris. $Deus, a quo孤儿órum."),
+         "Expúngere, Dómine, scélera nostra: et mundémur ab ómnibus peccátis nostris. Deus, a quo orphanórum."),
         (4, "Laudes",  "Feria V — Laudes",
-         "Deus, in adjutórium meum inténde: ut festínanter liberéntur qui cómminantur ánimam meam. $Per Dóminum"),
+         "Deus, in adjutórium meum inténde: ut festínanter liberéntur qui cómminantur ánimam meam. Per Dóminum"),
         (4, "Vespers", "Feria V — Vespera",
-         "Tunc invocábis me, et ego exáudiam te: et revocábis et congregábis me. $Per Dóminum"),
+         "Tunc invocábis me, et ego exáudiam te: et revocábis et congregábis me. Per Dóminum"),
         (4, "Matins",  "Feria V — Matutinum",
-         "Audívi, Dómine, quod ánimam meam audíres: quóniam in te sperávi. $Deus, a quo孤儿órum."),
+         "Audívi, Dómine, quod ánimam meam audíres: quóniam in te sperávi. Deus, a quo orphanórum."),
         (5, "Laudes",  "Feria VI — Laudes",
-         "Lætátus sum in his, quæ dicta sunt mihi: in domum Dómini íbimus. $Per Dóminum"),
+         "Lætátus sum in his, quæ dicta sunt mihi: in domum Dómini íbimus. Per Dóminum"),
         (5, "Vespers", "Feria VI — Vespera",
-         "Pósuit in cælo meo lumen non apparens: et nómini tuo Dómine, laus et grátias. $Per Dóminum"),
+         "Pósuit in cælo meo lumen non apparens: et nómini tuo Dómine, laus et grátias. Per Dóminum"),
         (5, "Matins",  "Feria VI — Matutinum",
-         "Pérfice gressus meos in viam tuam, Dómine: ut non moveántur vestígia mea. $Deus, a quo孤儿órum."),
+         "Pérfice gressus meos in viam tuam, Dómine: ut non moveántur vestígia mea. Deus, a quo orphanórum."),
         (6, "Laudes",  "Sabbato — Laudes",
-         "Sperét Israel in Dómino: quóniam in eo misericórdia et abúndans détestptio in eo. $Per Dóminum"),
+         "Sperét Israel in Dómino: quóniam in eo misericórdia et abúndans détestptio in eo. Per Dóminum"),
         (6, "Vespers", "Sabbato — Vespera",
-         "Sint lumbi vestri præcíncti, et lucérnæ ardéntes: quia Dóminus nobis in occúrsum. $Qui tecum"),
+         "Sint lumbi vestri præcíncti, et lucérnæ ardéntes: quia Dóminus nobis in occúrsum. Qui tecum"),
         (6, "Matins",  "Sabbato — Matutinum",
-         "Laudáte Dóminum, ómnes géntes: et collaudáte eum, ómnes pópuli. $Quóniam confirmáta est."),
+         "Laudáte Dóminum, ómnes géntes: et collaudáte eum, ómnes pópuli. Quóniam confirmáta est."),
     ]
 
     # English ferial oratios keyed by (day, office_type)
     EN_ORATIOS = {
-        (0, "Laudes"):  "Grant us, we pray, almighty God, that we who recognize our frailty may, mindful of our dignity, devote ourselves to your service. $Through the same Lord.",
-        (0, "Vespers"): "Grant, we pray, Lord, a steadfast hope and solid charity to your servants and handmaids, that in every place and at all times they may be able to give you thanks through their merits. $Through the same Lord.",
-        (0, "Matins"):  "Create in me, O God, a right spirit, and renew a steadfast spirit within me. $O God, from whom orphans.",
-        (1, "Laudes"):  "Let our prayer rise before you, O Lord, like incense, and the lifting up of our hands like the evening sacrifice. $Through the same Lord.",
-        (1, "Vespers"): "O Lord, shine your face upon us and hide us in the shelter of your wings. $Through the same Lord.",
-        (1, "Matins"):  "In your hands, O Lord, is my strength: you have given me your mercy as my sure foundation. $O God, from whom orphans.",
-        (2, "Laudes"):  "Blessed are you, O Lord; teach me your statutes, and give me life in them. $Through the same Lord.",
-        (2, "Vespers"): "May your mercy be upon us, O Lord, as we have hoped in you; and may we be praised in the midst of your temple. $Through the same Lord.",
-        (2, "Matins"):  "In the morning I will think of you, O Lord, for you have been my helper. $O God, from whom orphans.",
-        (3, "Laudes"):  "The Lord has lifted up my heart that I may hear and keep all his songs. $Through the same Lord.",
-        (3, "Vespers"): "Remember your name, O Lord, and deliver us in your truth, for great is your mercy toward us. $Through the same Lord.",
-        (3, "Matins"):  "Wash away our iniquities, O Lord, and cleanse us from all our sins. $O God, from whom orphans.",
-        (4, "Laudes"):  "O God, come to my aid; O Lord, make haste to help me, that those who threaten my soul may be quickly confounded. $Through the same Lord.",
-        (4, "Vespers"): "Then you shall call upon me, and I will answer you; you shall bring me back and gather me together. $Through the same Lord.",
-        (4, "Matins"):  "I have heard, O Lord, that you hear the voice of my soul; for in you have I hoped. $O God, from whom orphans.",
-        (5, "Laudes"):  "I have greatly rejoiced in what was said to me: we shall go up to the house of the Lord. $Through the same Lord.",
-        (5, "Vespers"): "You have set a light in my heart, O Lord, which does not appear to the world; to your name, O Lord, be praise and thanks. $Through the same Lord.",
-        (5, "Matins"):  "Direct my steps according to your word, O Lord, that no iniquity may gain dominion over me. $O God, from whom orphans.",
-        (6, "Laudes"):  "Let Israel hope in the Lord, for in him is mercy and plenteous redemption. $Through the same Lord.",
-        (6, "Vespers"): "Let your loins be girt and your lamps burning, for the Lord himself is about to come. $Who lives with you.",
-        (6, "Matins"):  "O praise the Lord, all you nations: and magnify him, all you peoples. $For his mercy has been confirmed.",
+        (0, "Laudes"):  "Grant us, we pray, almighty God, that we who recognize our frailty may, mindful of our dignity, devote ourselves to your service. Through the same Lord.",
+        (0, "Vespers"): "Grant, we pray, Lord, a steadfast hope and solid charity to your servants and handmaids, that in every place and at all times they may be able to give you thanks through their merits. Through the same Lord.",
+        (0, "Matins"):  "Create in me, O God, a right spirit, and renew a steadfast spirit within me. O God, from whom orphans.",
+        (1, "Laudes"):  "Let our prayer rise before you, O Lord, like incense, and the lifting up of our hands like the evening sacrifice. Through the same Lord.",
+        (1, "Vespers"): "O Lord, shine your face upon us and hide us in the shelter of your wings. Through the same Lord.",
+        (1, "Matins"):  "In your hands, O Lord, is my strength: you have given me your mercy as my sure foundation. O God, from whom orphans.",
+        (2, "Laudes"):  "Blessed are you, O Lord; teach me your statutes, and give me life in them. Through the same Lord.",
+        (2, "Vespers"): "May your mercy be upon us, O Lord, as we have hoped in you; and may we be praised in the midst of your temple. Through the same Lord.",
+        (2, "Matins"):  "In the morning I will think of you, O Lord, for you have been my helper. O God, from whom orphans.",
+        (3, "Laudes"):  "The Lord has lifted up my heart that I may hear and keep all his songs. Through the same Lord.",
+        (3, "Vespers"): "Remember your name, O Lord, and deliver us in your truth, for great is your mercy toward us. Through the same Lord.",
+        (3, "Matins"):  "Wash away our iniquities, O Lord, and cleanse us from all our sins. O God, from whom orphans.",
+        (4, "Laudes"):  "O God, come to my aid; O Lord, make haste to help me, that those who threaten my soul may be quickly confounded. Through the same Lord.",
+        (4, "Vespers"): "Then you shall call upon me, and I will answer you; you shall bring me back and gather me together. Through the same Lord.",
+        (4, "Matins"):  "I have heard, O Lord, that you hear the voice of my soul; for in you have I hoped. O God, from whom orphans.",
+        (5, "Laudes"):  "I have greatly rejoiced in what was said to me: we shall go up to the house of the Lord. Through the same Lord.",
+        (5, "Vespers"): "You have set a light in my heart, O Lord, which does not appear to the world; to your name, O Lord, be praise and thanks. Through the same Lord.",
+        (5, "Matins"):  "Direct my steps according to your word, O Lord, that no iniquity may gain dominion over me. O God, from whom orphans.",
+        (6, "Laudes"):  "Let Israel hope in the Lord, for in him is mercy and plenteous redemption. Through the same Lord.",
+        (6, "Vespers"): "Let your loins be girt and your lamps burning, for the Lord himself is about to come. Who lives with you.",
+        (6, "Matins"):  "O praise the Lord, all you nations: and magnify him, all you peoples. For his mercy has been confirmed.",
     }
 
     inserted = 0
@@ -2844,7 +2887,7 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
                 hymn, matins_antiphon)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
-                f"ferial/{day}", "ferial", lang, title, ot, oratio,
+                f"ferial/{day}", "ferial", lang, title, ot, _normalize_office_text(oratio),
                 *ant_list[:9],
                 hymn_text,
                 antiphon,
@@ -3150,6 +3193,25 @@ def compile_baltimore_catechism(conn: sqlite3.Connection) -> None:
     print(f"  Baltimore Catechism: {len(entries)} entries indexed.")
 
 
+def compile_compendium_catechism(conn: sqlite3.Connection) -> None:
+    path = os.path.join(CONTENT_DIR, "catechism", "compendium.json")
+    if not os.path.exists(path):
+        print("  SKIP: catechism/compendium.json not found.")
+        return
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+    if not data:
+        print("  SKIP: compendium.json is empty.")
+        return
+    conn.execute("DELETE FROM compendium_catechism")
+    for item in data:
+        conn.execute(
+            "INSERT INTO compendium_catechism (id, group_name, title, number, question, answer) VALUES (?, ?, ?, ?, ?, ?)",
+            (item["id"], item.get("group"), item.get("title"), item["number"], item["question"], item["answer"]),
+        )
+    print(f"  Compendium Catechism: {len(data)} questions loaded.")
+
+
 def compile_divine_office(conn, lang: str = "la"):
     horas_dir = os.path.join(
         REPO_ROOT, "divinum-officium", "web", "www", "horas",
@@ -3420,10 +3482,12 @@ def compile_divine_office(conn, lang: str = "la"):
                             merged.get("Versum") or merged.get("Versus"),
                             merged.get("Preces"),
                             capitulum,
-                            (merged.get(f"Oratio {office_type}")
-                             or merged.get(f"Oratio{office_type}")
-                             or merged.get("Oratio")
-                             or merged.get("Oratio Completorium")),
+                            _normalize_office_text(
+                                merged.get(f"Oratio {office_type}")
+                                or merged.get(f"Oratio{office_type}")
+                                or merged.get("Oratio")
+                                or merged.get("Oratio Completorium")
+                            ),
                             merged.get("Conclusio"),
                             matins_antiphon,
                             supplemental,
@@ -3906,6 +3970,7 @@ def main() -> None:
         compile_saints(conn, "zh-CN")
 
         compile_baltimore_catechism(conn)
+        compile_compendium_catechism(conn)
         compile_divine_office(conn)
         compile_divine_office(conn, lang="en")
         conn.commit()

@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase
 import androidx.room.Room
 import com.tristinbaker.defide.data.db.content.ContentDatabase
 import com.tristinbaker.defide.data.db.content.dao.BaltimoreCatechismDao
+import com.tristinbaker.defide.data.db.content.dao.CompendiumCatechismDao
 import com.tristinbaker.defide.data.db.content.dao.BibleDao
 import com.tristinbaker.defide.data.db.content.dao.DivineOfficeDao
 import com.tristinbaker.defide.data.db.content.dao.NovenaContentDao
@@ -52,6 +53,9 @@ object DatabaseModule {
 
     @Provides
     fun provideBaltimoreCatechismDao(db: SQLiteDatabase) = BaltimoreCatechismDao(db)
+
+    @Provides
+    fun provideCompendiumCatechismDao(db: SQLiteDatabase) = CompendiumCatechismDao(db)
 
     @Provides
     fun provideDivineOfficeDao(db: SQLiteDatabase) = DivineOfficeDao(db)

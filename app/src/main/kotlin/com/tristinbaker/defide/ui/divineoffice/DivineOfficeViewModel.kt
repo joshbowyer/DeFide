@@ -137,7 +137,7 @@ class DivineOfficeViewModel @Inject constructor(
                 _selectedPsalmsLatin.value = repository.getFerialPsalmsLatin(dayOfWeek, ot)
                 // Fetch Latin version of the same office for hymn + antiphons + oratio
                 val laOffices = repository.getOfficesByFilesLatin(
-                    listOfNotNull(cal?.temporaFile, cal?.sanctiFile, cal?.communeFile)
+                    listOfNotNull(_dayOffices.value.calendarEntry?.temporaFile, _dayOffices.value.calendarEntry?.sanctiFile, _dayOffices.value.calendarEntry?.communeFile)
                 )
                 _selectedOfficeLatin.value = laOffices.find {
                     it.officeType == office.officeType ||

@@ -184,16 +184,18 @@ fun SettingsScreen(
             }
             item {
                 val languages = listOf(
-                    "en" to "English",
-                    "es" to "Español",
-                    "fr" to "Français",
-                    "lt" to "Lietuvių",
-                    "pt-BR" to "Português (Brasil)",
-                    "pt-PT" to "Português (Portugal)",
-                    "zh-CN" to "中文 (简体)",
+                    "en"    to stringResource(R.string.lang_en),
+                    "es"    to stringResource(R.string.lang_es),
+                    "fr"    to stringResource(R.string.lang_fr),
+                    "lt"    to stringResource(R.string.lang_lt),
+                    "pt-BR" to stringResource(R.string.lang_pt_BR),
+                    "pt-PT" to stringResource(R.string.lang_pt_PT),
+                    "zh-CN" to stringResource(R.string.lang_zh_CN),
+                    "la"    to stringResource(R.string.lang_la),
                 )
                 var languageDropdownExpanded by remember { mutableStateOf(false) }
-                val selectedLanguageLabel = languages.firstOrNull { it.first == prefs.appLanguage }?.second ?: prefs.appLanguage
+                val selectedLanguageLabel = languages.find { it.first == prefs.appLanguage }?.second
+                    ?: prefs.appLanguage
                 ExposedDropdownMenuBox(
                     expanded = languageDropdownExpanded,
                     onExpandedChange = { languageDropdownExpanded = it },

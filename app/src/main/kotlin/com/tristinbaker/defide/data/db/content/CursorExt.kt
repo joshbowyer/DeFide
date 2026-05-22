@@ -1,6 +1,7 @@
 package com.tristinbaker.defide.data.db.content
 
 import android.database.Cursor
+import com.tristinbaker.defide.data.model.CompendiumCatechism
 import com.tristinbaker.defide.data.model.Book
 import com.tristinbaker.defide.data.model.MysteryBead
 import com.tristinbaker.defide.data.model.Mystery
@@ -167,3 +168,13 @@ inline fun <T> Cursor.mapRows(transform: Cursor.() -> T): List<T> = use {
 inline fun <T> Cursor.firstOrNull(transform: Cursor.() -> T): T? = use {
     if (moveToFirst()) transform() else null
 }
+
+
+fun Cursor.toCompendiumCatechism() = CompendiumCatechism(
+    id = getInt(0),
+    groupName = getString(1) ?: "",
+    title = getString(2) ?: "",
+    number = getInt(3),
+    question = getString(4) ?: "",
+    answer = getString(5) ?: "",
+)

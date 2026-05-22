@@ -30,6 +30,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.activity.compose.BackHandler
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -80,6 +81,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.res.stringResource
 import com.tristinbaker.defide.R
+import com.tristinbaker.defide.data.preferences.AppRite
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -143,19 +145,25 @@ fun DeFideApp() {
         else                               -> CCC_URL_EN
     }
 
-    LocaleWrapper(prefs.appLanguage) {
-        DeFideAppContent(
-            navController = navController,
-            drawerState = drawerState,
-            scope = scope,
-            context = context,
-            showCatechismDialog = showCatechismDialog,
-            onShowCatechismDialog = { showCatechismDialog = it },
-            cccUrl = cccUrl,
-            showLothDialog = showLothDialog,
-            onShowLothDialog = { showLothDialog = it },
-            language = prefs.appLanguage,
-        )
+    // Outer wrapper: UI chrome (drawer labels, nav) in "en" for Traditional,
+    // in app language for Modern and Latin.
+    val uiLanguage = if (prefs.appRite == AppRite.TRADITIONAL) "en" else prefs.appLanguage
+    LocaleWrapper(uiLanguage) {
+        // Inner wrapper: content in the full app language (la for Latin/Traditional).
+        LocaleWrapper(prefs.appLanguage) {
+            DeFideAppContent(
+                navController = navController,
+                drawerState = drawerState,
+                scope = scope,
+                context = context,
+                showCatechismDialog = showCatechismDialog,
+                onShowCatechismDialog = { showCatechismDialog = it },
+                cccUrl = cccUrl,
+                showLothDialog = showLothDialog,
+                onShowLothDialog = { showLothDialog = it },
+                language = prefs.appLanguage,
+            )
+        }
     }
 }
 
@@ -332,6 +340,9 @@ private fun DeFideAppContent(
             openDrawer = openDrawer,
             language = language,
         )
+    }
+    BackHandler(enabled = drawerState.isOpen) {
+        scope.launch { drawerState.close() }
     }
 }
 

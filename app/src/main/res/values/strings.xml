@@ -15,6 +15,7 @@
     <string name="catechism_dialog_text">Select which catechism to read:</string>
     <string name="catechism_option_ccc">Catechism of the Catholic Church (Online)</string>
     <string name="catechism_option_baltimore">Baltimore Catechism (Offline)</string>
+    <string name="catechism_option_compendium">Compendium to the Catechism (Offline)</string>
 
     <!-- Liturgy of the Hours / Breviary dialog -->
     <string name="loth_dialog_title">Divine Office</string>
@@ -30,6 +31,16 @@
     <string name="prayed_today">Prayed Today</string>
 
     <!-- Settings -->
+    <string name="app_language">Language</string>
+    <string name="lang_en">English</string>
+    <string name="lang_es">Español</string>
+    <string name="lang_fr">Français</string>
+    <string name="lang_lt">Lietuvių</string>
+    <string name="lang_pt_BR">Português (Brasil)</string>
+    <string name="lang_pt_PT">Português (Portugal)</string>
+    <string name="lang_zh_CN">中文 (简体)</string>
+    <string name="lang_la">Latina</string>
+
     <string name="settings_title">Settings</string>
     <string name="section_appearance">Appearance</string>
     <string name="theme_system">System</string>
@@ -208,12 +219,14 @@
     <string name="saints_search_hint">Search saints…</string>
     <string name="saints_sort_name">By Name</string>
     <string name="saints_sort_feast">By Feast Day</string>
+    <string name="saints_sort_popularity">By Popularity</string>
     <string name="saints_not_available">Saints are not yet available in your language. You can help by contributing, open a pull request on GitHub.</string>
     <string name="today_mystery_prefix">✦ Today — %s</string>
     <string name="the_nth_mystery">The %s Mystery</string>
 
     <!-- Baltimore Catechism -->
     <string name="baltimore_catechism_title">Baltimore Catechism</string>
+    <string name="compendium_title">Compendium of the Catechism</string>
     <string name="divine_office_title">Divine Office</string>
     <string name="lesson_number">Lesson %1$d</string>
     <string name="question_label">Question %1$d</string>

@@ -387,10 +387,11 @@ fun BibleReaderScreen(
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(translationId, bookNumber, chapter) {
+        viewModel.setTranslationId(translationId)
         viewModel.saveLastBiblePosition(translationId, bookNumber, chapter)
-    }
-    LaunchedEffect(book?.id, chapter) {
-        book?.let { viewModel.loadVerses(it.id, chapter) }
+        // Use the direct method so bookNumber-based navigation (from home screen) works
+        // without waiting for the books StateFlow to populate.
+        viewModel.loadVersesByBookNumber(translationId, bookNumber, chapter)
     }
     LaunchedEffect(verses.firstOrNull()?.id, scrollToVerse) {
         if (verses.isNotEmpty() && scrollToVerse > 1) {
