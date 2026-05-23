@@ -34,3 +34,7 @@ patch_compile.py
 # Compiled content DB (built by scripts/compile_content.py)
 *.db
 databases/
+# Build artifacts (local dev helpers)
+android-sdk
+compile_output*.log
+gradle_build.log
