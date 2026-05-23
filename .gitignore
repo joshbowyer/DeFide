@@ -38,3 +38,4 @@ databases/
 android-sdk
 compile_output*.log
 gradle_build.log
+.sandbox-tmp/
