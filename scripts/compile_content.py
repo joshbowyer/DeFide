@@ -2970,12 +2970,16 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
                     (ant, lang, f"ferial/{day}", "Completorium"),
                 )
             continue
+        lectio_comp = "\n".join(ms.get("Lectio Completorium", []))
+        resp_comp = "\n".join(ms.get("Responsory Completorium", []))
+
         # Insert new Completorium row
         ant = completorium_ant_by_day.get(day, "")
         conn.execute(
             """INSERT INTO divine_office
-               (file, file_type, language, title, office_type, hymn, matins_antiphon, oratio)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+               (file, file_type, language, title, office_type, hymn,
+                lectio_1, responsory_1, matins_antiphon, oratio)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 f"ferial/{day}",
                 "ferial",
@@ -2983,6 +2987,8 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
                 f"{day_label} — Completorium",
                 "Completorium",
                 hymn_text,
+                lectio_comp,
+                resp_comp,
                 ant,
                 oratio_text,
             ),
