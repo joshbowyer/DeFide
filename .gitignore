@@ -39,3 +39,7 @@ android-sdk
 compile_output*.log
 gradle_build.log
 .sandbox-tmp/
+
+# Claw Code local instructions (never push)
+CLAW.md
+CLAUDE.md
