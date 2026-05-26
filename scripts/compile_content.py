@@ -335,6 +335,7 @@ def create_schema(conn: sqlite3.Connection) -> None:
             full_bio   TEXT NOT NULL,
             patronage  TEXT,
             category   TEXT NOT NULL,
+            rank       INTEGER,
             PRIMARY KEY (id, language)
         );
 
@@ -1330,9 +1331,9 @@ def compile_saints(conn: sqlite3.Connection, lang: str) -> None:
 
     for s in saints:
         conn.execute(
-            "INSERT OR REPLACE INTO saints (id, language, name, feast_date, short_bio, full_bio, patronage, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT OR REPLACE INTO saints (id, language, name, feast_date, short_bio, full_bio, patronage, category, rank) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (s["id"], lang, s["name"], s.get("feast_date"), s["short_bio"], s["full_bio"],
-             s.get("patronage"), s["category"]),
+             s.get("patronage"), s["category"], s.get("rank")),
         )
     print(f"  Saints ({lang}): {len(saints)} entries loaded.")
 

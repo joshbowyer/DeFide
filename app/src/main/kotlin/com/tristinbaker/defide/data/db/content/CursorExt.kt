@@ -85,6 +85,7 @@ fun Cursor.toSaint() = Saint(
     fullBio = getString(getColumnIndexOrThrow("full_bio")),
     patronage = getStringOrNull("patronage"),
     category = getString(getColumnIndexOrThrow("category")),
+    rank = getIntOrNull("rank"),
 )
 
 private fun Cursor.getStringOrNull(column: String): String? {

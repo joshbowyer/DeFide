@@ -1,6 +1,7 @@
 package com.tristinbaker.defide.ui.settings
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,6 +11,7 @@ import androidx.work.WorkManager
 import com.tristinbaker.defide.data.backup.BackupManager
 import com.tristinbaker.defide.data.preferences.AppFont
 import com.tristinbaker.defide.data.preferences.AppTheme
+import com.tristinbaker.defide.data.preferences.BackupFrequency
 import com.tristinbaker.defide.data.preferences.RosaryOrder
 import com.tristinbaker.defide.data.preferences.UserPreferences
 import com.tristinbaker.defide.data.preferences.UserPreferencesRepository
@@ -19,6 +21,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
+import com.tristinbaker.defide.worker.BackupWorker
 import com.tristinbaker.defide.worker.NovenaReminderWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -152,5 +155,48 @@ class SettingsViewModel @Inject constructor(
 
     fun setRosaryHapticFeedback(enabled: Boolean) {
         viewModelScope.launch { prefsRepository.setRosaryHapticFeedback(enabled) }
+    }
+
+    fun setAutoBackupFolder(uri: Uri) {
+        context.contentResolver.takePersistableUriPermission(
+            uri,
+            Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
+        )
+        viewModelScope.launch {
+            prefsRepository.setAutoBackupFolderUri(uri.toString())
+            val frequency = prefsRepository.preferences.first().autoBackupFrequency
+            if (frequency != BackupFrequency.OFF) scheduleAutoBackup(frequency)
+        }
+    }
+
+    fun setAutoBackupFrequency(frequency: BackupFrequency) {
+        viewModelScope.launch {
+            prefsRepository.setAutoBackupFrequency(frequency)
+            val folderUri = prefsRepository.preferences.first().autoBackupFolderUri
+            if (frequency == BackupFrequency.OFF || folderUri.isEmpty()) {
+                cancelAutoBackup()
+            } else {
+                scheduleAutoBackup(frequency)
+            }
+        }
+    }
+
+    private fun scheduleAutoBackup(frequency: BackupFrequency) {
+        val (interval, unit) = when (frequency) {
+            BackupFrequency.DAILY   -> 1L to TimeUnit.DAYS
+            BackupFrequency.WEEKLY  -> 7L to TimeUnit.DAYS
+            BackupFrequency.MONTHLY -> 30L to TimeUnit.DAYS
+            BackupFrequency.OFF     -> return
+        }
+        val request = PeriodicWorkRequestBuilder<BackupWorker>(interval, unit).build()
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+            BackupWorker.WORK_NAME,
+            ExistingPeriodicWorkPolicy.UPDATE,
+            request,
+        )
+    }
+
+    private fun cancelAutoBackup() {
+        WorkManager.getInstance(context).cancelUniqueWork(BackupWorker.WORK_NAME)
     }
 }

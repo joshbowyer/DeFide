@@ -86,4 +86,5 @@ data class Saint(
     val fullBio: String,
     val patronage: String?,
     val category: String,
+    val rank: Int? = null,
 )

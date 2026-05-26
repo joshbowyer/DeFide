@@ -55,6 +55,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.tristinbaker.defide.R
 import com.tristinbaker.defide.data.preferences.AppFont
 import com.tristinbaker.defide.data.preferences.AppTheme
+import com.tristinbaker.defide.data.preferences.BackupFrequency
 import com.tristinbaker.defide.data.preferences.RosaryOrder
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -83,6 +84,11 @@ fun SettingsScreen(
         ActivityResultContracts.OpenDocument()
     ) { uri ->
         if (uri != null) viewModel.restore(uri)
+    }
+    val autoBackupFolderLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocumentTree()
+    ) { uri ->
+        if (uri != null) viewModel.setAutoBackupFolder(uri)
     }
 
     LaunchedEffect(Unit) {
@@ -444,6 +450,76 @@ fun SettingsScreen(
                         onClick = { restoreLauncher.launch(arrayOf("application/json")) },
                         modifier = Modifier.weight(1f),
                     ) { Text(stringResource(R.string.restore_label)) }
+                }
+            }
+            item {
+                var frequencyDropdownExpanded by remember { mutableStateOf(false) }
+                val frequencyOptions = listOf(
+                    BackupFrequency.OFF     to stringResource(R.string.auto_backup_freq_off),
+                    BackupFrequency.DAILY   to stringResource(R.string.auto_backup_freq_daily),
+                    BackupFrequency.WEEKLY  to stringResource(R.string.auto_backup_freq_weekly),
+                    BackupFrequency.MONTHLY to stringResource(R.string.auto_backup_freq_monthly),
+                )
+                val selectedFrequencyLabel = frequencyOptions.firstOrNull { it.first == prefs.autoBackupFrequency }?.second
+                    ?: stringResource(R.string.auto_backup_freq_off)
+                Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
+                    Text(
+                        stringResource(R.string.auto_backup_label),
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(bottom = 8.dp),
+                    )
+                    ExposedDropdownMenuBox(
+                        expanded = frequencyDropdownExpanded,
+                        onExpandedChange = { frequencyDropdownExpanded = it },
+                    ) {
+                        OutlinedTextField(
+                            value = selectedFrequencyLabel,
+                            onValueChange = {},
+                            readOnly = true,
+                            label = { Text(stringResource(R.string.auto_backup_frequency_label)) },
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = frequencyDropdownExpanded) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .menuAnchor(MenuAnchorType.PrimaryNotEditable),
+                        )
+                        ExposedDropdownMenu(
+                            expanded = frequencyDropdownExpanded,
+                            onDismissRequest = { frequencyDropdownExpanded = false },
+                        ) {
+                            frequencyOptions.forEach { (freq, label) ->
+                                DropdownMenuItem(
+                                    text = { Text(label) },
+                                    onClick = {
+                                        viewModel.setAutoBackupFrequency(freq)
+                                        frequencyDropdownExpanded = false
+                                    },
+                                )
+                            }
+                        }
+                    }
+                    if (prefs.autoBackupFrequency != BackupFrequency.OFF) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        val folderLabel = if (prefs.autoBackupFolderUri.isNotEmpty())
+                            stringResource(R.string.auto_backup_folder_set)
+                        else
+                            stringResource(R.string.auto_backup_folder_none)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(stringResource(R.string.auto_backup_folder_label), style = MaterialTheme.typography.bodySmall)
+                                Text(
+                                    folderLabel,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                            TextButton(onClick = { autoBackupFolderLauncher.launch(null) }) {
+                                Text(stringResource(R.string.auto_backup_choose_folder))
+                            }
+                        }
+                    }
                 }
                 HorizontalDivider(modifier = Modifier.padding(top = 8.dp))
             }

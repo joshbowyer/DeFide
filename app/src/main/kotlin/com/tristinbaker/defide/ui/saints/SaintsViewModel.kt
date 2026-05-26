@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class SaintSortOrder { NAME, FEAST_DATE }
+enum class SaintSortOrder { POPULARITY, NAME, FEAST_DATE }
 
 private val MONTH_ORDER = mapOf(
     "january" to 1, "february" to 2, "march" to 3, "april" to 4,
@@ -41,7 +41,7 @@ class SaintsViewModel @Inject constructor(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-    private val _sortOrder = MutableStateFlow(SaintSortOrder.NAME)
+    private val _sortOrder = MutableStateFlow(SaintSortOrder.POPULARITY)
     val sortOrder: StateFlow<SaintSortOrder> = _sortOrder.asStateFlow()
 
     val favoriteIds: StateFlow<Set<String>> = repository.getFavoriteIds()
@@ -51,6 +51,7 @@ class SaintsViewModel @Inject constructor(
         val filtered = if (query.isBlank()) all
         else all.filter { it.name.contains(query, ignoreCase = true) || it.patronage?.contains(query, ignoreCase = true) == true }
         when (sort) {
+            SaintSortOrder.POPULARITY -> filtered.sortedWith(compareBy(nullsLast()) { it.rank })
             SaintSortOrder.NAME       -> filtered.sortedBy { it.name }
             SaintSortOrder.FEAST_DATE -> filtered.sortedBy { it.feastSortKey() }
         }

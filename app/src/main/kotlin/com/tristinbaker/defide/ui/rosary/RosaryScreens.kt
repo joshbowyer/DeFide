@@ -373,9 +373,17 @@ private fun RosaryBeadIndicatorCompact(
         val tailStep  = (crossEndX - jX) / (tailCount + 2f)
 
         // physBead 0 farthest from junction, physBead 4 closest
+        // HM beads (1-3) are clustered together; OF beads (0, 4) keep wider spacing
         fun tailPos(physBead: Int): Offset {
-            val steps = tailCount - physBead   // 0→5, 4→1
-            return Offset(jX + steps * tailStep, jY)
+            val x = when (physBead) {
+                0    -> jX + 5.0f * tailStep
+                1    -> jX + 3.7f * tailStep
+                2    -> jX + 3.0f * tailStep
+                3    -> jX + 2.3f * tailStep
+                4    -> jX + 1.0f * tailStep
+                else -> jX + (tailCount - physBead) * tailStep
+            }
+            return Offset(x, jY)
         }
 
         val seg1      = rH / 2f - cornerR

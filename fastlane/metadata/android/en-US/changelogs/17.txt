@@ -1,0 +1,7 @@
+Added:
+- Automatic backup: choose a folder and a frequency (daily, weekly, or monthly) in Settings to have De Fide back up your data automatically
+- Saints now show portrait images (classical artwork) in the list and detail screen; 261 saints total, up from 53
+- Top 250 most popular saints added, sourced from Catholic Online
+
+Fixed:
+- Rosary diagram: the three Hail Mary beads on the pendant are now clustered closer together, matching real rosary proportions

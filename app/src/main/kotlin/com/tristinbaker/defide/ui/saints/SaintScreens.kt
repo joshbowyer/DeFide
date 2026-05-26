@@ -40,10 +40,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.SubcomposeAsyncImage
 import com.tristinbaker.defide.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,6 +94,11 @@ fun SaintsListScreen(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
+                    FilterChip(
+                        selected = sortOrder == SaintSortOrder.POPULARITY,
+                        onClick = { viewModel.setSortOrder(SaintSortOrder.POPULARITY) },
+                        label = { Text(stringResource(R.string.saints_sort_popularity)) },
+                    )
                     FilterChip(
                         selected = sortOrder == SaintSortOrder.NAME,
                         onClick = { viewModel.setSortOrder(SaintSortOrder.NAME) },
@@ -162,7 +169,7 @@ private fun SaintListItem(
             .padding(horizontal = 16.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        SaintAvatar(name = saint.name, category = saint.category)
+        SaintAvatar(name = saint.name, category = saint.category, saintId = saint.id)
         Spacer(Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
@@ -204,7 +211,7 @@ private fun SaintListItem(
 }
 
 @Composable
-private fun SaintAvatar(name: String, category: String) {
+private fun SaintAvatar(name: String, category: String, saintId: String, size: androidx.compose.ui.unit.Dp = 44.dp) {
     val bgColor = when (category) {
         "martyr"    -> MaterialTheme.colorScheme.errorContainer
         "apostle"   -> MaterialTheme.colorScheme.primaryContainer
@@ -219,19 +226,35 @@ private fun SaintAvatar(name: String, category: String) {
         "virgin"    -> MaterialTheme.colorScheme.onSurfaceVariant
         else        -> MaterialTheme.colorScheme.onPrimaryContainer
     }
-    Box(
-        modifier = Modifier
-            .size(44.dp)
-            .clip(CircleShape)
-            .background(bgColor),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = name.first().uppercaseChar().toString(),
-            style = MaterialTheme.typography.titleMedium,
-            color = fgColor,
-        )
-    }
+    SubcomposeAsyncImage(
+        model = "file:///android_asset/saints/$saintId.webp",
+        contentDescription = name,
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.size(size).clip(CircleShape),
+        error = {
+            Box(
+                modifier = Modifier
+                    .size(size)
+                    .clip(CircleShape)
+                    .background(bgColor),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = name.first().uppercaseChar().toString(),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = fgColor,
+                )
+            }
+        },
+        loading = {
+            Box(
+                modifier = Modifier
+                    .size(size)
+                    .clip(CircleShape)
+                    .background(bgColor),
+            )
+        },
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -284,16 +307,44 @@ fun SaintDetailScreen(
                     .padding(padding)
                     .verticalScroll(rememberScrollState()),
             ) {
+                // Full-width portrait image (or tinted placeholder if none available)
+                SubcomposeAsyncImage(
+                    model = "file:///android_asset/saints/${s.id}.webp",
+                    contentDescription = s.name,
+                    contentScale = ContentScale.FillWidth,
+                    modifier = Modifier.fillMaxWidth(),
+                    error = {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(220.dp)
+                                .background(MaterialTheme.colorScheme.primaryContainer),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = s.name.first().uppercaseChar().toString(),
+                                style = MaterialTheme.typography.displayLarge,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            )
+                        }
+                    },
+                    loading = {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(220.dp)
+                                .background(MaterialTheme.colorScheme.primaryContainer),
+                        )
+                    },
+                )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.primaryContainer)
-                        .padding(24.dp),
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
                     contentAlignment = Alignment.Center,
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        SaintAvatar(name = s.name, category = s.category)
-                        Spacer(Modifier.height(12.dp))
                         Text(
                             text = s.name,
                             style = MaterialTheme.typography.headlineSmall,

@@ -13,6 +13,7 @@ import javax.inject.Singleton
 enum class AppTheme { SYSTEM, LIGHT, DARK, AMOLED, DYNAMIC }
 enum class AppFont { SERIF, SYSTEM, SANS_SERIF }
 enum class RosaryOrder { DOMINICAN, FATIMA }
+enum class BackupFrequency { OFF, DAILY, WEEKLY, MONTHLY }
 
 data class UserPreferences(
     val theme: AppTheme = AppTheme.SYSTEM,
@@ -27,6 +28,8 @@ data class UserPreferences(
     val keepScreenOn: Boolean = false,
     val rosaryOrder: RosaryOrder = RosaryOrder.DOMINICAN,
     val rosaryHapticFeedback: Boolean = true,
+    val autoBackupFrequency: BackupFrequency = BackupFrequency.OFF,
+    val autoBackupFolderUri: String = "",
 )
 
 @Singleton
@@ -46,6 +49,8 @@ class UserPreferencesRepository @Inject constructor(
         private val KEY_KEEP_SCREEN_ON = androidx.datastore.preferences.core.booleanPreferencesKey("keep_screen_on")
         private val KEY_ROSARY_ORDER     = stringPreferencesKey("rosary_order")
         private val KEY_ROSARY_HAPTIC    = androidx.datastore.preferences.core.booleanPreferencesKey("rosary_haptic_feedback")
+        private val KEY_AUTO_BACKUP_FREQUENCY = stringPreferencesKey("auto_backup_frequency")
+        private val KEY_AUTO_BACKUP_FOLDER_URI = stringPreferencesKey("auto_backup_folder_uri")
     }
 
     val preferences: Flow<UserPreferences> = dataStore.data.map { prefs ->
@@ -62,6 +67,8 @@ class UserPreferencesRepository @Inject constructor(
             keepScreenOn = prefs[KEY_KEEP_SCREEN_ON] ?: false,
             rosaryOrder = prefs[KEY_ROSARY_ORDER]?.let { runCatching { RosaryOrder.valueOf(it) }.getOrNull() } ?: RosaryOrder.DOMINICAN,
             rosaryHapticFeedback = prefs[KEY_ROSARY_HAPTIC] ?: true,
+            autoBackupFrequency = prefs[KEY_AUTO_BACKUP_FREQUENCY]?.let { runCatching { BackupFrequency.valueOf(it) }.getOrNull() } ?: BackupFrequency.OFF,
+            autoBackupFolderUri = prefs[KEY_AUTO_BACKUP_FOLDER_URI] ?: "",
         )
     }
 
@@ -99,6 +106,14 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun setRosaryHapticFeedback(enabled: Boolean) {
         dataStore.edit { it[KEY_ROSARY_HAPTIC] = enabled }
+    }
+
+    suspend fun setAutoBackupFrequency(frequency: BackupFrequency) {
+        dataStore.edit { it[KEY_AUTO_BACKUP_FREQUENCY] = frequency.name }
+    }
+
+    suspend fun setAutoBackupFolderUri(uri: String) {
+        dataStore.edit { it[KEY_AUTO_BACKUP_FOLDER_URI] = uri }
     }
 
     suspend fun setBibleLastPosition(translationId: String, bookNumber: Int, chapter: Int) {
