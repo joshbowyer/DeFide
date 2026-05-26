@@ -109,7 +109,7 @@ Builds:
 
   - versionName: 2.0.0
     versionCode: 17
-    commit: b7226e1cce9221e8b839f033fe0e124f83efa0af
+    commit: 82ac86c4eff3ca18e0d26f33619f2fb5cc3e6f50
     subdir: app
     gradle:
       - yes
