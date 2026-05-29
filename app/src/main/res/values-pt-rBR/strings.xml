@@ -225,4 +225,15 @@
     <string name="tag_anxiety">Aflição</string>
     <string name="tag_home">Lar</string>
     <string name="tag_hospital">Hospital</string>
+    <string name="auto_backup_label">Cópia automática</string>
+    <string name="auto_backup_frequency_label">Frequência</string>
+    <string name="auto_backup_freq_off">Desativado</string>
+    <string name="auto_backup_freq_daily">Diariamente</string>
+    <string name="auto_backup_freq_weekly">Semanalmente</string>
+    <string name="auto_backup_freq_monthly">Mensalmente</string>
+    <string name="auto_backup_folder_label">Pasta da cópia</string>
+    <string name="auto_backup_folder_none">Nenhuma pasta selecionada</string>
+    <string name="auto_backup_folder_set">Pasta selecionada</string>
+    <string name="auto_backup_choose_folder">Escolher pasta</string>
+    <string name="saints_sort_popularity">Popular</string>
 </resources>
