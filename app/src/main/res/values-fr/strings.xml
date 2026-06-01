@@ -211,4 +211,15 @@
     <string name="restore_label">Restaurer</string>
     <string name="backup_label">Sauvegarder</string>
     <string name="section_backup">Sauvegarde &amp; Restauration</string>
+    <string name="auto_backup_freq_daily">Quotidien</string>
+    <string name="auto_backup_freq_weekly">Hebdomadaire</string>
+    <string name="auto_backup_freq_monthly">Mensuel</string>
+    <string name="auto_backup_folder_label">Dossier de sauvegarde</string>
+    <string name="auto_backup_folder_none">Aucun dossier sélectionné</string>
+    <string name="auto_backup_folder_set">Dossier sélectionné</string>
+    <string name="auto_backup_choose_folder">Choisir un dossier</string>
+    <string name="auto_backup_freq_off">Désactivé</string>
+    <string name="saints_sort_popularity">Popularité</string>
+    <string name="auto_backup_frequency_label">Fréquence</string>
+    <string name="auto_backup_label">Sauvegarde automatique</string>
 </resources>
