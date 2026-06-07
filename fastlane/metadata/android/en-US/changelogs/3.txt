@@ -1,4 +1,5 @@
 Fixed:
+- Saint Lawrence duplicate fix from v2.0.1 was not applied to existing installs due to a missing database version bump; this release forces the corrected database to load correctly
 - Removed duplicate Saint Lawrence entry; merged the fuller biography and added his famous last words ("Turn me over, I'm done on this side") to the single canonical entry
 - Novenas: completed novenas now show a delete icon so they can be reset without restoring from backup
 - Novenas: tapping "Mark Day Complete" now scrolls back to the top of the next day's prayer automatically

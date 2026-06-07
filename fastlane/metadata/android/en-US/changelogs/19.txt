@@ -1,0 +1,2 @@
+Fixed:
+- Saint Lawrence duplicate fix from v2.0.1 was not applied to existing installs due to a missing database version bump; this release forces the corrected database to load correctly
