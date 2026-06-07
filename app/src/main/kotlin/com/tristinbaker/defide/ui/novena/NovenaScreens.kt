@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -29,9 +30,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
+import kotlinx.coroutines.launch
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -167,8 +170,14 @@ fun NovenaSessionScreen(
 ) {
     val currentDay by viewModel.currentDay.collectAsState()
     val progress by viewModel.progress.collectAsState()
+    val listState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(novenaId, progressId) { viewModel.loadCurrentDay(novenaId, progressId) }
+
+    LaunchedEffect(progress?.lastCompletedDay) {
+        scope.launch { listState.animateScrollToItem(0) }
+    }
 
     Scaffold(
         topBar = {
@@ -182,7 +191,7 @@ fun NovenaSessionScreen(
             )
         },
     ) { padding ->
-        LazyColumn(modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp)) {
+        LazyColumn(state = listState, modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp)) {
             item {
                 currentDay?.title?.let {
                     Text(it, style = MaterialTheme.typography.titleMedium)
@@ -197,6 +206,13 @@ fun NovenaSessionScreen(
                         onClick = { viewModel.completeDay(novenaId) },
                         modifier = Modifier.fillMaxWidth(),
                     ) { Text(stringResource(R.string.novena_mark_complete)) }
+                    if ((progress?.lastCompletedDay ?: 0) > 0) {
+                        Spacer(Modifier.height(8.dp))
+                        OutlinedButton(
+                            onClick = { viewModel.undoDay(novenaId) },
+                            modifier = Modifier.fillMaxWidth(),
+                        ) { Text(stringResource(R.string.novena_undo_day)) }
+                    }
                 } else if (progress?.completed == true) {
                     Text(stringResource(R.string.novena_complete_msg), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
                 }
@@ -254,11 +270,19 @@ fun NovenaProgressScreen(
             if (completed.isNotEmpty()) {
                 item { Text(stringResource(R.string.novena_section_completed), style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(16.dp)) }
                 items(completed) { prog ->
-                    Text(
-                        titles[prog.novenaId] ?: prog.novenaId,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(16.dp),
-                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onNovenaSelected(prog.novenaId, prog.id) }
+                            .padding(start = 16.dp, top = 4.dp, bottom = 4.dp, end = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                    ) {
+                        Text(titles[prog.novenaId] ?: prog.novenaId, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+                        IconButton(onClick = { viewModel.abandonNovena(prog.id) }) {
+                            Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.novena_reset), tint = MaterialTheme.colorScheme.error)
+                        }
+                    }
                     HorizontalDivider()
                 }
             }

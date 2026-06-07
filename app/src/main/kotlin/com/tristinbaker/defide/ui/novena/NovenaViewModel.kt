@@ -99,6 +99,16 @@ class NovenaViewModel @Inject constructor(
         viewModelScope.launch { repository.abandonNovena(progressId) }
     }
 
+    fun undoDay(novenaId: String) {
+        viewModelScope.launch {
+            val prog = _progress.value ?: return@launch
+            if (prog.lastCompletedDay > 0) {
+                repository.undoDay(prog.id)
+                loadCurrentDay(novenaId, prog.id)
+            }
+        }
+    }
+
     fun completeDay(novenaId: String) {
         viewModelScope.launch {
             val prog = _progress.value ?: return@launch

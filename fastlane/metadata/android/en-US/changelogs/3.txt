@@ -1,4 +1,9 @@
 Fixed:
+- Removed duplicate Saint Lawrence entry; merged the fuller biography and added his famous last words ("Turn me over, I'm done on this side") to the single canonical entry
+- Novenas: completed novenas now show a delete icon so they can be reset without restoring from backup
+- Novenas: tapping "Mark Day Complete" now scrolls back to the top of the next day's prayer automatically
+- Novenas: added "Undo Last Day" button so you can step back one day without deleting and restarting the novena
+
 - Bible reading progress is now shared across translations, marking a chapter as read in one translation no longer shows it as unread when switching translations
 - Returning to the Bible section now reopens the last chapter you were reading instead of the books list
 - Prayer and novena detail screens now correctly show the selected language instead of always showing English

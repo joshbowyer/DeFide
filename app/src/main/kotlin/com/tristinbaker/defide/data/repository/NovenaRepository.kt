@@ -63,4 +63,7 @@ class NovenaRepository @Inject constructor(
 
     suspend fun completeNovena(progressId: String) =
         withContext(Dispatchers.IO) { novenaProgressDao.markComplete(progressId) }
+
+    suspend fun undoDay(progressId: String) =
+        withContext(Dispatchers.IO) { novenaProgressDao.decrementDay(progressId) }
 }
