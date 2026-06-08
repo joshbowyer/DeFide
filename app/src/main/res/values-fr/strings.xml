@@ -223,6 +223,8 @@
     <string name="saints_sort_popularity">Popularité</string>
     <string name="auto_backup_frequency_label">Fréquence</string>
     <string name="auto_backup_label">Sauvegarde automatique</string>
+    <string name="novena_undo_day">Annuler la journée d\'hier</string>
+    <string name="novena_reset">Réinitialiser la neuvaine</string>
 
     <!-- Confession log -->
     <string name="nav_confession">Confession</string>
