@@ -199,6 +199,7 @@
         <item quantity="many">%d дней</item>
         <item quantity="other">%d дней</item>
     </plurals>
+    <string name="section_backup">Резервная копия и восстановление</string>
 
     <!-- Confession log -->
     <string name="nav_confession">Confession</string>
