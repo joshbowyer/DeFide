@@ -1,0 +1,5 @@
+- Added Divine Mercy Chaplet, Litany of Humility, and Litany of Purity to the prayers library across all supported locales
+- Added Confession Log: track pending notes before confession and keep a dated history of past confessions
+- Fixed rosary tail bead spacing to match the loop bead density
+- Bible chapter tiles are now uniform 44dp squares for a consistent grid layout
+- Added per-mystery prayer intentions to the Rosary: set, save, and clear intentions that persist between sessions
