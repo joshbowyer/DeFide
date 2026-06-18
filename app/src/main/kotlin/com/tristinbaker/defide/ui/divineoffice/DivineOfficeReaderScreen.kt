@@ -311,9 +311,12 @@ private fun LaudesContent(
     rite: AppRite,
 ) {
     OfficeCard {
-        // 1. Invitatorium — always Latin in Traditional mode
+        // 1. Invitatorium — only Matins has one liturgically. Only show when populated
+        // (ferial backfill and some feasts have content; many feasts don't).
         val invitText = if (rite == AppRite.TRADITIONAL) officeLatin?.invitatorium ?: office.invitatorium else office.invitatorium
-        InvitatoriumSection(invitText)
+        if (!invitText.isNullOrBlank()) {
+            InvitatoriumSection(invitText)
+        }
 
         // 2. Hymn — Latin in Traditional
         val hymnText = if (rite == AppRite.TRADITIONAL) officeLatin?.hymn ?: office.hymn else office.hymn
@@ -577,7 +580,9 @@ private fun DefaultOfficeContent(
 ) {
     OfficeCard {
         val invitText = if (rite == AppRite.TRADITIONAL) officeLatin?.invitatorium ?: office.invitatorium else office.invitatorium
-        InvitatoriumSection(invitText)
+        if (!invitText.isNullOrBlank()) {
+            InvitatoriumSection(invitText)
+        }
         val hymnText = if (rite == AppRite.TRADITIONAL) officeLatin?.hymn ?: office.hymn else office.hymn
         HymnSection(hymnText)
         listOfNotNull(

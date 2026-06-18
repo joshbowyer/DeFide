@@ -3115,10 +3115,10 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
         print(f"  Backfilled {ferial_backfill} ferial Laudes/Vespers lectio+responsory rows from Major Special.txt.")
 
     # -----------------------------------------------------------------------
-    # Ferial Matins: backfill invitatorium (Psalm 95 opening) for days where
-    # source has none. Standard text is the same every day in the ferial cycle;
-    # the antiphon below the versicle varies by season in the real breviary
-    # but for the offline reader we use a generic one.
+    # Matins: backfill invitatorium (Psalm 95 opening) for ALL Matins rows where
+    # source has none. Standard text is the same every day; the antiphon below
+    # the versicle varies by season in the real breviary but for the offline
+    # reader we use a generic one.
     # -----------------------------------------------------------------------
     invitatorium_default_la = (
         "Dómine, lábia mea apéries.\n"
@@ -3133,12 +3133,23 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
     invit_default = invitatorium_default_en if lang == "en" else invitatorium_default_la
     cur = conn.execute(
         "UPDATE divine_office SET invitatorium=COALESCE(NULLIF(?, ''), invitatorium) "
-        "WHERE language=? AND file LIKE 'ferial/%' AND office_type='Matins' "
+        "WHERE language=? AND office_type='Matins' "
         "AND (invitatorium IS NULL OR invitatorium='')",
         (invit_default, lang),
     )
     if cur.rowcount:
-        print(f"  Backfilled {cur.rowcount} ferial Matins invitatorium rows.")
+        print(f"  Backfilled {cur.rowcount} Matins invitatorium rows ({lang}).")
+
+    # Laudes and Vespers don't have an invitatory in the traditional breviary.
+    # Some source files (e.g. sancti/01-01) include an "Invit" key for non-Matins
+    # offices but this is data-leakage from the original Matins section. Clear it.
+    cur = conn.execute(
+        "UPDATE divine_office SET invitatorium=NULL "
+        "WHERE language=? AND office_type IN ('Laudes', 'Vespers', 'Compline', 'Completorium')",
+        (lang,),
+    )
+    if cur.rowcount:
+        print(f"  Cleared {cur.rowcount} non-Matins invitatorium rows ({lang}).")
 
 
 # ---------------------------------------------------------------------------
