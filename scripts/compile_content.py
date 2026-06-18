@@ -2506,6 +2506,191 @@ _VERSE_CACHE = {}
 _VULGATE_PSALMS_BOOK_ID = 2022
 _VULGATE_ET_PSALMS_BOOK_ID = 3022
 
+# Commune fallback chain for feasts whose source doesn't define
+# Lectio1/2/3 or Responsory1/2/3. When a commune lacks a key, the next
+# commune in the chain is consulted. Cached per-process.
+_COMMUNE_FALLBACK_CHAIN = {
+    "C1":  ["C1p", "C1a"],
+    "C1a": ["C1", "C1p", "C1ap"],
+    "C2":  ["C2a", "C2p"],
+    "C2a": ["C2", "C2-1", "C2p"],
+    "C2b": ["C2", "C2a"],
+    "C3":  ["C3a", "C3p"],
+    "C4":  ["C4a", "C4b"],
+    "C4a": ["C4", "C4b"],
+    "C4b": ["C4", "C2b"],
+    "C5":  ["C5a", "C5b", "C4"],
+    "C5a": ["C5", "C4a", "C4"],
+    "C5b": ["C5", "C4"],
+    "C6":  ["C6a"],
+    "C6a": ["C6"],
+    "C7":  ["C6", "C6a"],
+    "C7a": ["C6a"],
+    "C11": ["C12"],
+}
+_COMMUNE_DATA_CACHE: dict[str, dict[str, str]] = {}
+
+
+def _resolve_commune_from_title(title: str) -> str | None:
+    """
+    Map a feast's Officium title to the appropriate Commune file.
+    Returns the commune name (e.g. "C5") or None if no match.
+
+    The Divinum Officium convention: feasts with "[Saint], Confessor" or
+    "[Saint], Virgin and Martyr" inherit the 1st-nocturn readings and
+    responsories from the matching commune (C5, C6, etc.). The Officium
+    title keywords drive the lookup.
+    """
+    if not title:
+        return None
+    t = title.lower()
+    # 0. Vigil/Octave/Within-Octave of a specific saint — inherit the parent
+    #    feast's commune. Common cases:
+    if "st. stephen" in t or "s. stephen" in t or "stephen" in t:
+        return "C2a"  # deacon/martyr
+    if "holy innocents" in t:
+        return "C2a"
+    if "sts. peter and paul" in t or "st. peter and paul" in t or "peter and paul" in t:
+        return "C1"
+    if "st. matthias" in t or "s. matthias" in t or "matthias" in t:
+        return "C1"
+    if "st. john" in t and "evangelist" in t:
+        return "C1a"
+    if "st. john" in t and "baptist" in t:
+        return "C5"  # Baptist was a Confessor (Matins Office treats him as one)
+    if "nativity of our lord" in t or "nativity of the lord" in t or "christmas" in t:
+        return "C1"  # Christmas uses Angel/Shepherd sections
+    if "epiphany" in t:
+        return "C5"  # default
+    if "ascension" in t:
+        return "C1"  # Ascension uses Apostle commune
+    if "vigil" in t and "apostle" in t:
+        return "C1"
+    if "vigil" in t and "evangelist" in t:
+        return "C1a"
+    if "vigil" in t and "martyr" in t:
+        return "C2a"
+    if "vigil" in t and "confessor" in t:
+        return "C5"
+    if "vigil" in t and "virgin" in t:
+        return "C6a"
+    # 1. Most specific: combinations
+    if "blessed virgin mary" in t or "beatae mariae virginis" in t or "b.m.v." in t:
+        return "C11"
+    if "evangelist" in t:
+        return "C1a"
+    # Handle "Apostels" (common typo in source) and other apostle variants
+    if "apostle" in t or "apostles" in t or "apostels" in t:
+        return "C1"
+    # 2. Widows (check before Martyr/Virgin to avoid false matches)
+    if "widow" in t and "martyr" in t:
+        return "C7"
+    if "widow" in t:
+        return "C7a"
+    # 3. Virgins
+    if "virgin" in t and "martyr" in t:
+        return "C6"
+    if "virgin" in t:
+        return "C6a"
+    # 4. Martyrs
+    if "martyr" in t and "pope" in t:
+        return "C2b"
+    if "martyr" in t and "bishop" in t:
+        return "C2"
+    if "martyr" in t and ("companion" in t or "companions" in t or "mm." in t):
+        return "C3"
+    if "martyr" in t:
+        return "C2a"
+    # 5. Confessors / Doctors
+    if "confessor" in t and "bishop" in t and "doctor" in t:
+        return "C4a"
+    if "pope" in t and "doctor" in t:
+        return "C4b"
+    if "bishop" in t and "doctor" in t:
+        return "C4a"
+    if "bishop" in t and "confessor" in t:
+        return "C4"
+    if "pope" in t:
+        return "C4b"
+    if "doctor" in t and "bishop" in t:
+        return "C4a"
+    if "doctor" in t:
+        return "C5a"
+    if "confessor" in t:
+        return "C5"
+    # 6. Monastics
+    if "abbot" in t or "abbess" in t or "monk" in t or "religious" in t:
+        return "C5b"
+    return None
+
+
+def _load_commune_office(do_dir: str, commune_name: str) -> dict[str, str]:
+    """
+    Load a commune's JSON file from content/divine_office/data/commune/
+    and return a flat {section_name: text} dict (later items override
+    earlier ones, mirroring the JSON merge). Returns empty dict if the
+    commune file doesn't exist.
+    """
+    en_lang = globals().get("_compile_lang", "la")
+    cache_key = f"{commune_name}:{en_lang}"
+    if cache_key in _COMMUNE_DATA_CACHE:
+        return _COMMUNE_DATA_CACHE[cache_key]
+    commune_path = os.path.join(do_dir, "commune", f"{commune_name}.json")
+    flat: dict[str, str] = {}
+    if os.path.exists(commune_path):
+        try:
+            with open(commune_path) as f:
+                data = json.load(f)
+            if isinstance(data, list):
+                for item in data:
+                    if isinstance(item, dict):
+                        for k, v in item.items():
+                            if isinstance(v, str) and v and not k.startswith("_"):
+                                flat[k] = v
+        except (json.JSONDecodeError, OSError):
+            pass
+
+    # For English rows, overlay the English txt sections on top of the
+    # JSON-derived dict (the same overlay pattern used for sancti).
+    if en_lang == "en":
+        horas_dir = globals().get("_compile_horas_dir")
+        if horas_dir:
+            en_path = os.path.join(horas_dir, "Commune", f"{commune_name}.txt")
+            if os.path.exists(en_path):
+                en_secs = _load_txt_sections_flat(en_path)
+                _meta_keys = ("Rank", "Rule", "Comment")
+                for k, v in en_secs.items():
+                    if k in _meta_keys:
+                        continue
+                    if v and v.strip():
+                        flat[k] = v
+
+    _COMMUNE_DATA_CACHE[cache_key] = flat
+    return flat
+
+
+def _commune_fallback_lookup(do_dir: str, commune_name: str, *keys: str) -> str | None:
+    """
+    Look up `keys` (in order) in the commune chain. Returns the first
+    non-empty value found, or None.
+
+    E.g. _commune_fallback_lookup(do_dir, "C5", "Responsory1", "Responsory1 in 2 loco")
+    would consult C5 → C5a → C5b → C4 for "Responsory1", then try
+    "Responsory1 in 2 loco" in the same chain.
+    """
+    chain = [commune_name] + _COMMUNE_FALLBACK_CHAIN.get(commune_name, [])
+    seen = set()
+    for cname in chain:
+        if cname in seen:
+            continue
+        seen.add(cname)
+        cdata = _load_commune_office(do_dir, cname)
+        for k in keys:
+            v = cdata.get(k)
+            if v and v.strip() and not v.startswith("@"):
+                return v
+    return None
+
 
 def _expand_psalm_ref(conn, ref, lang: str = "la"):
     if not ref:
@@ -3516,6 +3701,10 @@ def compile_divine_office(conn, lang: str = "la"):
         print(f"  SKIP: content/divine_office/data not found.")
         return
 
+    # Set module-level state so _load_commune_office can apply EN txt overlay
+    globals()["_compile_lang"] = lang
+    globals()["_compile_horas_dir"] = horas_dir
+
     CALENDAR_FILE_TYPES = {"tempora", "sancti", "commune", "extra",
                            "orationes", "psalmi", "missa", "martyrologium"}
 
@@ -3808,7 +3997,37 @@ def compile_divine_office(conn, lang: str = "la"):
                                     if len(parts) == 3:
                                         text = text.replace(parts[1], parts[2])
                             return text
-                    return "@" + ref  # unresolved
+
+                # ─────────────────────────────────────────────────────────
+                # Commune fallback — for sancti feasts whose source file
+                # doesn't define Lectio1/2/3 or Responsory1/2/3, fall back
+                # to the matching Commune office (Apostles, Martyrs, etc.).
+                # The Divinum Officium convention is that 1st-nocturn readings
+                # and responsories come from the commune when the feast
+                # doesn't have its own.
+                # ─────────────────────────────────────────────────────────
+                if file_type == "sancti":
+                    # Use EN txt Officium if the JSON has none (some feasts
+                    # use [Rank] for the title and leave [Officium] empty).
+                    _title_for_commune = raw_title or title
+                    if not _title_for_commune and en_txt_sections:
+                        _title_for_commune = en_txt_sections.get("Officium", "")
+                    if not _title_for_commune and en_txt_sections:
+                        _title_for_commune = en_txt_sections.get("Rank", "")
+                    _commune_office = _resolve_commune_from_title(_title_for_commune)
+                    if _commune_office:
+                        for _field, _key, _alt_key in (
+                            ("lectio1", "Lectio1", "Lectio1 in 2 loco"),
+                            ("lectio2", "Lectio2", "Lectio2 in 2 loco"),
+                            ("lectio3", "Lectio3", "Lectio3 in 2 loco"),
+                            ("responsory1", "Responsory1", "Responsory1 in 2 loco"),
+                            ("responsory2", "Responsory2", "Responsory2 in 2 loco"),
+                            ("responsory3", "Responsory3", "Responsory3 in 2 loco"),
+                        ):
+                            if not merged.get(_key):
+                                fb = _commune_fallback_lookup(do_dir, _commune_office, _key, _alt_key)
+                                if fb:
+                                    merged[_key] = fb
 
                 for office_type, sec in sections:
                     hymn = None
@@ -4513,15 +4732,23 @@ def compile_divine_office(conn, lang: str = "la"):
     # Many sancti/tempora files use `@Sancti/XX-YY:Responsory1` style refs to
     # share text with another office. The compiler's section parser already
     # stored the raw @-ref in those columns; here we follow the chain.
+    # The column N (1/2/3) is used as a section hint when the @-ref has none
+    # (e.g. `@Sancti/06-30` in `responsory_1` resolves to 06-30's Responsory1,
+    # not its default Hymnus).
     field_resolved = 0
-    for col, kind in (
-        ("lectio_1", "lectio"), ("lectio_2", "lectio"), ("lectio_3", "lectio"),
-        ("responsory_1", "responsory"), ("responsory_2", "responsory"), ("responsory_3", "responsory"),
+    for col, kind, n in (
+        ("lectio_1", "lectio", 1), ("lectio_2", "lectio", 2), ("lectio_3", "lectio", 3),
+        ("responsory_1", "responsory", 1), ("responsory_2", "responsory", 2), ("responsory_3", "responsory", 3),
     ):
         cu = conn.execute(
             f"SELECT id, {col} FROM divine_office WHERE {col} LIKE '@%'"
         )
         for row_id, ref in cu.fetchall():
+            # If the @-ref has no :section hint, append a default section based
+            # on the column number (Responsory1/2/3, Lectio1/2/3).
+            if ":" not in ref and "@" in ref and "/" in ref:
+                default_sec = f"Responsory{n}" if kind == "responsory" else f"Lectio{n}"
+                ref = f"{ref}:{default_sec}"
             resolved = _resolve_hymn_chain(ref, default_kind=kind)
             if resolved != ref:
                 conn.execute(
