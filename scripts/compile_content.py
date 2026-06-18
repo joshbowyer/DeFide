@@ -4039,6 +4039,67 @@ def compile_divine_office(conn, lang: str = "la"):
     major_secs = _load_txt_file("Psalmi major.txt", horas_dir)
     mat_secs = _load_txt_file("Psalmi matutinum.txt", horas_dir)
 
+    # Load Compline (Completorium) antiphons + psalm refs from Psalmi minor.txt.
+    # Each day has one antiphon + 3 psalm refs (e.g. "Have mercy... 4,90,133").
+    # Without this, the Compline row in divine_office_psalms would inherit
+    # the Laudes blocks (since the JSON pre-insert doesn't know about it).
+    def _flush_comp_day(target_day, ant, refs):
+        if target_day is None or (ant is None and not refs):
+            return
+        verses = []
+        if refs:
+            for ref in refs:
+                verses.extend(_expand_psalm_ref(conn, ref, lang=lang))
+        compline_blocks_by_day[target_day] = [
+            {"antiphon": ant, "verses": verses}
+        ]
+
+    minor_txt_path = os.path.join(horas_dir, "Psalterium", "Psalmi", "Psalmi minor.txt")
+    compline_blocks_by_day = {}
+    if os.path.exists(minor_txt_path):
+        day_map_comp = {"Dominica": 0, "Feria II": 1, "Feria III": 2, "Feria IV": 3,
+                        "Feria V": 4, "Feria VI": 5, "Sabbato": 6}
+        in_comp = False
+        with open(minor_txt_path, encoding="utf-8") as fh:
+            cur_day = None
+            cur_ant = None
+            cur_refs = None
+            for raw in fh:
+                line = raw.rstrip("\n")
+                if line.startswith("[") and line.endswith("]"):
+                    # section change — flush current
+                    if in_comp:
+                        _flush_comp_day(cur_day, cur_ant, cur_refs)
+                    in_comp = (line[1:-1] == "Completorium")
+                    cur_day = None
+                    cur_ant = None
+                    cur_refs = None
+                    continue
+                if not in_comp:
+                    continue
+                # Antiphon line: "Dominica = Have mercy..."
+                if "=" in line:
+                    # new day — flush previous
+                    if cur_day is not None:
+                        _flush_comp_day(cur_day, cur_ant, cur_refs)
+                    label, rest = line.split("=", 1)
+                    label = label.strip()
+                    if label not in day_map_comp:
+                        continue
+                    cur_day = day_map_comp[label]
+                    cur_ant = rest.strip().rstrip(".")
+                    cur_refs = None
+                    continue
+                # Psalm ref line: "4,90,133" — must follow an antiphon line
+                if line.strip() and cur_day is not None and cur_refs is None:
+                    refs = [r.strip() for r in line.replace(" ", "").split(",") if r.strip()]
+                    if refs:
+                        cur_refs = refs
+            # flush last
+            if in_comp:
+                _flush_comp_day(cur_day, cur_ant, cur_refs)
+        print(f"  Compline psalm blocks loaded for {len(compline_blocks_by_day)} days.")
+
     ferial_map = {}
     for sec_key, sec_rows in major_secs.items():
         m = re.match(r"^Day(\d+)\s+(.*)$", sec_key)
@@ -4071,11 +4132,11 @@ def compile_divine_office(conn, lang: str = "la"):
         if blocks:
             matins_map[day] = blocks
 
-    # Ensure Day 0–6 ferial rows exist for Laudes/Vespers/Matins in the current language.
+    # Ensure Day 0–6 ferial rows exist for Laudes/Vespers/Matins/Compline in the current language.
     # The pre-processed JSON only inserts these for `la` (English has no Psalmi major.json),
     # so without this step EN users would see no psalm verses for the ferial cycle.
     for day in range(7):
-        for ot in ("Laudes", "Vespers", "Matins"):
+        for ot in ("Laudes", "Vespers", "Matins", "Compline"):
             existing = conn.execute(
                 "SELECT 1 FROM divine_office_psalms WHERE day=? AND office_type=? AND language=?",
                 (day, ot, lang),
@@ -4085,6 +4146,12 @@ def compile_divine_office(conn, lang: str = "la"):
                     "INSERT INTO divine_office_psalms (day, office_type, language, antiphon, psalms) VALUES (?, ?, ?, NULL, '[]')",
                     (day, ot, lang),
                 )
+
+    # Register Compline (Completorium) blocks in ferial_map so the UPDATE
+    # pass below finds them and overwrites the Laudes-fallback blocks that
+    # the JSON-inserted 'Compline' rows would otherwise receive.
+    for day, blocks in compline_blocks_by_day.items():
+        ferial_map[(day, "Compline")] = blocks
 
     expanded = 0
     cu = conn.execute(
@@ -4096,6 +4163,8 @@ def compile_divine_office(conn, lang: str = "la"):
         blocks = None
         if ot == "Matins":
             blocks = matins_map.get(day)
+        elif ot == "Compline":
+            blocks = ferial_map.get((day, "Compline"))
         else:
             blocks = ferial_map.get((day, ot))
             if not blocks:
