@@ -3115,30 +3115,38 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
         print(f"  Backfilled {ferial_backfill} ferial Laudes/Vespers lectio+responsory rows from Major Special.txt.")
 
     # -----------------------------------------------------------------------
-    # Matins: backfill invitatorium (Psalm 95 opening) for ALL Matins rows where
-    # source has none. Standard text is the same every day; the antiphon below
-    # the versicle varies by season in the real breviary but for the offline
-    # reader we use a generic one.
+    # Invitatorium: backfill for Matins and Lauds (and other offices, since
+    # the Invitatory is prayed at whichever of Lauds or Matins is done first
+    # in the day, and is the same text either way). Source files only include
+    # `Invit` keys for major feasts; everything else gets this generic ferial text.
+    # The text includes the versicle + a generic antiphon + Psalm 95 reference
+    # so the reader has the complete prayer, not a truncated stub.
     # -----------------------------------------------------------------------
     invitatorium_default_la = (
         "Dómine, lábia mea apéries.\n"
         "Et os meum annuntiábit laudem tuam.\n"
-        "Psalmus 94 (95): Veníte, exsultémus Dómino…"
+        "\n"
+        "Ant. (ferial): Veníte, adorémus Deum, et curvémur ante Dóminum.\n"
+        "\n"
+        "Psalmus 94 (95) — Veníte, exsultémus Dómino, jubilémus Deo salutári nostro."
     )
     invitatorium_default_en = (
         "O Lord, open my lips.\n"
         "And my mouth shall declare your praise.\n"
-        "Psalm 95: Come, let us sing joyfully to the Lord…"
+        "\n"
+        "Antiphon (ferial): Come, let us worship the Lord, for he is our God.\n"
+        "\n"
+        "Psalm 95 — Come, let us sing joyfully to the Lord, the rock of our salvation."
     )
     invit_default = invitatorium_default_en if lang == "en" else invitatorium_default_la
     cur = conn.execute(
         "UPDATE divine_office SET invitatorium=COALESCE(NULLIF(?, ''), invitatorium) "
-        "WHERE language=? AND office_type='Matins' "
+        "WHERE language=? AND office_type IN ('Matins', 'Laudes', 'Vespers', 'Compline', 'Completorium') "
         "AND (invitatorium IS NULL OR invitatorium='')",
         (invit_default, lang),
     )
     if cur.rowcount:
-        print(f"  Backfilled {cur.rowcount} Matins invitatorium rows ({lang}).")
+        print(f"  Backfilled {cur.rowcount} invitatorium rows ({lang}).")
 
     # Note: the Invitatory can also be prayed at Lauds (whichever of Lauds or
     # Matins is done first in the day). Non-Matins rows that had invitatory in
