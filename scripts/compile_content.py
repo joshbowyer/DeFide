@@ -3140,16 +3140,9 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
     if cur.rowcount:
         print(f"  Backfilled {cur.rowcount} Matins invitatorium rows ({lang}).")
 
-    # Laudes and Vespers don't have an invitatory in the traditional breviary.
-    # Some source files (e.g. sancti/01-01) include an "Invit" key for non-Matins
-    # offices but this is data-leakage from the original Matins section. Clear it.
-    cur = conn.execute(
-        "UPDATE divine_office SET invitatorium=NULL "
-        "WHERE language=? AND office_type IN ('Laudes', 'Vespers', 'Compline', 'Completorium')",
-        (lang,),
-    )
-    if cur.rowcount:
-        print(f"  Cleared {cur.rowcount} non-Matins invitatorium rows ({lang}).")
+    # Note: the Invitatory can also be prayed at Lauds (whichever of Lauds or
+    # Matins is done first in the day). Non-Matins rows that had invitatory in
+    # source are kept as-is — they reflect the user's preferred praxis.
 
 
 # ---------------------------------------------------------------------------
