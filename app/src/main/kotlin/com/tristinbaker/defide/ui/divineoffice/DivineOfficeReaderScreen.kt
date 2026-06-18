@@ -509,9 +509,15 @@ private fun MatinsContent(
         HymnSection(hymnText)
 
         // 3. Psalm 1
-        val matinsPsalms = psalms.filter { it.officeType == "Matins" }
+        // Matins source has 9 antiphons per row (3 per psalm). Each psalm = 3 antiphons.
+        val matinsRow = psalms.firstOrNull { it.officeType == "Matins" }
+        val matinsBlocks = matinsRow?.parseBlocks()?.blocks.orEmpty()
         val matAnt1 = if (rite == AppRite.TRADITIONAL) officeLatin?.ant1 ?: office.ant1 else office.ant1
-        MatinsPsalm1Section(matinsPsalms.getOrNull(0), matAnt1, rite)
+        MatinsPsalm1Section(
+            blocks = matinsBlocks.subList(0, minOf(3, matinsBlocks.size)),
+            antiphon = matAnt1,
+            rite = rite,
+        )
 
         // 4. First Reading — English in Traditional
         FirstReadingSection(office.lectio1)
@@ -522,7 +528,11 @@ private fun MatinsContent(
 
         // 6. Psalm 2
         val matAnt2 = if (rite == AppRite.TRADITIONAL) officeLatin?.ant2 ?: office.ant2 else office.ant2
-        MatinsPsalm2Section(matinsPsalms.getOrNull(1), matAnt2, rite)
+        MatinsPsalm2Section(
+            blocks = if (matinsBlocks.size >= 6) matinsBlocks.subList(3, 6) else emptyList(),
+            antiphon = matAnt2,
+            rite = rite,
+        )
 
         // 7. Second Reading — English in Traditional
         SecondReadingSection(office.lectio2)
@@ -533,7 +543,11 @@ private fun MatinsContent(
 
         // 9. Psalm 3 — only if lectio3 is present (feast/commemoratio format)
         if (!office.lectio3.isNullOrBlank()) {
-            MatinsPsalm3Section(matinsPsalms.getOrNull(2), office.ant3, rite)
+            MatinsPsalm3Section(
+                blocks = if (matinsBlocks.size >= 9) matinsBlocks.subList(6, 9) else emptyList(),
+                antiphon = office.ant3,
+                rite = rite,
+            )
         }
 
         // 10. Third Reading — English in Traditional
@@ -795,14 +809,14 @@ private fun DefaultOfficeContent(
 // ─────────────────────────────────────────────────────────────────────────────
 //  MATINS
 // ─────────────────────────────────────────────────────────────────────────────
-@Composable private fun MatinsPsalm1Section(psalm: DivineOfficePsalm?, antiphon: String?, rite: AppRite) {
+@Composable private fun MatinsPsalm1Section(blocks: List<PsalmBlock>, antiphon: String?, rite: AppRite) {
     SectionHeader("Psalm 1")
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
         if (!clean.isNullOrBlank()) SectionSubtext(clean)
         Spacer(modifier = Modifier.height(4.dp))
     }
-    psalm?.let { PsalmVerses(it) }
+    MatinsPsalmVerses(blocks)
     Spacer(modifier = Modifier.height(8.dp))
     GloriaPatriLine(rite)
     if (!antiphon.isNullOrBlank()) {
@@ -821,14 +835,14 @@ private fun DefaultOfficeContent(
 @Composable private fun Responsory1Section(value: String?) =
     OfficeField(label = "Responsory", value = value ?: "(empty)")
 
-@Composable private fun MatinsPsalm2Section(psalm: DivineOfficePsalm?, antiphon: String?, rite: AppRite) {
+@Composable private fun MatinsPsalm2Section(blocks: List<PsalmBlock>, antiphon: String?, rite: AppRite) {
     SectionHeader("Psalm 2")
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
         if (!clean.isNullOrBlank()) SectionSubtext(clean)
         Spacer(modifier = Modifier.height(4.dp))
     }
-    psalm?.let { PsalmVerses(it) }
+    MatinsPsalmVerses(blocks)
     Spacer(modifier = Modifier.height(8.dp))
     GloriaPatriLine(rite)
     if (!antiphon.isNullOrBlank()) {
@@ -847,14 +861,14 @@ private fun DefaultOfficeContent(
 @Composable private fun Responsory2Section(value: String?) =
     OfficeField(label = "Responsory 2", value = value ?: "(empty)")
 
-@Composable private fun MatinsPsalm3Section(psalm: DivineOfficePsalm?, antiphon: String?, rite: AppRite) {
+@Composable private fun MatinsPsalm3Section(blocks: List<PsalmBlock>, antiphon: String?, rite: AppRite) {
     SectionHeader("Psalm 3")
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
         if (!clean.isNullOrBlank()) SectionSubtext(clean)
         Spacer(modifier = Modifier.height(4.dp))
     }
-    psalm?.let { PsalmVerses(it) }
+    MatinsPsalmVerses(blocks)
     Spacer(modifier = Modifier.height(8.dp))
     GloriaPatriLine(rite)
     if (!antiphon.isNullOrBlank()) {
@@ -983,6 +997,31 @@ private fun PsalmVerses(psalm: DivineOfficePsalm) {
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurface,
         )
+    }
+}
+
+/**
+ * Render a Matins psalm that has multiple antiphon+verse blocks (typically 3).
+ * Each block is preceded by its antiphon (the asterisk splits the antiphon
+ * chant — text before * is the start, text after is the repeat on the
+ * concluding tone; we display the full line for now).
+ */
+@Composable
+private fun MatinsPsalmVerses(blocks: List<PsalmBlock>) {
+    for ((idx, block) in blocks.withIndex()) {
+        if (idx > 0) Spacer(modifier = Modifier.height(6.dp))
+        block.antiphon?.takeIf { it.isNotBlank() }?.let { ant ->
+            val clean = ant.sanitizeOfficeField()
+            if (!clean.isNullOrBlank()) SectionSubtext(clean)
+            Spacer(modifier = Modifier.height(4.dp))
+        }
+        block.verses.joinToString("\n").formatVerses().forEach { verse ->
+            Text(
+                text = verse,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        }
     }
 }
 
