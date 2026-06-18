@@ -208,19 +208,45 @@ def _clean_nrsvce_verse(text: str) -> str:
 
 
 def _normalize_office_text(text: str | None) -> str | None:
-    """Remove $ template markers embedded in Latin office source data.
+    """Remove $ template markers and DivinumOfficium DSL noise from office text.
 
-    The sancti/Latin Divine Office JSON files contain rubric markers like
-    $Qui tecum, $Per Dominum, $Oremus v., $Amen, $Credo that should not
-    appear in the rendered text. These are placeholders meant to be expanded
-    by a typesetting system, but for our plain-text display they are noise.
+    Source files contain rubric markers like $Tu autem, $Per Dominum, $Deo gratias,
+    $Qui tecum, $Oremus, $Amen, $Credo that should not appear in the rendered text.
+    They also contain inline DSL directives (&Gloria, &psalm(...), &special(...))
+    and chapter/verse markers (!Rom 13:12-13, leading "v."). All of these need to
+    be cleaned before display.
     """
     if not text:
         return text
     import re
-    # Strip $ prefix from rubric marker words: $Qui → Qui, $Per → Per, etc.
-    # Only matches [A-Z][a-z]+ so $O God, is NOT matched (mixed case after $)
+    # Strip full rubric phrases that source files include inline. These are
+    # stand-alone rubric markers and should disappear entirely from the displayed text.
+    for phrase in (
+        "$Tu autem", "$Per Dominum", "$Per Dóminum", "$Deo gratias",
+        "$Qui tecum", "$Oremus", "$Amen", "$Credo", "$Alleluia",
+        "$Deus in adjutorium", "$Domine exaudi", "$Kyrie",
+        "$Pater noster", "$Ave Maria", "$Converte nos",
+    ):
+        text = text.replace(phrase, "")
+    # Strip $ prefix from single-word rubric markers: $Qui → Qui, $Per → Per, etc.
     text = re.sub(r'\$([A-Z][a-z]+)', r'\1', text)
+    # Strip chapter-reference markers like "!Rom 13:12-13" (DivinumOfficium source format).
+    # Matches anywhere in text: "!Word N:N" optionally followed by more verse refs.
+    text = re.sub(r'!\S+\s+\d+:\d+(?:[-,]\d+)*\s*', '', text)
+    # Strip bare !Word markers like "!Sermo 7" or "!Serm. 2." (DivinumOfficium sermon refs)
+    # that didn't get matched by the verse pattern above.
+    text = re.sub(r'!\S+\.?\s*\d*\.?\s*', '', text)
+    # Strip DivinumOfficium DSL directives: &Gloria, &psalm(...), &special(...),
+    # &Alleluia, &pater_noster, etc. These are runtime placeholders, not displayable text.
+    text = re.sub(r'&\w+(?:\([^)]*\))?', '', text)
+    # Strip "v." verse marker at start of lines ("v. Fratres: ...").
+    text = re.sub(r'(?m)^v\.\s*', '', text)
+    # Strip DivinumOfficium @-reference substitution syntax: @file::s/SEARCH/REPLACE/
+    # leaves stray $/: in the visible text when the @-ref was not resolved by the
+    # source extractor. Remove these markers entirely.
+    text = re.sub(r'\$/:?\S*', '', text)
+    # Collapse leftover blank lines / extra whitespace
+    text = re.sub(r'\n{3,}', '\n\n', text).strip()
     return text
 
 def create_schema(conn: sqlite3.Connection) -> None:
@@ -2845,13 +2871,21 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
     }
 
     inserted = 0
+    updated = 0
     for day, ot, title, oratio in FERIAL_ROWS:
-        oratio = EN_ORATIOS[(day, ot)] if lang == "en" else oratio
+        oratio_text = EN_ORATIOS[(day, ot)] if lang == "en" else oratio
         exists = conn.execute(
             "SELECT COUNT(*) FROM divine_office WHERE file=? AND office_type=? AND language=?",
             (f"ferial/{day}", ot, lang),
         ).fetchone()[0]
         if exists:
+            # Backfill: if oratio is missing on an existing row, set it from the hardcoded cycle.
+            conn.execute(
+                "UPDATE divine_office SET oratio=COALESCE(NULLIF(?, ''), oratio) "
+                "WHERE language=? AND file=? AND office_type=? AND (oratio IS NULL OR oratio='')",
+                (_normalize_office_text(oratio_text), lang, f"ferial/{day}", ot),
+            )
+            updated += 1
             continue
         antiphon = matins_ant_by_day.get(day) if ot == "Matins" else (
             laudes_ant_by_day.get(day) if ot == "Laudes" else vespers_ant_by_day.get(day)
@@ -2888,7 +2922,7 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
                 hymn, matins_antiphon)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
-                f"ferial/{day}", "ferial", lang, title, ot, _normalize_office_text(oratio),
+                f"ferial/{day}", "ferial", lang, title, ot, _normalize_office_text(oratio_text),
                 *ant_list[:9],
                 hymn_text,
                 antiphon,
@@ -2915,6 +2949,7 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
             )
 
     print(f"  Inserted {inserted} ferial fallback rows into divine_office.")
+    print(f"  Updated oratio on {updated} existing ferial rows.")
 
     # -----------------------------------------------------------------------
     # Completorium ferial rows — not covered by JSON files, built from txt
@@ -2936,6 +2971,13 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
     ms = _load_txt_sections_local(minor_special) if os.path.exists(minor_special) else {}
 
     hymn_text = "\n".join(ms.get("Hymnus Completorium", []))
+    # Standard Compline capitulum from Minor Special [Completorium_] section (Jer 14:9)
+    capitulum_text = "\n".join(ms.get("Completorium_", []))
+    # Standard Compline conclusio
+    conclusio_text = (
+        "Benedicamus Domino. Deo gratias." if lang == "la"
+        else "Benedicamus Domino. Thanks be to God."
+    )
     # Standard Completorium oratio
     oratio_text = (
         "Vísita, quǽsumus, Dómine, habitátionem istam, et ómnes insídias inimíci ab ea repélle: "
@@ -2963,24 +3005,27 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
             (f"ferial/{day}", "Completorium", lang),
         ).fetchone()[0]
         if exists:
-            # Update matins_antiphon with Completorium antiphon from txt
+            # Backfill antiphon, capitulum, and conclusio on existing rows.
             ant = completorium_ant_by_day.get(day, "")
-            if ant:
-                conn.execute(
-                    "UPDATE divine_office SET matins_antiphon=? WHERE language=? AND file=? AND office_type=?",
-                    (ant, lang, f"ferial/{day}", "Completorium"),
-                )
+            conn.execute(
+                "UPDATE divine_office SET matins_antiphon=COALESCE(NULLIF(?, ''), matins_antiphon), "
+                "capitulum=COALESCE(NULLIF(?, ''), capitulum), "
+                "conclusio=COALESCE(NULLIF(?, ''), conclusio) "
+                "WHERE language=? AND file=? AND office_type=?",
+                (ant, capitulum_text, conclusio_text, lang, f"ferial/{day}", "Completorium"),
+            )
             continue
-        lectio_comp = "\n".join(ms.get("Lectio Completorium", []))
-        resp_comp = "\n".join(ms.get("Responsory Completorium", []))
+        lectio_comp = _normalize_office_text("\n".join(ms.get("Lectio Completorium", [])))
+        resp_comp = _normalize_office_text("\n".join(ms.get("Responsory Completorium", [])))
 
         # Insert new Completorium row
         ant = completorium_ant_by_day.get(day, "")
         conn.execute(
             """INSERT INTO divine_office
                (file, file_type, language, title, office_type, hymn,
-                lectio_1, responsory_1, matins_antiphon, oratio)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                lectio_1, responsory_1, matins_antiphon, oratio,
+                capitulum, conclusio)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 f"ferial/{day}",
                 "ferial",
@@ -2992,11 +3037,82 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
                 resp_comp,
                 ant,
                 oratio_text,
+                capitulum_text,
+                conclusio_text,
             ),
         )
+
+        # Sweep: also normalize any pre-existing lectio_1/responsory_1/2/3 rows that
+        # may have inherited DivinumOfficium DSL markers (!$Word, !Ref, &Gloria, etc.)
+        # from source. This is idempotent — already-clean text passes through unchanged.
+        n_cleaned = 0
+        for col in ("lectio_1", "lectio_2", "lectio_3",
+                    "responsory_1", "responsory_2", "responsory_3"):
+            rows = conn.execute(
+                f"SELECT id, {col} FROM divine_office WHERE language=? AND {col} IS NOT NULL AND ({col} LIKE '%$%' OR {col} LIKE '%!%' OR {col} LIKE '%&%')",
+                (lang,),
+            ).fetchall()
+            for row_id, val in rows:
+                cleaned = _normalize_office_text(val)
+                if cleaned != val:
+                    conn.execute(f"UPDATE divine_office SET {col}=? WHERE id=?", (cleaned, row_id))
+                    n_cleaned += 1
         comp_inserted += 1
 
+    # Sweep: normalize any pre-existing lectio_1/2/3/responsory_1/2/3 cells that may
+    # have inherited DivinumOfficium DSL markers (!$Word, !Ref, &Gloria, etc.) from
+    # source. Idempotent — clean text passes through unchanged.
+    # Note: use INSTR (not LIKE) because `!` and `&` are not safe to use unescaped in LIKE
+    # on all SQLite builds.
+    n_cleaned = 0
+    for col in ("lectio_1", "lectio_2", "lectio_3",
+                "responsory_1", "responsory_2", "responsory_3"):
+        rows = conn.execute(
+            f"SELECT id, {col} FROM divine_office WHERE language=? AND {col} IS NOT NULL AND (instr({col}, '$') > 0 OR instr({col}, '!') > 0 OR instr({col}, '&') > 0)",
+            (lang,),
+        ).fetchall()
+        for row_id, val in rows:
+            cleaned = _normalize_office_text(val)
+            if cleaned != val:
+                conn.execute(f"UPDATE divine_office SET {col}=? WHERE id=?", (cleaned, row_id))
+                n_cleaned += 1
+    if n_cleaned:
+        print(f"  Cleaned {n_cleaned} pre-existing lectio/responsory cells of DSL markers ({lang}).")
+
     print(f"  Completorium ferial rows: {comp_inserted} inserted, {7-comp_inserted-len(completorium_ant_by_day)} updated.")
+
+    # -----------------------------------------------------------------------
+    # Ferial Laudes / Vespers: populate lectio_1 (short scripture) + responsory_1
+    # from Major Special.txt. Without these, ferial days show empty Scripture Reading
+    # and Short Responsory sections in the reader.
+    # -----------------------------------------------------------------------
+    major_special_path = os.path.join(horas_dir, "Psalterium", "Special", "Major Special.txt")
+    major_secs = _load_txt_sections_local(major_special_path) if os.path.exists(major_special_path) else {}
+
+    ferial_la_lectio = _normalize_office_text("\n".join(major_secs.get("Feria Laudes", [])))
+    ferial_la_resp = _normalize_office_text("\n".join(major_secs.get("Responsory Feria Laudes", [])))
+    # Feria Vespera in Major Special is an @-reference to Dominica Vespera — use the
+    # standard Sunday short responsory from that section.
+    ferial_ve_resp = _normalize_office_text(
+        "\n".join(major_secs.get("Responsory Feria Vespera_", []))
+        or "\n".join(major_secs.get("Responsory Dominica Vespera_", []))
+    )
+
+    if ferial_la_lectio or ferial_la_resp or ferial_ve_resp:
+        ferial_backfill = 0
+        for day in range(7):
+            for ot, lectio, resp in (
+                ("Laudes",  ferial_la_lectio, ferial_la_resp),
+                ("Vespers", ferial_la_lectio, ferial_ve_resp),
+            ):
+                cur = conn.execute(
+                    "UPDATE divine_office SET lectio_1=COALESCE(NULLIF(?, ''), lectio_1), "
+                    "responsory_1=COALESCE(NULLIF(?, ''), responsory_1) "
+                    "WHERE language=? AND file=? AND office_type=? AND (lectio_1 IS NULL OR lectio_1='')",
+                    (lectio, resp, lang, f"ferial/{day}", ot),
+                )
+                ferial_backfill += cur.rowcount
+        print(f"  Backfilled {ferial_backfill} ferial Laudes/Vespers lectio+responsory rows from Major Special.txt.")
 
 
 # ---------------------------------------------------------------------------
@@ -3238,6 +3354,15 @@ def compile_divine_office(conn, lang: str = "la"):
     calendar_rows = 0
     psalm_rows = 0
 
+    # Load Minor Special.txt once — used as Compline fallback when source has no direct keys.
+    minor_special_path = os.path.join(horas_dir, "Psalterium", "Special", "Minor Special.txt")
+    minor_special_sections: dict[str, list[str]] = (
+        _load_txt_sections(minor_special_path) if os.path.exists(minor_special_path) else {}
+    )
+    def _ms(section_name: str) -> str | None:
+        rows = minor_special_sections.get(section_name)
+        return "\n".join(rows) if rows else None
+
     for root, _dirs, files in os.walk(do_dir):
         for fn in sorted(files):
             if not fn.endswith(".json"):
@@ -3268,7 +3393,8 @@ def compile_divine_office(conn, lang: str = "la"):
                                   "Hymnus", "Hymnus Laudes", "Hymnus Vespera", "HymnusM Laudes", "HymnusM Vespera",
                                   "Ant 1", "Ant 2", "Ant Laudes", "Ant Vespera", "AntVespera",
                                   "Invitatorium", "Oratio", "Oratio Completorium",
-                                  "Versum", "Versus")
+                                  "Versum", "Versus",
+                                  "Special Completorium")
                     for key in office_keys:
                         if key in item:
                             return True
@@ -3278,6 +3404,7 @@ def compile_divine_office(conn, lang: str = "la"):
                         if (kl.startswith("lectio") or kl.startswith("ant")
                             or kl.startswith("hymn") or kl.startswith("responsory")
                             or kl.startswith("capitulum") or kl.startswith("versum")
+                            or kl.startswith("special") or kl.startswith("oratio")
                             or kl == "invit" or kl == "invitatorium"):
                             return True
                     return False
@@ -3321,11 +3448,23 @@ def compile_divine_office(conn, lang: str = "la"):
                            or (any("completorium" in k.lower() for k in hymn_keys + ant_keys) and has_lectio4_or_more)
 
                 def _has_completorium():
-                    return any(k.lower() in ("ant completorium", "ant completine", "completorium")
-                               for k in ant_keys + hymn_keys) \
-                           or bool(merged.get("LectioCompletorium")) \
-                           or bool(merged.get("OratioCompletorium")) \
-                           or "completorium" in file_stem.lower() \
+                    # Any of these source keys signals real Completorium content:
+                    #   * direct keys (Ant/Capitulum/Oratio/Lectio/Responsory/Hymnus Completorium)
+                    #   * the @-reference key (Special Completorium) — appears in 7 files
+                    #   * the legacy "Completorium" section key
+                    completorium_keys = (
+                        "ant completorium", "ant completine", "completorium",
+                        "special completorium",
+                        "capitulum completorium", "hymnus completorium",
+                        "hymnus completorium_c", "hymnusm completorium",
+                        "oratio completorium", "lectio completorium",
+                        "responsory completorium",
+                    )
+                    if any(k.lower() in completorium_keys for k in merged):
+                        return True
+                    if any(k.lower() in completorium_keys for k in ant_keys + hymn_keys):
+                        return True
+                    return "completorium" in file_stem.lower() \
                            or merged.get("Completorium") is not None
 
                 sections = []
@@ -3393,7 +3532,8 @@ def compile_divine_office(conn, lang: str = "la"):
                     elif office_type == "Compline":
                         hymn = (merged.get("Hymnus Completorium_C")
                                 or merged.get("Hymnus Completorium")
-                                or merged.get("HymnusM Completorium"))
+                                or merged.get("HymnusM Completorium")
+                                or _ms("Hymnus Completorium"))
                     # Resolve inline @:SectionName refs against merged JSON
                     if hymn and str(hymn).startswith("@:"):
                         hymn = _inline_hymn_resolve(str(hymn))
@@ -3410,6 +3550,10 @@ def compile_divine_office(conn, lang: str = "la"):
                         v = merged.get(f"Ant Vespera {i}") or merged.get(f"AntVespera{i}")
                         if v:
                             vespera_ants.append(v)
+                    # Marian variants (rare, e.g. C12 has Ant VesperaBMV)
+                    v_bmv = merged.get("Ant VesperaBMV")
+                    if v_bmv:
+                        vespera_ants.append(v_bmv)
                     while len(vespera_ants) < 12:
                         vespera_ants.append("")
                     vespera_ants = vespera_ants[:12]  # CAP at 12 columns
@@ -3429,8 +3573,33 @@ def compile_divine_office(conn, lang: str = "la"):
                                  or merged.get("Responsory2"))
                         resp2, resp3 = None, None
                         capitulum = merged.get("Capitulum Vespera")
-                    elif office_type == "Completorium":
-                        capitulum = merged.get("Capitulum Completorium")
+                    elif office_type == "Compline":
+                        capitulum = (merged.get("Capitulum Completorium")
+                                     or merged.get("Capitulum Completorium_")
+                                     or _ms("Completorium_"))
+                        lectio1 = merged.get("Lectio Completorium") or _ms("Lectio Completorium")
+                        lectio2, lectio3 = None, None
+                        resp1 = merged.get("Responsory Completorium") or _ms("Responsory Completorium")
+                        resp2, resp3 = None, None
+                        # Standard Compline oratio (Visita) — used when source has no specific one
+                        _visita_la = (
+                            "Vísita, quǽsumus, Dómine, habitátionem istam, et ómnes insídias "
+                            "inimíci ab ea repélle: ángeli sancti tui custódiam præstent, et "
+                            "nos in pace custodíre dignéris. Per Dóminum."
+                        )
+                        _visita_en = (
+                            "Visit, we pray, Lord, this dwelling, and drive away from it all "
+                            "the snares of the enemy: may your holy angels dwell in it to guard "
+                            "us, and may you in your mercy keep us in peace. Through Christ our Lord."
+                        )
+                        compline_oratio = (
+                            merged.get("Oratio Compline")
+                            or merged.get("OratioCompline")
+                            or merged.get("Oratio Completorium")
+                            or merged.get("Oratio")
+                            or _ms("Oratio Completorium")
+                            or (_visita_en if lang == "en" else _visita_la)
+                        )
                     else:
                         lectio1 = merged.get("Lectio4") or merged.get("Lectio 4") \
                                    or merged.get("Lectio94") \
@@ -3446,7 +3615,27 @@ def compile_divine_office(conn, lang: str = "la"):
                     if len(sections) > 1:
                         sec_title = f"{title} — {office_type}" if title else office_type
 
-                    matins_antiphon = None  # matins antiphon populated by dedicated column in source
+                    if office_type == "Compline":
+                        # Compline antiphon lives in matins_antiphon column (UI convention).
+                        # Priority: source Ant Completorium > standard Salva nos antiphon.
+                        # Salva nos is the standard Marian Compline antiphon — used for any
+                        # Compline office whose source doesn't define a specific one
+                        # (e.g. the 6 Special Completorium DSL files in 11-02, Quad6-4/5/6r).
+                        _salva_nos_la = (
+                            "Salva nos, Dómine, vigilántes, custódi nos dormiéntes, "
+                            "ut vigilémus cum Christo et requiescámus in pace."
+                        )
+                        _salva_nos_en = (
+                            "Keep us safe, Lord, while we are awake, and guard us as we sleep, "
+                            "so that we may keep watch with Christ and rest in peace."
+                        )
+                        matins_antiphon = (
+                            merged.get("Ant Completorium")
+                            or _ms("Ant Completorium")
+                            or (_salva_nos_en if lang == "en" else _salva_nos_la)
+                        )
+                    else:
+                        matins_antiphon = None  # matins antiphon populated by dedicated column in source
 
                     # Collect any unmapped fields into supplemental JSON for UI display
                     supplemental_keys = {
@@ -3484,18 +3673,31 @@ def compile_divine_office(conn, lang: str = "la"):
                             *laudes_ants,
                             *vespera_ants,
                             hymn,
-                            lectio1, lectio2, lectio3,
-                            resp1, resp2, resp3,
+                            _normalize_office_text(lectio1),
+                            _normalize_office_text(lectio2),
+                            _normalize_office_text(lectio3),
+                            _normalize_office_text(resp1),
+                            _normalize_office_text(resp2),
+                            _normalize_office_text(resp3),
                             merged.get("Versum") or merged.get("Versus"),
                             merged.get("Preces"),
                             capitulum,
                             _normalize_office_text(
-                                merged.get(f"Oratio {office_type}")
-                                or merged.get(f"Oratio{office_type}")
-                                or merged.get("Oratio")
-                                or merged.get("Oratio Completorium")
+                                compline_oratio if office_type == "Compline" else (
+                                    merged.get(f"Oratio {office_type}")
+                                    or merged.get(f"Oratio{office_type}")
+                                    or merged.get("Oratio")
+                                    or merged.get("Oratio 2")
+                                    or merged.get("Oratio2")
+                                    or merged.get("Oratio 3")
+                                    or merged.get("Oratio3")
+                                    or merged.get("Oratio Completorium")
+                                )
                             ),
-                            merged.get("Conclusio"),
+                            merged.get("Conclusio") or (
+                                "Benedicamus Domino. Deo gratias." if lang == "la"
+                                else "Benedicamus Domino. Thanks be to God."
+                            ),
                             matins_antiphon,
                             supplemental,
                         ))
@@ -3572,6 +3774,21 @@ def compile_divine_office(conn, lang: str = "la"):
         blocks = _build_blocks_from_txt_rows(sec_rows, conn)
         if blocks:
             matins_map[day] = blocks
+
+    # Ensure Day 0–6 ferial rows exist for Laudes/Vespers/Matins in the current language.
+    # The pre-processed JSON only inserts these for `la` (English has no Psalmi major.json),
+    # so without this step EN users would see no psalm verses for the ferial cycle.
+    for day in range(7):
+        for ot in ("Laudes", "Vespers", "Matins"):
+            existing = conn.execute(
+                "SELECT 1 FROM divine_office_psalms WHERE day=? AND office_type=? AND language=?",
+                (day, ot, lang),
+            ).fetchone()
+            if not existing:
+                conn.execute(
+                    "INSERT INTO divine_office_psalms (day, office_type, language, antiphon, psalms) VALUES (?, ?, ?, NULL, '[]')",
+                    (day, ot, lang),
+                )
 
     expanded = 0
     cu = conn.execute("SELECT id, day, office_type FROM divine_office_psalms")

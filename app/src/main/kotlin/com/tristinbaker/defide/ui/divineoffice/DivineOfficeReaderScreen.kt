@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.tristinbaker.defide.R
 import com.tristinbaker.defide.data.model.DivineOffice
+import com.tristinbaker.defide.data.model.PsalmBlock
 import com.tristinbaker.defide.data.preferences.AppRite
 import com.tristinbaker.defide.data.model.DivineOfficePsalm
 import java.time.format.DateTimeFormatter
@@ -75,7 +76,12 @@ and bring us to everlasting life.
 
 Amen."""
 
+private const val COMPLETORY_BLESSING_LATIN = "Dóminus det nobis sui óperis requiem, et perféctum sui nóminis fine.\n\nAmen."
+
 private const val COMPLETORY_BLESSING = "The Lord grant us a quiet night and a perfect end.\n\nAmen."
+
+private const val GLORIA_PATRI_LATIN = """Glória Patri, et Fílio, et Spirítui Sancto.
+Sicut erat in princípio, et nunc, et semper, et in sǽcula sæculórum. Amen."""
 
 private const val GLORIA_PATRI = """Glory be to the Father and to the Son and to the Holy Spirit,
 as it was in the beginning, is now, and ever shall be, world without end. Amen."""
@@ -268,9 +274,9 @@ private fun LaudesContent(
                 when (idx) { 0 -> office.ant1; 1 -> office.ant2; 2 -> office.ant3; else -> null }
             }
         }
-        Psalm1Section(laudPsalms.getOrNull(0), getAnt(0))
-        Psalm2Section(laudPsalms.getOrNull(1), getAnt(1))
-        Psalm3Section(laudPsalms.getOrNull(2), getAnt(2))
+        Psalm1Section(laudPsalms.getOrNull(0), getAnt(0), rite)
+        Psalm2Section(laudPsalms.getOrNull(1), getAnt(1), rite)
+        Psalm3Section(laudPsalms.getOrNull(2), getAnt(2), rite)
 
         // 6. Scripture Reading — English in Traditional
         ScriptureReadingSection(office.lectio1)
@@ -279,9 +285,17 @@ private fun LaudesContent(
         val respText = if (rite == AppRite.TRADITIONAL) officeLatin?.responsory1 ?: office.responsory1 else office.responsory1
         ShortResponsorySection(respText)
 
-        // 8. Canticle Benedictus — Latin antiphon in Traditional
-        val cantAnt = if (rite == AppRite.TRADITIONAL) officeLatin?.ant1 ?: office.ant1 else office.ant1
-        CanticleBenedictusSection(cantAnt)
+        // 8. Canticle Benedictus — uses the 4th psalm block's antiphon (the Benedictus-specific
+        // antiphon), not ant1 which is shared with Psalm 1. Falls back to ant1 if blocks are missing.
+        val cantBlocks: List<PsalmBlock> = laudPsalms.getOrNull(0)?.parseBlocks()?.blocks ?: emptyList()
+        val canticleAnt: String? = cantBlocks.getOrNull(3)?.antiphon
+        val cantAnt: String? = when {
+            rite == AppRite.TRADITIONAL && !canticleAnt.isNullOrBlank() -> canticleAnt
+            rite == AppRite.TRADITIONAL -> officeLatin?.ant1 ?: office.ant1
+            !canticleAnt.isNullOrBlank() -> canticleAnt
+            else -> office.ant1
+        }
+        CanticleBenedictusSection(cantAnt, rite)
 
         // 9. Prayers and Intercessions — Latin in Traditional
         val precesText = if (rite == AppRite.TRADITIONAL) officeLatin?.preces ?: office.preces else office.preces
@@ -333,9 +347,9 @@ private fun VespersContent(
         val vespAnt2 = if (rite == AppRite.TRADITIONAL) officeLatin?.antVespera2 ?: officeLatin?.ant2 ?: office.antVespera2 ?: office.ant2 else office.antVespera2 ?: office.ant2
         val vespAnt3 = if (rite == AppRite.TRADITIONAL) officeLatin?.antVespera3 ?: officeLatin?.ant3 ?: office.antVespera3 ?: office.ant3 else office.antVespera3 ?: office.ant3
         val vespPsalms = psalms.filter { it.officeType == "Vespers" }
-        Psalm1Section(vespPsalms.getOrNull(0), vespAnt1)
-        Psalm2Section(vespPsalms.getOrNull(1), vespAnt2)
-        Psalm3Section(vespPsalms.getOrNull(2), vespAnt3)
+        Psalm1Section(vespPsalms.getOrNull(0), vespAnt1, rite)
+        Psalm2Section(vespPsalms.getOrNull(1), vespAnt2, rite)
+        Psalm3Section(vespPsalms.getOrNull(2), vespAnt3, rite)
 
         // 5. Scripture Reading — English in Traditional
         ScriptureReadingSection(office.lectio1)
@@ -346,7 +360,7 @@ private fun VespersContent(
 
         // 7. Canticle Magnificat — Latin antiphon in Traditional
         val magnAnt = if (rite == AppRite.TRADITIONAL) officeLatin?.antVespera1 ?: officeLatin?.ant1 ?: office.antVespera1 ?: office.ant1 else office.antVespera1 ?: office.ant1
-        CanticleMagnificatSection(magnAnt)
+        CanticleMagnificatSection(magnAnt, rite)
 
         // 8. Prayers and Intercessions — Latin in Traditional
         val precesText = if (rite == AppRite.TRADITIONAL) officeLatin?.preces ?: office.preces else office.preces
@@ -402,7 +416,7 @@ private fun MatinsContent(
         // 3. Psalm 1
         val matinsPsalms = psalms.filter { it.officeType == "Matins" }
         val matAnt1 = if (rite == AppRite.TRADITIONAL) officeLatin?.ant1 ?: office.ant1 else office.ant1
-        MatinsPsalm1Section(matinsPsalms.getOrNull(0), matAnt1)
+        MatinsPsalm1Section(matinsPsalms.getOrNull(0), matAnt1, rite)
 
         // 4. First Reading — English in Traditional
         FirstReadingSection(office.lectio1)
@@ -413,7 +427,7 @@ private fun MatinsContent(
 
         // 6. Psalm 2
         val matAnt2 = if (rite == AppRite.TRADITIONAL) officeLatin?.ant2 ?: office.ant2 else office.ant2
-        MatinsPsalm2Section(matinsPsalms.getOrNull(1), matAnt2)
+        MatinsPsalm2Section(matinsPsalms.getOrNull(1), matAnt2, rite)
 
         // 7. Second Reading — English in Traditional
         SecondReadingSection(office.lectio2)
@@ -424,7 +438,7 @@ private fun MatinsContent(
 
         // 9. Psalm 3 — only if lectio3 is present (feast/commemoratio format)
         if (!office.lectio3.isNullOrBlank()) {
-            MatinsPsalm3Section(matinsPsalms.getOrNull(2), office.ant3)
+            MatinsPsalm3Section(matinsPsalms.getOrNull(2), office.ant3, rite)
         }
 
         // 10. Third Reading — English in Traditional
@@ -472,7 +486,7 @@ private fun CompletoriumContent(
         // 3. Antiphon + Psalm
         val complineAntiphon = office.matinsAntiphon ?: office.ant1
         val complinePsalms = psalms.filter { it.officeType in listOf("Compline", "Completorium") }
-        ComplineAntiphonPsalmSection(complinePsalms.firstOrNull(), complineAntiphon)
+        ComplineAntiphonPsalmSection(complinePsalms.firstOrNull(), complineAntiphon, rite)
 
         // 4. Scripture Reading
         ScriptureReadingSection(office.lectio1)
@@ -481,13 +495,13 @@ private fun CompletoriumContent(
         ShortResponsorySection(office.responsory1)
 
         // 6. Canticle Nunc Dimittis
-        CanticleNuncDimittisSection(complineAntiphon)
+        CanticleNuncDimittisSection(complineAntiphon, rite)
 
         // 7. Collect
         CollectSection(office.oratio)
 
         // 8. Final Blessing
-        FinalBlessingSection()
+        FinalBlessingSection(rite)
 
         // 9. Antiphon to Mary
         AntiphonToMarySection(rite)
@@ -539,7 +553,7 @@ private fun DefaultOfficeContent(
 @Composable private fun HymnSection(value: String?) =
     OfficeField(label = "Hymn", value = value ?: "(empty)")
 
-@Composable private fun Psalm1Section(psalm: DivineOfficePsalm?, antiphon: String?) {
+@Composable private fun Psalm1Section(psalm: DivineOfficePsalm?, antiphon: String?, rite: AppRite) {
     SectionHeader("Psalm 1")
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
@@ -548,7 +562,7 @@ private fun DefaultOfficeContent(
     }
     psalm?.let { PsalmVerses(it) }
     Spacer(modifier = Modifier.height(8.dp))
-    GloriaPatriLine()
+    GloriaPatriLine(rite)
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
         if (!clean.isNullOrBlank()) {
@@ -559,7 +573,7 @@ private fun DefaultOfficeContent(
     SectionDivider()
 }
 
-@Composable private fun Psalm2Section(psalm: DivineOfficePsalm?, antiphon: String?) {
+@Composable private fun Psalm2Section(psalm: DivineOfficePsalm?, antiphon: String?, rite: AppRite) {
     SectionHeader("Psalm 2")
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
@@ -568,7 +582,7 @@ private fun DefaultOfficeContent(
     }
     psalm?.let { PsalmVerses(it) }
     Spacer(modifier = Modifier.height(8.dp))
-    GloriaPatriLine()
+    GloriaPatriLine(rite)
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
         if (!clean.isNullOrBlank()) {
@@ -579,7 +593,7 @@ private fun DefaultOfficeContent(
     SectionDivider()
 }
 
-@Composable private fun Psalm3Section(psalm: DivineOfficePsalm?, antiphon: String?) {
+@Composable private fun Psalm3Section(psalm: DivineOfficePsalm?, antiphon: String?, rite: AppRite) {
     SectionHeader("Psalm 3")
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
@@ -588,7 +602,7 @@ private fun DefaultOfficeContent(
     }
     psalm?.let { PsalmVerses(it) }
     Spacer(modifier = Modifier.height(8.dp))
-    GloriaPatriLine()
+    GloriaPatriLine(rite)
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
         if (!clean.isNullOrBlank()) {
@@ -605,14 +619,14 @@ private fun DefaultOfficeContent(
 @Composable private fun ShortResponsorySection(value: String?) =
     OfficeField(label = "Short Responsory", value = value ?: "(empty)")
 
-@Composable private fun CanticleBenedictusSection(antiphon: String?) {
+@Composable private fun CanticleBenedictusSection(antiphon: String?, rite: AppRite) {
     SectionHeader("Canticle (Benedictus)")
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
         if (!clean.isNullOrBlank()) SectionSubtext(clean)
         Spacer(modifier = Modifier.height(4.dp))
     }
-    GloriaPatriLine()
+    GloriaPatriLine(rite)
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
         if (!clean.isNullOrBlank()) {
@@ -647,14 +661,14 @@ private fun DefaultOfficeContent(
 // ─────────────────────────────────────────────────────────────────────────────
 //  VESPERS canticle
 // ─────────────────────────────────────────────────────────────────────────────
-@Composable private fun CanticleMagnificatSection(antiphon: String?) {
+@Composable private fun CanticleMagnificatSection(antiphon: String?, rite: AppRite) {
     SectionHeader("Canticle (Magnificat)")
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
         if (!clean.isNullOrBlank()) SectionSubtext(clean)
         Spacer(modifier = Modifier.height(4.dp))
     }
-    GloriaPatriLine()
+    GloriaPatriLine(rite)
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
         if (!clean.isNullOrBlank()) {
@@ -668,7 +682,7 @@ private fun DefaultOfficeContent(
 // ─────────────────────────────────────────────────────────────────────────────
 //  MATINS
 // ─────────────────────────────────────────────────────────────────────────────
-@Composable private fun MatinsPsalm1Section(psalm: DivineOfficePsalm?, antiphon: String?) {
+@Composable private fun MatinsPsalm1Section(psalm: DivineOfficePsalm?, antiphon: String?, rite: AppRite) {
     SectionHeader("Psalm 1")
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
@@ -677,7 +691,7 @@ private fun DefaultOfficeContent(
     }
     psalm?.let { PsalmVerses(it) }
     Spacer(modifier = Modifier.height(8.dp))
-    GloriaPatriLine()
+    GloriaPatriLine(rite)
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
         if (!clean.isNullOrBlank()) {
@@ -694,7 +708,7 @@ private fun DefaultOfficeContent(
 @Composable private fun Responsory1Section(value: String?) =
     OfficeField(label = "Responsory", value = value ?: "(empty)")
 
-@Composable private fun MatinsPsalm2Section(psalm: DivineOfficePsalm?, antiphon: String?) {
+@Composable private fun MatinsPsalm2Section(psalm: DivineOfficePsalm?, antiphon: String?, rite: AppRite) {
     SectionHeader("Psalm 2")
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
@@ -703,7 +717,7 @@ private fun DefaultOfficeContent(
     }
     psalm?.let { PsalmVerses(it) }
     Spacer(modifier = Modifier.height(8.dp))
-    GloriaPatriLine()
+    GloriaPatriLine(rite)
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
         if (!clean.isNullOrBlank()) {
@@ -720,7 +734,7 @@ private fun DefaultOfficeContent(
 @Composable private fun Responsory2Section(value: String?) =
     OfficeField(label = "Responsory 2", value = value ?: "(empty)")
 
-@Composable private fun MatinsPsalm3Section(psalm: DivineOfficePsalm?, antiphon: String?) {
+@Composable private fun MatinsPsalm3Section(psalm: DivineOfficePsalm?, antiphon: String?, rite: AppRite) {
     SectionHeader("Psalm 3")
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
@@ -729,7 +743,7 @@ private fun DefaultOfficeContent(
     }
     psalm?.let { PsalmVerses(it) }
     Spacer(modifier = Modifier.height(8.dp))
-    GloriaPatriLine()
+    GloriaPatriLine(rite)
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
         if (!clean.isNullOrBlank()) {
@@ -752,7 +766,7 @@ private fun DefaultOfficeContent(
 @Composable private fun ExaminationOfConscienceSection(rite: AppRite) {
     SectionHeader("Examination of Conscience")
     Spacer(modifier = Modifier.height(4.dp))
-    val examText = if (rite == AppRite.TRADITIONAL) EXAMINATION_OF_CONSCIENCE_LATIN else EXAMINATION_OF_CONSCIENCE
+    val examText = if (rite != AppRite.MODERN) EXAMINATION_OF_CONSCIENCE_LATIN else EXAMINATION_OF_CONSCIENCE
     Text(
         text = examText,
         style = MaterialTheme.typography.bodyMedium,
@@ -761,7 +775,7 @@ private fun DefaultOfficeContent(
     SectionDivider()
 }
 
-@Composable private fun ComplineAntiphonPsalmSection(psalm: DivineOfficePsalm?, antiphon: String?) {
+@Composable private fun ComplineAntiphonPsalmSection(psalm: DivineOfficePsalm?, antiphon: String?, rite: AppRite) {
     SectionHeader("Antiphon + Psalm")
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
@@ -770,7 +784,7 @@ private fun DefaultOfficeContent(
     }
     psalm?.let { PsalmVerses(it) }
     Spacer(modifier = Modifier.height(8.dp))
-    GloriaPatriLine()
+    GloriaPatriLine(rite)
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
         if (!clean.isNullOrBlank()) {
@@ -781,14 +795,14 @@ private fun DefaultOfficeContent(
     SectionDivider()
 }
 
-@Composable private fun CanticleNuncDimittisSection(antiphon: String?) {
+@Composable private fun CanticleNuncDimittisSection(antiphon: String?, rite: AppRite) {
     SectionHeader("Canticle (Nunc Dimittis)")
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
         if (!clean.isNullOrBlank()) SectionSubtext(clean)
         Spacer(modifier = Modifier.height(4.dp))
     }
-    GloriaPatriLine()
+    GloriaPatriLine(rite)
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
         if (!clean.isNullOrBlank()) {
@@ -799,11 +813,12 @@ private fun DefaultOfficeContent(
     SectionDivider()
 }
 
-@Composable private fun FinalBlessingSection() {
+@Composable private fun FinalBlessingSection(rite: AppRite) {
     SectionHeader("Blessing")
     Spacer(modifier = Modifier.height(4.dp))
+    val text = if (rite == AppRite.MODERN) COMPLETORY_BLESSING else COMPLETORY_BLESSING_LATIN
     Text(
-        text = COMPLETORY_BLESSING,
+        text = text,
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
@@ -813,8 +828,8 @@ private fun DefaultOfficeContent(
 @Composable private fun AntiphonToMarySection(rite: AppRite) {
     SectionHeader("Antiphon to Mary (Regina Caeli)")
     Spacer(modifier = Modifier.height(4.dp))
-    // Traditional mode: Latin only; other modes: English first then Latin
-    val showLatinOnly = rite == AppRite.TRADITIONAL
+    // Traditional and Latin rites: Latin only; Modern: English first then Latin.
+    val showLatinOnly = rite != AppRite.MODERN
     if (!showLatinOnly) {
         Text(
             text = REGINA_CAELI_ENGLISH,
@@ -918,9 +933,10 @@ private fun SectionSubtext(text: String) {
 //  Gloria Patri line
 // ─────────────────────────────────────────────────────────────────────────────
 @Composable
-private fun GloriaPatriLine() {
+private fun GloriaPatriLine(rite: AppRite) {
+    val text = if (rite == AppRite.MODERN) GLORIA_PATRI else GLORIA_PATRI_LATIN
     Text(
-        text = GLORIA_PATRI,
+        text = text,
         style = MaterialTheme.typography.bodySmall,
         fontStyle = FontStyle.Italic,
         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
