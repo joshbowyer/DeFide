@@ -3300,6 +3300,21 @@ def _load_txt_sections(filepath: str) -> dict[str, list[str]]:
     return sections
 
 
+def _load_txt_sections_flat(filepath: str) -> dict[str, str]:
+    """
+    Like _load_txt_sections but joins each section's lines into a single
+    string with newlines. Returns {section_name: "line1\\nline2..."}.
+    Skips metadata-only sections like Rank, Rule, Comment, Versum.
+
+    Used to merge English txt sections over pre-processed JSON content.
+    """
+    sections = _load_txt_sections(filepath)
+    flat: dict[str, str] = {}
+    for name, lines in sections.items():
+        flat[name] = "\n".join(lines)
+    return flat
+
+
 def _get_hymn_tag_body(tag: str) -> str:
     """
     Load all Latin hymn tag files and extract the body of the named hymn.
@@ -3613,6 +3628,22 @@ def compile_divine_office(conn, lang: str = "la"):
             with open(path) as f:
                 data = json.load(f)
 
+            # For English rows, also load the corresponding English txt file
+            # from divinum-officium. The pre-processed JSON files contain
+            # Latin Vulgate content only; the EN txt has the proper English
+            # translation in matching section names. We merge EN sections
+            # over the JSON to get English text for every translatable field
+            # (Antiphons, Oratio, Lectio, Responsory, Hymn, Capitulum, etc.).
+            en_txt_sections: dict[str, str] = {}
+            if lang == "en" and file_type in ("sancti", "commune", "tempora"):
+                en_txt_path = os.path.join(
+                    horas_dir, file_type.capitalize(), f"{file_stem}.txt"
+                )
+                if os.path.exists(en_txt_path):
+                    en_txt_sections = _load_txt_sections_flat(en_txt_path)
+                if not en_txt_sections and rel == "sancti/01-01.json":
+                    print(f"  DEBUG: no en_txt_sections for {rel}, file_type={file_type}, hours_dir={horas_dir}")
+
             if isinstance(data, list):
                 merged = {}
                 for item in data:
@@ -3654,6 +3685,22 @@ def compile_divine_office(conn, lang: str = "la"):
                 merged = {}
                 for item in content_items:
                     merged.update(item)
+
+                # For English rows, overlay the English txt sections on top of
+                # the JSON-derived dict. Sections present in BOTH the EN txt and
+                # the JSON get the English version (overwrites Latin). Sections
+                # only in the EN txt are added fresh. Skips metadata-only keys
+                # (Rank, Rule, Comment, Versum) that don't translate to text.
+                if en_txt_sections:
+                    _meta_keys = ("Rank", "Rule", "Comment", "Versum 1", "Versum 2", "Versum 3")
+                    _en_overlaid = 0
+                    for k, v in en_txt_sections.items():
+                        if k in _meta_keys:
+                            continue
+                        # Only add if non-empty
+                        if v and v.strip():
+                            merged[k] = v
+                            _en_overlaid += 1
 
                 raw_title = (
                     merged.get("Officium") or merged.get("Scriptura")
