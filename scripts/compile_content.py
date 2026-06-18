@@ -230,9 +230,9 @@ def _normalize_office_text(text: str | None) -> str | None:
         text = text.replace(phrase, "")
     # Strip $ prefix from single-word rubric markers: $Qui → Qui, $Per → Per, etc.
     text = re.sub(r'\$([A-Z][a-z]+)', r'\1', text)
-    # Strip chapter-reference markers like "!Rom 13:12-13" (DivinumOfficium source format).
-    # Matches anywhere in text: "!Word N:N" optionally followed by more verse refs.
-    text = re.sub(r'!\S+\s+\d+:\d+(?:[-,]\d+)*\s*', '', text)
+    # Strip the leading "!" prefix from chapter/verse references like "!Rom 13:12-13"
+    # but PRESERVE the reference text itself (the user wants to see "Rom 13:12-13").
+    text = re.sub(r'!(?=[A-Z][a-z]+\s+\d+:\d+|\S+\.?\s*\d+\.?\s)', '', text)
     # Strip bare !Word markers like "!Sermo 7" or "!Serm. 2." (DivinumOfficium sermon refs)
     # that didn't get matched by the verse pattern above.
     text = re.sub(r'!\S+\.?\s*\d*\.?\s*', '', text)
@@ -3114,6 +3114,32 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
                 ferial_backfill += cur.rowcount
         print(f"  Backfilled {ferial_backfill} ferial Laudes/Vespers lectio+responsory rows from Major Special.txt.")
 
+    # -----------------------------------------------------------------------
+    # Ferial Matins: backfill invitatorium (Psalm 95 opening) for days where
+    # source has none. Standard text is the same every day in the ferial cycle;
+    # the antiphon below the versicle varies by season in the real breviary
+    # but for the offline reader we use a generic one.
+    # -----------------------------------------------------------------------
+    invitatorium_default_la = (
+        "Dómine, lábia mea apéries.\n"
+        "Et os meum annuntiábit laudem tuam.\n"
+        "Psalmus 94 (95): Veníte, exsultémus Dómino…"
+    )
+    invitatorium_default_en = (
+        "O Lord, open my lips.\n"
+        "And my mouth shall declare your praise.\n"
+        "Psalm 95: Come, let us sing joyfully to the Lord…"
+    )
+    invit_default = invitatorium_default_en if lang == "en" else invitatorium_default_la
+    cur = conn.execute(
+        "UPDATE divine_office SET invitatorium=COALESCE(NULLIF(?, ''), invitatorium) "
+        "WHERE language=? AND file LIKE 'ferial/%' AND office_type='Matins' "
+        "AND (invitatorium IS NULL OR invitatorium='')",
+        (invit_default, lang),
+    )
+    if cur.rowcount:
+        print(f"  Backfilled {cur.rowcount} ferial Matins invitatorium rows.")
+
 
 # ---------------------------------------------------------------------------
 # Hymn reference resolver
@@ -3363,6 +3389,94 @@ def compile_divine_office(conn, lang: str = "la"):
         rows = minor_special_sections.get(section_name)
         return "\n".join(rows) if rows else None
 
+    # -----------------------------------------------------------------------
+    # Canticle text constants (Benedictus, Magnificat, Nunc Dimittis)
+    # These are stable biblical canticles and are not in the DivinumOfficium
+    # source for non-festial days — we hardcode them so the canticle section
+    # in the reader always has content, even when the antiphons come from ferial.
+    # -----------------------------------------------------------------------
+    CANTICLE_BENEDICTUS_LA = (
+        "Benedíctus Dóminus Deus Israël, * quia visitávit et fecit redemptiónem plebis suæ,\n"
+        "Et eréxit cornu salútis nobis * in domo David púeri sui.\n"
+        "Sicut locútus est per os sanctórum, * qui a sǽculo sunt, prophetárum ejus,\n"
+        "Salútem ex inimícis nostris, * et de manu ómnium, qui odérunt nos,\n"
+        "Ad faciéndam misericórdiam cum pátribus nostris, * et memorári testaménti sui sancti,\n"
+        "Juraménti, quod jurávit ad Abraham patrem nostrum, * datúrum se nobis,\n"
+        "Ut sine timóre, de manu inimicórum nostrórum liberáti, * serviámus illi,\n"
+        "In sanctitáte et justítia coram ipso, * ómnibus diébus nostris.\n"
+        "Et tu, puer, Prophéta Altíssimi vocáberis: * præíbis enim ante fáciem Dómini paráre vias ejus,\n"
+        "Ad dandam sciéntiam salútis plebi ejus, * in remissiónem peccatórum eórum,\n"
+        "Per víscera misericórdiæ Dei nostri, * in quibus visitávit nos Oriens ex alto,\n"
+        "Illumináre his, qui in ténebris et in umbra mortis sedent, * ad dirigéndos pedes nostros in viam pacis.\n"
+        "Glória Patri, et Fílio, * et Spirítui Sancto.\n"
+        "Sicut erat in princípio, et nunc, et semper, * et in sǽcula sæculórum. Amen."
+    )
+    CANTICLE_BENEDICTUS_EN = (
+        "Blessed be the Lord, the God of Israel; * he has come to his people and set them free.\n"
+        "He has raised up for us a mighty savior * born of the house of his servant David.\n"
+        "Through his holy prophets he promised of old * that he would save us from our enemies,\n"
+        "from the hands of all who hate us.\n"
+        "He promised to show mercy to our fathers * and to remember his holy covenant.\n"
+        "This was the oath he swore to our father Abraham, * to set us free from the hand of our enemies,\n"
+        "Free to worship him without fear, * holy and righteous in his sight,\n"
+        "all the days of our life.\n"
+        "And you, my child, shall be called the prophet of the Most High, * for you will go before the Lord to prepare his way,\n"
+        "To give his people knowledge of salvation * by the forgiveness of their sins.\n"
+        "In the tender compassion of our God, * the dawn from on high shall break upon us,\n"
+        "To shine on those who dwell in darkness and the shadow of death, * and to guide our feet into the way of peace.\n"
+        "Glory to the Father, and to the Son, * and to the Holy Spirit,\n"
+        "as it was in the beginning, is now, and will be forever. Amen."
+    )
+    CANTICLE_MAGNIFICAT_LA = (
+        "Magníficat * ánima mea Dóminum,\n"
+        "Et exsultávit spíritus meus * in Deo salutári meo,\n"
+        "Quia respéxit humilitátem ancíllæ suæ: * ecce enim ex hoc beátam me dicent omnes generatiónes.\n"
+        "Quia fecit mihi magna qui potens est, * et sanctum nomen ejus,\n"
+        "Et misericórdia ejus a progénie in progénies * timéntibus eum.\n"
+        "Fecit poténtiam in brácchio suo, * dispérsit supérbos mente cordis sui.\n"
+        "Depósuit poténtes de sede, * et exaltávit húmiles.\n"
+        "Esuriéntes implévit bonis: * et dívites dimísit inánes.\n"
+        "Suscépit Israël púerum suum, * memorátus misericórdiæ suæ.\n"
+        "Sicut locútus est ad patres nostros, * Abraham et sémini ejus in sǽcula.\n"
+        "Glória Patri, et Fílio, * et Spirítui Sancto.\n"
+        "Sicut erat in princípio, et nunc, et semper, * et in sǽcula sæculórum. Amen."
+    )
+    CANTICLE_MAGNIFICAT_EN = (
+        "My soul proclaims the greatness of the Lord, * my spirit rejoices in God my Savior,\n"
+        "For he has looked with favor on his lowly servant; * from this day all generations will call me blessed,\n"
+        "The Almighty has done great things for me, * and holy is his Name.\n"
+        "He has mercy on those who fear him * in every generation.\n"
+        "He has shown the strength of his arm, * he has scattered the proud in their conceit,\n"
+        "He has cast down the mighty from their thrones, * and has lifted up the lowly.\n"
+        "He has filled the hungry with good things, * and the rich he has sent away empty.\n"
+        "He has come to the help of his servant Israel, * for he has remembered his promise of mercy,\n"
+        "The promise he made to our fathers, * to Abraham and his children forever.\n"
+        "Glory to the Father, and to the Son, * and to the Holy Spirit,\n"
+        "as it was in the beginning, is now, and will be forever. Amen."
+    )
+    CANTICLE_NUNCDIMITTIS_LA = (
+        "Nunc dimíttis servum tuum, Dómine, * secúndum verbum tuum in pace,\n"
+        "Quia vidérunt óculi mei * salutáre tuum,\n"
+        "Quod parásti * ante fáciem ómnium populórum,\n"
+        "Lumen ad revelatiónem géntium, * et glóriam plebis tuæ Israël.\n"
+        "Glória Patri, et Fílio, * et Spirítui Sancto.\n"
+        "Sicut erat in princípio, et nunc, et semper, * et in sǽcula sæculórum. Amen."
+    )
+    CANTICLE_NUNCDIMITTIS_EN = (
+        "At last, all-powerful Master, you dismiss your servant in peace, * according to your word;\n"
+        "For my eyes have seen your salvation, * which you have prepared in the sight of all peoples,\n"
+        "A light of revelation to the Gentiles, * and the glory of your people Israel.\n"
+        "Glory to the Father, and to the Son, * and to the Holy Spirit,\n"
+        "as it was in the beginning, is now, and will be forever. Amen."
+    )
+    canticles = {
+        "Benedictus":  (CANTICLE_BENEDICTUS_LA, CANTICLE_BENEDICTUS_EN),
+        "Magnificat":  (CANTICLE_MAGNIFICAT_LA, CANTICLE_MAGNIFICAT_EN),
+        "NuncDimittis": (CANTICLE_NUNCDIMITTIS_LA, CANTICLE_NUNCDIMITTIS_EN),
+    }
+    def _canticle(name: str) -> str | None:
+        if name not in canticles: return None
+        return canticles[name][1] if lang == "en" else canticles[name][0]
     for root, _dirs, files in os.walk(do_dir):
         for fn in sorted(files):
             if not fn.endswith(".json"):

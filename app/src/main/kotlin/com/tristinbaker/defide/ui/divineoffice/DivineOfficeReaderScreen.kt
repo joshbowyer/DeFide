@@ -121,6 +121,62 @@ as we forgive those who trespass against us;
 and lead us not into temptation,
 but deliver us from evil."""
 
+private const val CANTICLE_BENEDICTUS_LATIN = """Benedíctus Dóminus Deus Israël, * quia visitávit et fecit redemptiónem plebis suæ,
+Et eréxit cornu salútis nobis * in domo David púeri sui.
+Sicut locútus est per os sanctórum, * qui a sǽculo sunt, prophetárum ejus,
+Salútem ex inimícis nostris, * et de manu ómnium, qui odérunt nos,
+Ad faciéndam misericórdiam cum pátribus nostris, * et memorári testaménti sui sancti,
+Juraménti, quod jurávit ad Abraham patrem nostrum, * datúrum se nobis,
+Ut sine timóre, de manu inimicórum nostrórum liberáti, * serviámus illi,
+In sanctitáte et justítia coram ipso, * ómnibus diébus nostris.
+Et tu, puer, Prophéta Altíssimi vocáberis: * præíbis enim ante fáciem Dómini paráre vias ejus,
+Ad dandam sciéntiam salútis plebi ejus, * in remissiónem peccatórum eórum,
+Per víscera misericórdiæ Dei nostri, * in quibus visitávit nos Oriens ex alto,
+Illumináre his, qui in ténebris et in umbra mortis sedent, * ad dirigéndos pedes nostros in viam pacis."""
+
+private const val CANTICLE_BENEDICTUS = """Blessed be the Lord, the God of Israel; * he has come to his people and set them free.
+He has raised up for us a mighty savior * born of the house of his servant David.
+Through his holy prophets he promised of old * that he would save us from our enemies,
+from the hands of all who hate us.
+He promised to show mercy to our fathers * and to remember his holy covenant.
+This was the oath he swore to our father Abraham, * to set us free from the hand of our enemies,
+Free to worship him without fear, * holy and righteous in his sight,
+all the days of our life.
+And you, my child, shall be called the prophet of the Most High, * for you will go before the Lord to prepare his way,
+To give his people knowledge of salvation * by the forgiveness of their sins.
+In the tender compassion of our God, * the dawn from on high shall break upon us,
+To shine on those who dwell in darkness and the shadow of death, * and to guide our feet into the way of peace."""
+
+private const val CANTICLE_MAGNIFICAT_LATIN = """Magníficat * ánima mea Dóminum,
+Et exsultávit spíritus meus * in Deo salutári meo,
+Quia respéxit humilitátem ancíllæ suæ: * ecce enim ex hoc beátam me dicent omnes generatiónes.
+Quia fecit mihi magna qui potens est, * et sanctum nomen ejus,
+Et misericórdia ejus a progénie in progénies * timéntibus eum.
+Fecit poténtiam in brácchio suo, * dispérsit supérbos mente cordis sui.
+Depósuit poténtes de sede, * et exaltávit húmiles.
+Esuriéntes implévit bonis: * et dívites dimísit inánes.
+Suscépit Israël púerum suum, * memorátus misericórdiæ suæ.
+Sicut locútus est ad patres nostros, * Abraham et sémini ejus in sǽcula."""
+
+private const val CANTICLE_MAGNIFICAT = """My soul proclaims the greatness of the Lord, * my spirit rejoices in God my Savior,
+For he has looked with favor on his lowly servant; * from this day all generations will call me blessed,
+The Almighty has done great things for me, * and holy is his Name.
+He has mercy on those who fear him * in every generation.
+He has shown the strength of his arm, * he has scattered the proud in their conceit,
+He has cast down the mighty from their thrones, * and has lifted up the lowly.
+He has filled the hungry with good things, * and the rich he has sent away empty.
+He has come to the help of his servant Israel, * for he has remembered his promise of mercy,
+The promise he made to our fathers, * to Abraham and his children forever."""
+
+private const val CANTICLE_NUNCDIMITTIS_LATIN = """Nunc dimíttis servum tuum, Dómine, * secúndum verbum tuum in pace,
+Quia vidérunt óculi mei * salutáre tuum,
+Quod parásti * ante fáciem ómnium populórum,
+Lumen ad revelatiónem géntium, * et glóriam plebis tuæ Israël."""
+
+private const val CANTICLE_NUNCDIMITTIS = """At last, all-powerful Master, you dismiss your servant in peace, * according to your word;
+For my eyes have seen your salvation, * which you have prepared in the sight of all peoples,
+A light of revelation to the Gentiles, * and the glory of your people Israel."""
+
 // ─────────────────────────────────────────────────────────────────────────────
 //  Screen
 // ─────────────────────────────────────────────────────────────────────────────
@@ -626,6 +682,15 @@ private fun DefaultOfficeContent(
         if (!clean.isNullOrBlank()) SectionSubtext(clean)
         Spacer(modifier = Modifier.height(4.dp))
     }
+    // Canticle text — the Canticle of Zechariah (Luke 1:68-79). Same every day.
+    val canticleText = if (rite == AppRite.LATIN) CANTICLE_BENEDICTUS_LATIN
+                       else CANTICLE_BENEDICTUS
+    Text(
+        text = canticleText,
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurface,
+    )
+    Spacer(modifier = Modifier.height(8.dp))
     GloriaPatriLine(rite)
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
@@ -668,6 +733,15 @@ private fun DefaultOfficeContent(
         if (!clean.isNullOrBlank()) SectionSubtext(clean)
         Spacer(modifier = Modifier.height(4.dp))
     }
+    // Canticle text — the Canticle of Mary (Luke 1:46-55). Same every day.
+    val canticleText = if (rite == AppRite.LATIN) CANTICLE_MAGNIFICAT_LATIN
+                       else CANTICLE_MAGNIFICAT
+    Text(
+        text = canticleText,
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurface,
+    )
+    Spacer(modifier = Modifier.height(8.dp))
     GloriaPatriLine(rite)
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
@@ -802,6 +876,15 @@ private fun DefaultOfficeContent(
         if (!clean.isNullOrBlank()) SectionSubtext(clean)
         Spacer(modifier = Modifier.height(4.dp))
     }
+    // Canticle text — the Canticle of Simeon (Luke 2:29-32). Same every day.
+    val canticleText = if (rite == AppRite.LATIN) CANTICLE_NUNCDIMITTIS_LATIN
+                       else CANTICLE_NUNCDIMITTIS
+    Text(
+        text = canticleText,
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurface,
+    )
+    Spacer(modifier = Modifier.height(8.dp))
     GloriaPatriLine(rite)
     if (!antiphon.isNullOrBlank()) {
         val clean = antiphon.sanitizeOfficeField()
