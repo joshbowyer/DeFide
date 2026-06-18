@@ -2540,7 +2540,7 @@ def _expand_psalm_ref(conn, ref):
     rm = re.match(r"^\((\d+)(?:[-']([\d]+))?(?:[-']([\d]+))?\)$", suffix)
     if rm:
         v_start = int(rm.group(1))
-        v_end = int(rm.group(3)) if rm.group(3) else v_start
+        v_end = int(rm.group(2)) if rm.group(2) else v_start
         return [f"{ps_id}:{vn}:{txt}" for vn, txt in all_verses if v_start <= vn <= v_end]
 
     return [f"{ps_id}:{vn}:{txt}" for vn, txt in all_verses]
@@ -2723,9 +2723,12 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
     for sec_key, sec_rows in mat_secs.items():
         if not sec_key.startswith("Day"):
             continue
-        day_str = sec_key[len("Day"):].lstrip("mM")
+        # Only `DayN` (digit-only) is a ferial Matins cycle. Skip DaymN, DayaN, etc.
+        rest = sec_key[len("Day"):]
+        if not rest or not rest[0].isdigit():
+            continue
         try:
-            day = int(day_str)
+            day = int(rest)
         except ValueError:
             continue
         if day in matins_ant_by_day:
@@ -3994,9 +3997,13 @@ def compile_divine_office(conn, lang: str = "la"):
     for sec_key, sec_rows in mat_secs.items():
         if not sec_key.startswith("Day"):
             continue
-        day_str = sec_key[len("Day"):].lstrip("mM")
+        # Only `DayN` (digit-only) is a ferial Matins cycle. Skip DaymN, DayaN, etc.
+        # which are sub-sections (nocturn 2, antiphons only, etc.).
+        rest = sec_key[len("Day"):]
+        if not rest or not rest[0].isdigit():
+            continue
         try:
-            day = int(day_str)
+            day = int(rest)
         except ValueError:
             continue
         blocks = _build_blocks_from_txt_rows(sec_rows, conn)
