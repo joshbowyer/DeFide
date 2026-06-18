@@ -7,6 +7,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.tristinbaker.defide.data.db.user.dao.BibleBookmarkDao
 import com.tristinbaker.defide.data.db.user.dao.BibleChapterReadDao
 import com.tristinbaker.defide.data.db.user.dao.BibleHighlightDao
+import com.tristinbaker.defide.data.db.user.dao.ConfessionNoteDao
+import com.tristinbaker.defide.data.db.user.dao.ConfessionRecordDao
 import com.tristinbaker.defide.data.db.user.dao.FavoriteSaintDao
 import com.tristinbaker.defide.data.db.user.dao.NovenaProgressDao
 import com.tristinbaker.defide.data.db.user.dao.PrayerLogDao
@@ -14,6 +16,8 @@ import com.tristinbaker.defide.data.db.user.dao.RosarySessionDao
 import com.tristinbaker.defide.data.db.user.entity.BibleBookmarkEntity
 import com.tristinbaker.defide.data.db.user.entity.BibleChapterReadEntity
 import com.tristinbaker.defide.data.db.user.entity.BibleHighlightEntity
+import com.tristinbaker.defide.data.db.user.entity.ConfessionNoteEntity
+import com.tristinbaker.defide.data.db.user.entity.ConfessionRecordEntity
 import com.tristinbaker.defide.data.db.user.entity.FavoriteSaintEntity
 import com.tristinbaker.defide.data.db.user.entity.NovenaProgressEntity
 import com.tristinbaker.defide.data.db.user.entity.PrayerLogEntity
@@ -28,8 +32,10 @@ import com.tristinbaker.defide.data.db.user.entity.RosarySessionEntity
         NovenaProgressEntity::class,
         PrayerLogEntity::class,
         FavoriteSaintEntity::class,
+        ConfessionNoteEntity::class,
+        ConfessionRecordEntity::class,
     ],
-    version = 4,
+    version = 5,
     exportSchema = true,
 )
 abstract class UserDatabase : RoomDatabase() {
@@ -40,6 +46,8 @@ abstract class UserDatabase : RoomDatabase() {
     abstract fun novenaProgressDao(): NovenaProgressDao
     abstract fun prayerLogDao(): PrayerLogDao
     abstract fun favoriteSaintDao(): FavoriteSaintDao
+    abstract fun confessionNoteDao(): ConfessionNoteDao
+    abstract fun confessionRecordDao(): ConfessionRecordDao
 
     companion object {
         val MIGRATION_1_2 = object : Migration(1, 2) {
@@ -83,6 +91,26 @@ abstract class UserDatabase : RoomDatabase() {
                     """CREATE TABLE IF NOT EXISTS `favorite_saints` (
                         `saint_id` TEXT NOT NULL,
                         PRIMARY KEY(`saint_id`)
+                    )"""
+                )
+            }
+        }
+
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """CREATE TABLE IF NOT EXISTS `confession_notes` (
+                        `id` TEXT NOT NULL,
+                        `text` TEXT NOT NULL,
+                        `created_at` INTEGER NOT NULL,
+                        PRIMARY KEY(`id`)
+                    )"""
+                )
+                db.execSQL(
+                    """CREATE TABLE IF NOT EXISTS `confession_records` (
+                        `id` TEXT NOT NULL,
+                        `made_at` INTEGER NOT NULL,
+                        PRIMARY KEY(`id`)
                     )"""
                 )
             }

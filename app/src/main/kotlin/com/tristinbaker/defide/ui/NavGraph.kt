@@ -15,6 +15,7 @@ import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Circle
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Schedule
@@ -63,6 +64,7 @@ import com.tristinbaker.defide.ui.rosary.RosaryHomeScreen
 import com.tristinbaker.defide.ui.rosary.RosarySessionScreen
 import com.tristinbaker.defide.ui.saints.SaintDetailScreen
 import com.tristinbaker.defide.ui.saints.SaintsListScreen
+import com.tristinbaker.defide.ui.confession.ConfessionScreen
 import com.tristinbaker.defide.ui.settings.HowToUseScreen
 import com.tristinbaker.defide.ui.settings.SettingsScreen
 import com.tristinbaker.defide.ui.settings.SettingsViewModel
@@ -90,7 +92,8 @@ private fun rememberDrawerItems() = listOf(
     DrawerItem("loth",      stringResource(R.string.nav_loth),      Icons.Default.Schedule),
     DrawerItem("prayers",   stringResource(R.string.nav_prayers),   Icons.Default.Star),
     DrawerItem("novena",    stringResource(R.string.nav_novenas),   Icons.Default.Book),
-    DrawerItem("saints",    stringResource(R.string.nav_saints),    Icons.Default.Person),
+    DrawerItem("saints",      stringResource(R.string.nav_saints),      Icons.Default.Person),
+    DrawerItem("confession",  stringResource(R.string.nav_confession),  Icons.Default.Edit),
 )
 
 private const val CCC_URL_EN = "https://usccb.cld.bz/Catechism-of-the-Catholic-Church2/7"
@@ -533,6 +536,11 @@ private fun DeFideNavHost(
                 language = language,
                 onBack = { navController.popBackStack() },
             )
+        }
+
+        // Confession
+        composable("confession") {
+            ConfessionScreen(onBack = { navController.popBackStack() })
         }
     }
 }

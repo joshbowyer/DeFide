@@ -25,7 +25,7 @@ object DatabaseModule {
     @Singleton
     fun provideUserDatabase(@ApplicationContext context: Context): UserDatabase =
         Room.databaseBuilder(context, UserDatabase::class.java, "defide_user.db")
-            .addMigrations(UserDatabase.MIGRATION_1_2, UserDatabase.MIGRATION_2_3, UserDatabase.MIGRATION_3_4)
+            .addMigrations(UserDatabase.MIGRATION_1_2, UserDatabase.MIGRATION_2_3, UserDatabase.MIGRATION_3_4, UserDatabase.MIGRATION_4_5)
             .build()
 
     @Provides
@@ -68,4 +68,10 @@ object DatabaseModule {
 
     @Provides
     fun provideFavoriteSaintDao(db: UserDatabase) = db.favoriteSaintDao()
+
+    @Provides
+    fun provideConfessionNoteDao(db: UserDatabase) = db.confessionNoteDao()
+
+    @Provides
+    fun provideConfessionRecordDao(db: UserDatabase) = db.confessionRecordDao()
 }

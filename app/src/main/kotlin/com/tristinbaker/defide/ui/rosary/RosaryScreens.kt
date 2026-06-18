@@ -25,14 +25,23 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import kotlinx.coroutines.launch
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.Alignment
@@ -61,6 +70,8 @@ fun RosaryHomeScreen(
 ) {
     val mysteries by viewModel.mysteries.collectAsState()
     val todaysMysteryId = viewModel.todaysMysteryId
+    val intentions by viewModel.intentions.collectAsState()
+    var showIntentionsSheet by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -69,6 +80,14 @@ fun RosaryHomeScreen(
                 navigationIcon = {
                     IconButton(onClick = onOpenDrawer) {
                         Icon(Icons.Default.Menu, contentDescription = "Menu")
+                    }
+                },
+                actions = {
+                    TextButton(
+                        onClick = { showIntentionsSheet = true },
+                        modifier = Modifier.padding(end = 4.dp),
+                    ) {
+                        Text(stringResource(R.string.rosary_intentions_title))
                     }
                 },
             )
@@ -115,6 +134,51 @@ fun RosaryHomeScreen(
             }
         }
     }
+
+    if (showIntentionsSheet) {
+        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        val scope = rememberCoroutineScope()
+        var draft by remember(intentions) {
+            mutableStateOf(MutableList(5) { i -> intentions.getOrElse(i) { "" } })
+        }
+        ModalBottomSheet(
+            onDismissRequest = { showIntentionsSheet = false },
+            sheetState = sheetState,
+        ) {
+            Column(modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 32.dp)) {
+                Text(
+                    stringResource(R.string.rosary_intentions_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(bottom = 16.dp),
+                )
+                (0..4).forEach { i ->
+                    OutlinedTextField(
+                        value = draft[i],
+                        onValueChange = { v -> draft = draft.toMutableList().also { it[i] = v } },
+                        label = { Text(stringResource(R.string.rosary_intention_hint, i + 1)) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp),
+                        singleLine = true,
+                    )
+                }
+                Spacer(Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    TextButton(onClick = {
+                        draft = MutableList(5) { "" }
+                        viewModel.clearIntentions()
+                    }) { Text(stringResource(R.string.rosary_clear_intentions)) }
+                    Button(onClick = {
+                        viewModel.saveIntentions(draft)
+                        scope.launch { sheetState.hide() }.invokeOnCompletion { showIntentionsSheet = false }
+                    }) { Text(stringResource(R.string.rosary_save_intentions)) }
+                }
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -136,6 +200,8 @@ fun RosarySessionScreen(
     val isFatima = rosaryOrder == RosaryOrder.FATIMA
     val hapticEnabled by viewModel.hapticFeedback.collectAsState()
     val completing by viewModel.completing.collectAsState()
+    val intentions by viewModel.intentions.collectAsState()
+    val currentMysteryNumber by viewModel.currentMysteryNumber.collectAsState()
     val haptic = LocalHapticFeedback.current
 
     LaunchedEffect(mysteryId) { viewModel.startSession(mysteryId) }
@@ -203,6 +269,21 @@ fun RosarySessionScreen(
                         color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Center,
                     )
+                    currentBead.mysteryNumber?.let { num ->
+                        if (num in 1..5) {
+                            val intention = intentions.getOrElse(num - 1) { "" }
+                            if (intention.isNotBlank()) {
+                                Spacer(Modifier.height(12.dp))
+                                Text(
+                                    text = stringResource(R.string.rosary_your_intention, intention),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center,
+                                    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                                )
+                            }
+                        }
+                    }
                     currentBead.mysteryScripture?.let { scripture ->
                         val firstRef = scripture.substringBefore(";").trim()
                         Spacer(Modifier.height(12.dp))
@@ -228,6 +309,20 @@ fun RosarySessionScreen(
                         )
                     }
                 } else {
+                    val mystNum = currentMysteryNumber
+                    if (mystNum != null && mystNum in 1..5) {
+                        val intention = intentions.getOrElse(mystNum - 1) { "" }
+                        if (intention.isNotBlank()) {
+                            Text(
+                                text = stringResource(R.string.rosary_your_intention, intention),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = TextAlign.Center,
+                                fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                            )
+                            Spacer(Modifier.height(8.dp))
+                        }
+                    }
                     // Regular prayer bead
                     currentBead?.mysteryTitle?.let { title ->
                         // On intro Hail Marys this is the intention; on mystery Hail Marys this is null
@@ -372,15 +467,13 @@ private fun RosaryBeadIndicatorCompact(
         val crossEndX = W - 10.dp.toPx()
         val tailStep  = (crossEndX - jX) / (tailCount + 2f)
 
-        // physBead 0 farthest from junction, physBead 4 closest
-        // HM beads (1-3) are clustered together; OF beads (0, 4) keep wider spacing
         fun tailPos(physBead: Int): Offset {
             val x = when (physBead) {
-                0    -> jX + 5.0f * tailStep
+                0    -> jX + 4.6f * tailStep
                 1    -> jX + 3.7f * tailStep
                 2    -> jX + 3.0f * tailStep
                 3    -> jX + 2.3f * tailStep
-                4    -> jX + 1.0f * tailStep
+                4    -> jX + 1.4f * tailStep
                 else -> jX + (tailCount - physBead) * tailStep
             }
             return Offset(x, jY)
@@ -428,12 +521,12 @@ private fun RosaryBeadIndicatorCompact(
         }
 
         val loopCount   = ovalSlots - 1           // 54 loop beads
-        val junctionGap = 1.5f * spacing          // distance gap around junction oval
+        val junctionGap = 1.3f * spacing          // distance gap around junction oval
         val loopSpan    = totalPerimeter - 2f * junctionGap
 
-        // Weighted spacing: larger gap before/after each Our Father bead (15, 26, 37, 48)
+        // Weighted spacing: slightly larger gap before/after each Our Father bead (15, 26, 37, 48)
         val largeLoopBeads = setOf(15, 26, 37, 48)
-        val loopGapMult = 1.8f
+        val loopGapMult = 1.2f
         val loopGaps = FloatArray(53) { i ->
             val f = i + 5; val t = i + 6
             if (f in largeLoopBeads || t in largeLoopBeads) loopGapMult else 1.0f
@@ -495,7 +588,7 @@ private fun RosaryBeadIndicatorCompact(
             }
             if (physBead == 59) {
                 val rx = rLarge * 1.0f
-                val ry = rLarge * 1.5f
+                val ry = rLarge * 1.4f
                 val tl = Offset(pos.x - rx, pos.y - ry)
                 val sz = Size(rx * 2, ry * 2)
                 when {

@@ -332,29 +332,31 @@ fun BibleChapterScreen(
                     val isRead = chapterNum in readChapters
                     if (isRead) {
                         Card(
-                            modifier = Modifier.pointerInput(chapterNum) {
-                                detectTapGestures(
-                                    onTap = { onChapterSelected(translationId, bookNumber, chapterNum) },
-                                    onLongPress = { viewModel.unmarkChapterRead(bookNumber, chapterNum) },
-                                )
-                            },
+                            modifier = Modifier
+                                .size(44.dp)
+                                .pointerInput(chapterNum) {
+                                    detectTapGestures(
+                                        onTap = { onChapterSelected(translationId, bookNumber, chapterNum) },
+                                        onLongPress = { viewModel.unmarkChapterRead(bookNumber, chapterNum) },
+                                    )
+                                },
                         ) {
-                            Text(
-                                text = "$chapterNum",
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
-                                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            )
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                Text(
+                                    text = "$chapterNum",
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                )
+                            }
                         }
                     } else {
                         OutlinedCard(
-                            modifier = Modifier.clickable {
-                                onChapterSelected(translationId, bookNumber, chapterNum)
-                            },
+                            modifier = Modifier
+                                .size(44.dp)
+                                .clickable { onChapterSelected(translationId, bookNumber, chapterNum) },
                         ) {
-                            Text(
-                                text = "$chapterNum",
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
-                            )
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                Text(text = "$chapterNum")
+                            }
                         }
                     }
                 }

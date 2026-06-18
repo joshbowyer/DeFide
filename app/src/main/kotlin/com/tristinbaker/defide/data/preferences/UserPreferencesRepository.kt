@@ -30,6 +30,7 @@ data class UserPreferences(
     val rosaryHapticFeedback: Boolean = true,
     val autoBackupFrequency: BackupFrequency = BackupFrequency.OFF,
     val autoBackupFolderUri: String = "",
+    val rosaryIntentions: List<String> = List(5) { "" },
 )
 
 @Singleton
@@ -51,6 +52,11 @@ class UserPreferencesRepository @Inject constructor(
         private val KEY_ROSARY_HAPTIC    = androidx.datastore.preferences.core.booleanPreferencesKey("rosary_haptic_feedback")
         private val KEY_AUTO_BACKUP_FREQUENCY = stringPreferencesKey("auto_backup_frequency")
         private val KEY_AUTO_BACKUP_FOLDER_URI = stringPreferencesKey("auto_backup_folder_uri")
+        private val KEY_ROSARY_INTENTION_0 = stringPreferencesKey("rosary_intention_0")
+        private val KEY_ROSARY_INTENTION_1 = stringPreferencesKey("rosary_intention_1")
+        private val KEY_ROSARY_INTENTION_2 = stringPreferencesKey("rosary_intention_2")
+        private val KEY_ROSARY_INTENTION_3 = stringPreferencesKey("rosary_intention_3")
+        private val KEY_ROSARY_INTENTION_4 = stringPreferencesKey("rosary_intention_4")
     }
 
     val preferences: Flow<UserPreferences> = dataStore.data.map { prefs ->
@@ -69,6 +75,13 @@ class UserPreferencesRepository @Inject constructor(
             rosaryHapticFeedback = prefs[KEY_ROSARY_HAPTIC] ?: true,
             autoBackupFrequency = prefs[KEY_AUTO_BACKUP_FREQUENCY]?.let { runCatching { BackupFrequency.valueOf(it) }.getOrNull() } ?: BackupFrequency.OFF,
             autoBackupFolderUri = prefs[KEY_AUTO_BACKUP_FOLDER_URI] ?: "",
+            rosaryIntentions = listOf(
+                prefs[KEY_ROSARY_INTENTION_0] ?: "",
+                prefs[KEY_ROSARY_INTENTION_1] ?: "",
+                prefs[KEY_ROSARY_INTENTION_2] ?: "",
+                prefs[KEY_ROSARY_INTENTION_3] ?: "",
+                prefs[KEY_ROSARY_INTENTION_4] ?: "",
+            ),
         )
     }
 
@@ -121,6 +134,26 @@ class UserPreferencesRepository @Inject constructor(
             prefs[KEY_BIBLE_LAST_TRANSLATION] = translationId
             prefs[KEY_BIBLE_LAST_BOOK] = bookNumber
             prefs[KEY_BIBLE_LAST_CHAPTER] = chapter
+        }
+    }
+
+    suspend fun setRosaryIntentions(intentions: List<String>) {
+        dataStore.edit { prefs ->
+            prefs[KEY_ROSARY_INTENTION_0] = intentions.getOrElse(0) { "" }
+            prefs[KEY_ROSARY_INTENTION_1] = intentions.getOrElse(1) { "" }
+            prefs[KEY_ROSARY_INTENTION_2] = intentions.getOrElse(2) { "" }
+            prefs[KEY_ROSARY_INTENTION_3] = intentions.getOrElse(3) { "" }
+            prefs[KEY_ROSARY_INTENTION_4] = intentions.getOrElse(4) { "" }
+        }
+    }
+
+    suspend fun clearRosaryIntentions() {
+        dataStore.edit { prefs ->
+            prefs.remove(KEY_ROSARY_INTENTION_0)
+            prefs.remove(KEY_ROSARY_INTENTION_1)
+            prefs.remove(KEY_ROSARY_INTENTION_2)
+            prefs.remove(KEY_ROSARY_INTENTION_3)
+            prefs.remove(KEY_ROSARY_INTENTION_4)
         }
     }
 }

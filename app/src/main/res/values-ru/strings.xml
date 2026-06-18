@@ -2,6 +2,7 @@
 <resources>
     <string name="action_open">Открыть</string>
     <string name="action_cancel">Отменить</string>
+    <string name="action_delete">Delete</string>
     <string name="action_save">Сохранить</string>
     <string name="action_turn_off">Отключить</string>
     <string name="action_all">Все</string>
@@ -198,4 +199,28 @@
         <item quantity="many">%d дней</item>
         <item quantity="other">%d дней</item>
     </plurals>
+
+    <!-- Confession log -->
+    <string name="nav_confession">Confession</string>
+    <string name="confession_title">Confession</string>
+    <string name="confession_notes_title">Pending Notes</string>
+    <string name="confession_history_title">Past Confessions</string>
+    <string name="confession_add_hint">Write something to remember…</string>
+    <string name="confession_add_label">Add Note</string>
+    <string name="confession_mark_confessed">I Made My Confession</string>
+    <string name="confession_confirm_title">Record Confession?</string>
+    <string name="confession_confirm_text">This will record today as your last confession and clear your pending notes.</string>
+    <string name="confession_confirm">Confirm</string>
+    <string name="confession_no_notes">No pending notes.</string>
+    <string name="confession_no_records">No confessions recorded yet.</string>
+    <string name="confession_last_on">Confession on %s</string>
+    <string name="confession_delete_record_title">Delete Record?</string>
+    <string name="confession_delete_record_text">This will permanently remove this confession from your history.</string>
+
+    <!-- Rosary intentions -->
+    <string name="rosary_intentions_title">Prayer Intentions</string>
+    <string name="rosary_intention_hint">Mystery %d…</string>
+    <string name="rosary_clear_intentions">Clear All</string>
+    <string name="rosary_save_intentions">Save</string>
+    <string name="rosary_your_intention">Intention: %s</string>
 </resources>

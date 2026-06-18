@@ -149,6 +149,34 @@ class RosaryViewModel @Inject constructor(
         .map { it.rosaryHapticFeedback }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
 
+    val intentions: StateFlow<List<String>> = prefsRepository.preferences
+        .map { it.rosaryIntentions }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), List(5) { "" })
+
+    val currentMysteryNumber: StateFlow<Int?> = _currentPosition
+        .map { pos ->
+            val beads = _beads.value
+            (pos downTo 0).firstOrNull { i ->
+                val b = beads.getOrNull(i)
+                b?.prayerId == null && b?.mysteryTitle != null && b?.mysteryNumber != null
+            }?.let { i -> beads[i].mysteryNumber }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+
+    fun saveIntentions(intentions: List<String>) {
+        viewModelScope.launch { prefsRepository.setRosaryIntentions(intentions) }
+    }
+
+    fun saveIntentionForMystery(index: Int, text: String) {
+        val current = intentions.value.toMutableList()
+        while (current.size < 5) current.add("")
+        current[index] = text
+        viewModelScope.launch { prefsRepository.setRosaryIntentions(current) }
+    }
+
+    fun clearIntentions() {
+        viewModelScope.launch { prefsRepository.clearRosaryIntentions() }
+    }
 
     private val _sessionId = MutableStateFlow<String?>(null)
     private var currentLanguage = "en"

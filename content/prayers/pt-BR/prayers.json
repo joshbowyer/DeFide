@@ -207,4 +207,29 @@
     "category": "saints",
     "tags": ["st-joseph", "saints", "fathers", "workers", "protection", "family", "vocations"]
   }
+,
+  {
+    "id": "divine-mercy-chaplet",
+    "title": "Divine Mercy Chaplet",
+    "body": "Begin with the Apostles' Creed, one Our Father, one Hail Mary, and the I Believe.\n\nOn the large bead of each decade:\nEternal Father, I offer You the Body and Blood, Soul and Divinity of Your dearly beloved Son, Our Lord Jesus Christ, in atonement for our sins and those of the whole world.\n\nOn each of the ten small beads:\nFor the sake of His sorrowful Passion, have mercy on us and on the whole world.\n\nConclude with (three times):\nHoly God, Holy Mighty One, Holy Immortal One, have mercy on us and on the whole world.",
+    "source": "Revealed to St. Faustina Kowalska, 1935",
+    "category": "devotional",
+    "tags": ["mercy", "devotional", "daily", "passion"]
+  },
+  {
+    "id": "litany-of-humility",
+    "title": "Litany of Humility",
+    "body": "O Jesus, meek and humble of heart, hear me.\n\nFrom the desire of being esteemed, deliver me, O Jesus.\nFrom the desire of being loved, deliver me, O Jesus.\nFrom the desire of being extolled, deliver me, O Jesus.\nFrom the desire of being honored, deliver me, O Jesus.\nFrom the desire of being praised, deliver me, O Jesus.\nFrom the desire of being preferred to others, deliver me, O Jesus.\nFrom the desire of being consulted, deliver me, O Jesus.\nFrom the desire of being approved, deliver me, O Jesus.\n\nFrom the fear of being humiliated, deliver me, O Jesus.\nFrom the fear of being despised, deliver me, O Jesus.\nFrom the fear of suffering rebukes, deliver me, O Jesus.\nFrom the fear of being calumniated, deliver me, O Jesus.\nFrom the fear of being forgotten, deliver me, O Jesus.\nFrom the fear of being ridiculed, deliver me, O Jesus.\nFrom the fear of being wronged, deliver me, O Jesus.\nFrom the fear of being suspected, deliver me, O Jesus.\n\nThat others may be loved more than I, Jesus, grant me the grace to desire it.\nThat others may be esteemed more than I, Jesus, grant me the grace to desire it.\nThat in the opinion of the world, others may increase and I may decrease, Jesus, grant me the grace to desire it.\nThat others may be chosen and I set aside, Jesus, grant me the grace to desire it.\nThat others may be praised and I unnoticed, Jesus, grant me the grace to desire it.\nThat others may be preferred to me in everything, Jesus, grant me the grace to desire it.\nThat others may become holier than I, provided that I may become as holy as I should, Jesus, grant me the grace to desire it.",
+    "source": "Attributed to Cardinal Rafael Merry del Val (1865–1930)",
+    "category": "devotional",
+    "tags": ["humility", "devotional", "faith", "daily"]
+  },
+  {
+    "id": "litany-of-purity",
+    "title": "Litany of Purity",
+    "body": "Lord, have mercy on us.\nChrist, have mercy on us.\nLord, have mercy on us.\n\nGod the Father of Heaven, have mercy on us.\nGod the Son, Redeemer of the world, have mercy on us.\nGod the Holy Ghost, have mercy on us.\nHoly Trinity, One God, have mercy on us.\n\nJesus, meek and humble of heart, make our hearts like unto Thine.\nJesus, model of chastity, make us pure.\nJesus, lover of souls, guard our souls.\n\nFrom all impurity of heart, deliver us, O Lord.\nFrom all unchaste thoughts, deliver us, O Lord.\nFrom the blindness that sin brings, deliver us, O Lord.\nFrom all occasions of impurity, deliver us, O Lord.\nFrom carelessness in guarding the senses, deliver us, O Lord.\n\nThat we may love purity of heart, Lord, grant us this grace.\nThat we may persevere in virtue, Lord, grant us this grace.\nThat we may resist all temptation with Thy help, Lord, grant us this grace.\nThat we may imitate the purity of the Blessed Virgin Mary, Lord, grant us this grace.\nThat we may guard our thoughts, words, and deeds for Thy glory, Lord, grant us this grace.\n\nLamb of God, Who takest away the sins of the world, spare us, O Lord.\nLamb of God, Who takest away the sins of the world, graciously hear us, O Lord.\nLamb of God, Who takest away the sins of the world, have mercy on us.\n\nPray for us, O Holy Virgin Mary, that we may be made worthy of the promises of Christ.",
+    "source": null,
+    "category": "devotional",
+    "tags": ["purity", "faith", "devotional"]
+  }
 ]
