@@ -322,7 +322,10 @@ private fun LaudesContent(
         HymnSection(hymnText)
 
         // 3–5. Psalms 1–3 — Latin antiphons in Traditional
+        // The data is in ONE psalm row with 5 blocks (psalm, psalm, psalm,
+        // canticle-antiphon, psalm). We need to read each block, not each row.
         val laudPsalms = psalms.filter { it.officeType == "Laudes" }
+        val laudBlocks: List<PsalmBlock> = laudPsalms.getOrNull(0)?.parseBlocks()?.blocks ?: emptyList()
         val getAnt = { idx: Int ->
             if (rite == AppRite.TRADITIONAL) {
                 officeLatin?.let {
@@ -332,9 +335,23 @@ private fun LaudesContent(
                 when (idx) { 0 -> office.ant1; 1 -> office.ant2; 2 -> office.ant3; else -> null }
             }
         }
-        Psalm1Section(laudPsalms.getOrNull(0), getAnt(0), rite)
-        Psalm2Section(laudPsalms.getOrNull(1), getAnt(1), rite)
-        Psalm3Section(laudPsalms.getOrNull(2), getAnt(2), rite)
+        // Build a per-block DivineOfficePsalm wrapper so existing Psalm*Section composables
+        // (which take a DivineOfficePsalm?) can render the right verses.
+        fun blockPsalm(blockIdx: Int): DivineOfficePsalm? {
+            val block = laudBlocks.getOrNull(blockIdx) ?: return null
+            val wrapper = laudPsalms.getOrNull(0) ?: return null
+            val versesArr = org.json.JSONArray()
+            block.verses.forEach { versesArr.put(it) }
+            val blockJson = org.json.JSONObject().apply {
+                put("antiphon", block.antiphon ?: "")
+                put("verses", versesArr)
+            }
+            val arr = org.json.JSONArray().put(blockJson)
+            return wrapper.copy(psalmTextJson = arr.toString())
+        }
+        Psalm1Section(blockPsalm(0), getAnt(0), rite)
+        Psalm2Section(blockPsalm(1), getAnt(1), rite)
+        Psalm3Section(blockPsalm(2), getAnt(2), rite)
 
         // 6. Scripture Reading — English in Traditional
         ScriptureReadingSection(office.lectio1)
@@ -405,9 +422,22 @@ private fun VespersContent(
         val vespAnt2 = if (rite == AppRite.TRADITIONAL) officeLatin?.antVespera2 ?: officeLatin?.ant2 ?: office.antVespera2 ?: office.ant2 else office.antVespera2 ?: office.ant2
         val vespAnt3 = if (rite == AppRite.TRADITIONAL) officeLatin?.antVespera3 ?: officeLatin?.ant3 ?: office.antVespera3 ?: office.ant3 else office.antVespera3 ?: office.ant3
         val vespPsalms = psalms.filter { it.officeType == "Vespers" }
-        Psalm1Section(vespPsalms.getOrNull(0), vespAnt1, rite)
-        Psalm2Section(vespPsalms.getOrNull(1), vespAnt2, rite)
-        Psalm3Section(vespPsalms.getOrNull(2), vespAnt3, rite)
+        val vespBlocks: List<PsalmBlock> = vespPsalms.getOrNull(0)?.parseBlocks()?.blocks ?: emptyList()
+        fun vespBlockPsalm(blockIdx: Int): DivineOfficePsalm? {
+            val block = vespBlocks.getOrNull(blockIdx) ?: return null
+            val wrapper = vespPsalms.getOrNull(0) ?: return null
+            val versesArr = org.json.JSONArray()
+            block.verses.forEach { versesArr.put(it) }
+            val blockJson = org.json.JSONObject().apply {
+                put("antiphon", block.antiphon ?: "")
+                put("verses", versesArr)
+            }
+            val arr = org.json.JSONArray().put(blockJson)
+            return wrapper.copy(psalmTextJson = arr.toString())
+        }
+        Psalm1Section(vespBlockPsalm(0), vespAnt1, rite)
+        Psalm2Section(vespBlockPsalm(1), vespAnt2, rite)
+        Psalm3Section(vespBlockPsalm(2), vespAnt3, rite)
 
         // 5. Scripture Reading — English in Traditional
         ScriptureReadingSection(office.lectio1)
@@ -416,8 +446,15 @@ private fun VespersContent(
         val respText = if (rite == AppRite.TRADITIONAL) officeLatin?.responsory1 ?: office.responsory1 else office.responsory1
         ShortResponsorySection(respText)
 
-        // 7. Canticle Magnificat — Latin antiphon in Traditional
-        val magnAnt = if (rite == AppRite.TRADITIONAL) officeLatin?.antVespera1 ?: officeLatin?.ant1 ?: office.antVespera1 ?: office.ant1 else office.antVespera1 ?: office.ant1
+        // 7. Canticle Magnificat — uses the 4th psalm block's antiphon (the
+        // Magnificat-specific antiphon), not antVespera1 which is shared with Psalm 1.
+        val magnBlockAnt: String? = vespBlocks.getOrNull(3)?.antiphon
+        val magnAnt: String? = when {
+            rite == AppRite.TRADITIONAL && !magnBlockAnt.isNullOrBlank() -> magnBlockAnt
+            rite == AppRite.TRADITIONAL -> officeLatin?.antVespera1 ?: officeLatin?.ant1 ?: office.antVespera1 ?: office.ant1
+            !magnBlockAnt.isNullOrBlank() -> magnBlockAnt
+            else -> office.antVespera1 ?: office.ant1
+        }
         CanticleMagnificatSection(magnAnt, rite)
 
         // 8. Prayers and Intercessions — Latin in Traditional

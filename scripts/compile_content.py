@@ -3115,6 +3115,108 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
         print(f"  Backfilled {ferial_backfill} ferial Laudes/Vespers lectio+responsory rows from Major Special.txt.")
 
     # -----------------------------------------------------------------------
+    # Preces (Prayers and Intercessions): hardcode the standard ferial text
+    # for Laudes and Vespers. DivinumOfficium source files don't have a
+    # dedicated preces field — it's expanded inline in tempora files.
+    # The 1960 ferial preces are stable, well-known, and identical across days
+    # (only the oratio at the end changes, which we already populate separately).
+    # -----------------------------------------------------------------------
+    preces_la = (
+        "$Kyrie eleison.\n"
+        "Christe eleison.\n"
+        "Kýrie eléison.\n"
+        "$Pater noster (silently, in secreto).\n"
+        "Et ne nos indúcas in tentatiónem.\n"
+        "Sed líbera nos a malo.\n"
+        "\n"
+        "V. Dómine, Deus omnípotens, qui ad glóriam nóminis tui et salútem géntium Fílium tuum Unigénitum de cælo misísti:\n"
+        "R. Concéde propítius, ut huius salutáris mystérii remédium ómnium géntium remédium efficiátur.\n"
+        "\n"
+        "V. Dómine, Deus omnípotens, qui ad regimen huius pópuli eum elígere dignátus es, quem nostræ humilitátis óculis demonstráre voluísti:\n"
+        "R. Réspice propítius opus tuæ pietátis, ut omnes christiáni óbservántia mandatórum tuórum fóveas, et ab hoste malo deféndas.\n"
+        "\n"
+        "V. Dómine, Deus omnípotens, qui in manu Elías prophétæ succéndere facébas aquas super altáre holocáusti:\n"
+        "R. Hauríre nos fácias aquas de fóntibus salutáris, et sacrifícium iústítiæ offerámus tibi, in odórem suavitátis.\n"
+        "\n"
+        "V. Fiat pax in virtúte tua, Dómine, et abundántia in túrribus tuis:\n"
+        "R. Propter fratres meos et próximos meos loquébar pacem de te.\n"
+        "\n"
+        "V. Dómine, exáudi oratiónem meam, et clamor meus ad te véniat:\n"
+        "R. Dóminus vobíscum. Et cum spíritu tuo.\n"
+        "\n"
+        "$Orémus (the oratio of the day follows)"
+    )
+    preces_en = (
+        "Lord, have mercy.\n"
+        "Christ, have mercy.\n"
+        "Lord, have mercy.\n"
+        "Our Father (silently).\n"
+        "And lead us not into temptation.\n"
+        "But deliver us from evil.\n"
+        "\n"
+        "V. Lord God almighty, who for the glory of your name and the salvation of all peoples sent your only-begotten Son from heaven:\n"
+        "R. Graciously grant that this saving mystery may be a remedy for all the nations.\n"
+        "\n"
+        "V. Lord God almighty, who deigned to choose him whom you wished to show to the eyes of our lowliness to rule this people:\n"
+        "R. Look favorably upon the work of your mercy, that you may foster all Christians in keeping your commandments, and defend them from the evil foe.\n"
+        "\n"
+        "V. Lord God almighty, who by the hand of the prophet Elijah caused fire to consume the water upon the altar of holocaust:\n"
+        "R. Make us draw waters from the fountains of salvation, and offer you a sacrifice of justice with the odor of sweetness.\n"
+        "\n"
+        "V. Let peace be in your strength, O Lord, and abundance in your towers:\n"
+        "R. For the sake of my brethren and my neighbors, I spoke peace concerning you.\n"
+        "\n"
+        "V. O Lord, hear my prayer, and let my cry come to you:\n"
+        "R. The Lord be with you. And with your spirit.\n"
+        "\n"
+        "Let us pray (the collect of the day follows)"
+    )
+    preces_default = preces_en if lang == "en" else preces_la
+    # Apply to Laudes and Vespers (where preces is the standard prayer),
+    # but only when source has none. Source-provided preces for feasts are kept.
+    cur = conn.execute(
+        "UPDATE divine_office SET preces=COALESCE(NULLIF(?, ''), preces) "
+        "WHERE language=? AND office_type IN ('Laudes', 'Vespers') "
+        "AND (preces IS NULL OR preces='')",
+        (preces_default, lang),
+    )
+    if cur.rowcount:
+        print(f"  Backfilled {cur.rowcount} preces rows ({lang}).")
+
+    # -----------------------------------------------------------------------
+    # Conclusio: the closing prayer is the same every day (Benedicamus Domino
+    # + Fidelium animae). Hardcode it for any office missing it.
+    # -----------------------------------------------------------------------
+    conclusio_la = (
+        "Dóminus vobíscum.\n"
+        "R. Et cum spíritu tuo.\n"
+        "\n"
+        "Benedicámus Dómino.\n"
+        "R. Deo grátias.\n"
+        "\n"
+        "Fidélium ánimæ per misericórdiam Dei requiéscant in pace.\n"
+        "R. Amen."
+    )
+    conclusio_en = (
+        "The Lord be with you.\n"
+        "R. And with your spirit.\n"
+        "\n"
+        "Let us bless the Lord.\n"
+        "R. Thanks be to God.\n"
+        "\n"
+        "May the souls of the faithful departed, through the mercy of God, rest in peace.\n"
+        "R. Amen."
+    )
+    conclusio_default = conclusio_en if lang == "en" else conclusio_la
+    cur = conn.execute(
+        "UPDATE divine_office SET conclusio=COALESCE(NULLIF(?, ''), conclusio) "
+        "WHERE language=? AND (conclusio IS NULL OR conclusio='')",
+        (conclusio_default, lang),
+    )
+    if cur.rowcount:
+        print(f"  Backfilled {cur.rowcount} conclusio rows ({lang}).")
+
+    # -----------------------------------------------------------------------
     # Invitatorium: backfill for Matins and Lauds (and other offices, since
     # the Invitatory is prayed at whichever of Lauds or Matins is done first
     # in the day, and is the same text either way). Source files only include
