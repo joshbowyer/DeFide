@@ -2639,7 +2639,7 @@ def _build_hymn_lookup(horas_dir: str) -> dict[str, str]:
     special_dir = os.path.join(horas_dir, "Psalterium", "Special")
     lookup: dict[str, str] = {}
 
-    for fname in ("Major Special.txt", "Minor Special.txt"):
+    for fname in ("Major Special.txt", "Minor Special.txt", "Matutinum Special.txt"):
         path = os.path.join(special_dir, fname)
         if not os.path.exists(path):
             continue
@@ -2906,16 +2906,22 @@ def _do_divine_office_backfill(conn, ferial_map, matins_map, hymn_lookup: dict[s
         ant_list = ant_list[:9]
 
         # Look up hymn from hymn_lookup (contains per-language hymn text)
-        # English keys: "Hymnus Day0 Laudes", "Hymnus Day0 Vespera", "Hymnus Completorium"
+        # English keys: "Hymnus Day0 Laudes", "Hymnus Day0 Vespera", "Day0 Hymnus" (Matins), "Hymnus Completorium"
         # DB office_type uses "Vespers" but English file keys use Latin "Vespera"
-        # For Matins there is no specific English key; use "Vespers" key as fallback (same Sunday hymn)
-        ot_key = "Vespera" if ot in ("Vespers", "Matins") else ot
-        hymn_key = f"Hymnus Day{day} {ot_key}"
+        if ot == "Matins":
+            # Matutinum Special.txt uses keys like "Day0 Hymnus", "Day1 Hymnus", etc.
+            hymn_key = f"Day{day} Hymnus"
+            alt_key = f"Hymnus Day{day}"
+        else:
+            ot_key = "Vespera" if ot == "Vespers" else ot
+            hymn_key = f"Hymnus Day{day} {ot_key}"
+            alt_key = None
         # Fallbacks: Day6 Vespera may not exist in English → use Day0 Vespera
         hymn_text = (
             hymn_lookup.get(hymn_key)
-            or (hymn_lookup.get(f"Hymnus Day0 {ot_key}") if ot in ("Vespers", "Matins") else None)
-            or hymn_lookup.get(f"Hymnus {ot_key}")
+            or (hymn_lookup.get(alt_key) if alt_key else None)
+            or (hymn_lookup.get(f"Hymnus Day0 {ot_key}") if ot == "Vespers" else None)
+            or hymn_lookup.get(f"Day0 Hymnus" if ot == "Matins" else f"Hymnus {ot_key}")
         )
         conn.execute(
             """INSERT INTO divine_office
@@ -4178,11 +4184,20 @@ def compile_divine_office(conn, lang: str = "la"):
     ferial_hymn_tags = {
         "Laudes": "LaudsFeria",
         "Vespers": "VespFeria",
-        "Matins": "Audibenigne",
+        "Matins": None,  # resolved below from hymn_lookup
     }
     ferial_updated = 0
     for ot, tag in ferial_hymn_tags.items():
-        hymn_text = tag_to_text.get(tag)
+        if ot == "Matins":
+            # Use the Sunday ferial Matins hymn from Matutinum Special.txt
+            # (stored as "Day0 Hymnus" in hymn_lookup). This applies to all
+            # Matins rows that don't have an inline hymn or @-ref.
+            hymn_text = (
+                hymn_lookup.get("Day0 Hymnus")
+                or hymn_lookup.get("Hymnus Day0")
+            )
+        else:
+            hymn_text = tag_to_text.get(tag)
         if not hymn_text:
             continue
         n = conn.execute(
@@ -4195,7 +4210,13 @@ def compile_divine_office(conn, lang: str = "la"):
     # that have antiphon data indicating which office they belong to
     ferial_null_updated = 0
     for ot, tag in ferial_hymn_tags.items():
-        hymn_text = tag_to_text.get(tag)
+        if ot == "Matins":
+            hymn_text = (
+                hymn_lookup.get("Day0 Hymnus")
+                or hymn_lookup.get("Hymnus Day0")
+            )
+        else:
+            hymn_text = tag_to_text.get(tag)
         if not hymn_text:
             continue
         if ot == "Laudes":
@@ -4245,9 +4266,9 @@ def compile_divine_office(conn, lang: str = "la"):
             if sections:
                 hymn_file_index[fn] = sections
 
-    def _resolve_hymn_chain(ref: str, _seen: set | None = None) -> str:
+    def _resolve_hymn_chain(ref: str, _seen: set | None = None, default_kind: str = "hymn") -> str:
         """
-        Resolve a hymn reference string to its full text.
+        Resolve a hymn/responsory/lectio reference string to its full text.
         Handles:
           @:Hymnus Vespera        -> inline section in source file
           @Sancti/02-22          -> default hymn in target file
@@ -4256,7 +4277,10 @@ def compile_divine_office(conn, lang: str = "la"):
           @Tempora/Pasc2-3:Hymnus Laudes
           @Commune/C6::16-25     -> trailing :: marker, no actual sub
           ::s/PATTERN/REPLACEMENT/;::s/PATTERN/REPLACEMENT/  (subs)
-        Returns the resolved hymn text or the original ref if unresolved.
+          default_kind: "hymn" (default), "responsory" or "lectio" — used when
+            the ref has no :section hint to choose a sensible default
+            (Responsory1 for responsory, Lectio1 for lectio, Hymnus for hymn).
+        Returns the resolved text or the original ref if unresolved.
         """
         if _seen is None:
             _seen = set()
@@ -4304,14 +4328,23 @@ def compile_divine_office(conn, lang: str = "la"):
         if sec_hint:
             raw_text = find_section(sec_hint)
         else:
-            # Default: prefer vespers > laudes > matins > first hymn
-            for pref in ("vesper", "laudes", "matutin"):
-                for sec_name, lines in sections.items():
-                    if "hymnus" in sec_name.lower() and pref in sec_name.lower():
-                        raw_text = "\n".join(lines)
+            # Default: pick the section type matching default_kind
+            if default_kind == "responsory":
+                for pref in ("responsory 1", "responsory1", "responsory"):
+                    raw_text = find_section(pref)
+                    if raw_text: break
+            elif default_kind == "lectio":
+                for pref in ("lectio 1", "lectio1", "lectio"):
+                    raw_text = find_section(pref)
+                    if raw_text: break
+            else:  # hymn
+                for pref in ("vesper", "laudes", "matutin"):
+                    for sec_name, lines in sections.items():
+                        if "hymnus" in sec_name.lower() and pref in sec_name.lower():
+                            raw_text = "\n".join(lines)
+                            break
+                    if raw_text:
                         break
-                if raw_text:
-                    break
 
         if raw_text is None:
             return ref  # file not found or section not found
@@ -4320,7 +4353,11 @@ def compile_divine_office(conn, lang: str = "la"):
         stripped = raw_text.strip()
         if stripped.startswith("@") and stripped not in _seen:
             _seen2 = set(_seen) | {stripped}
-            return _resolve_hymn_chain(stripped, _seen2)
+            return _resolve_hymn_chain(stripped, _seen2, default_kind=default_kind)
+
+        # Apply substitutions
+        if subs:
+            raw_text = _apply_subs(raw_text, subs)
 
         return raw_text
 
@@ -4344,7 +4381,28 @@ def compile_divine_office(conn, lang: str = "la"):
                 (resolved, row_id),
             )
             cross_resolved += 1
-    print(f"    Cross-file @ ref resolution: {cross_resolved} rows resolved.")
+
+    # Step 4b: also resolve @-refs in lectio_1/2/3 and responsory_1/2/3 columns
+    # Many sancti/tempora files use `@Sancti/XX-YY:Responsory1` style refs to
+    # share text with another office. The compiler's section parser already
+    # stored the raw @-ref in those columns; here we follow the chain.
+    field_resolved = 0
+    for col, kind in (
+        ("lectio_1", "lectio"), ("lectio_2", "lectio"), ("lectio_3", "lectio"),
+        ("responsory_1", "responsory"), ("responsory_2", "responsory"), ("responsory_3", "responsory"),
+    ):
+        cu = conn.execute(
+            f"SELECT id, {col} FROM divine_office WHERE {col} LIKE '@%'"
+        )
+        for row_id, ref in cu.fetchall():
+            resolved = _resolve_hymn_chain(ref, default_kind=kind)
+            if resolved != ref:
+                conn.execute(
+                    f"UPDATE divine_office SET {col}=? WHERE id=?",
+                    (resolved, row_id),
+                )
+                field_resolved += 1
+    print(f"    Cross-file @ ref resolution: {cross_resolved} hymn rows, {field_resolved} lectio/responsory cells resolved.")
 
 
 def main() -> None:
