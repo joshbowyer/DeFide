@@ -2504,9 +2504,10 @@ def _load_txt_file(filename, horas_dir=""):
 
 _VERSE_CACHE = {}
 _VULGATE_PSALMS_BOOK_ID = 2022
+_VULGATE_ET_PSALMS_BOOK_ID = 3022
 
 
-def _expand_psalm_ref(conn, ref):
+def _expand_psalm_ref(conn, ref, lang: str = "la"):
     if not ref:
         return []
     ref = ref.strip()
@@ -2518,17 +2519,21 @@ def _expand_psalm_ref(conn, ref):
     ps_id = int(m.group(1))
     suffix = m.group(2)
 
-    if _VULGATE_PSALMS_BOOK_ID not in _VERSE_CACHE:
+    # English uses the Vulgate English Translation (book 3022); Latin uses
+    # the Vulgate (book 2022). Both share the same chapter/verse numbering.
+    book_id = _VULGATE_ET_PSALMS_BOOK_ID if lang == "en" else _VULGATE_PSALMS_BOOK_ID
+
+    if book_id not in _VERSE_CACHE:
         cu = conn.execute(
             "SELECT chapter, verse, text FROM verses WHERE book_id=? ORDER BY chapter, verse",
-            (_VULGATE_PSALMS_BOOK_ID,),
+            (book_id,),
         )
         rows = cu.fetchall()
         verses_by_ch = {}
         for ch, vn, txt in rows:
             verses_by_ch.setdefault(ch, []).append((vn, txt))
-        _VERSE_CACHE[_VULGATE_PSALMS_BOOK_ID] = verses_by_ch
-    verses_by_ch = _VERSE_CACHE[_VULGATE_PSALMS_BOOK_ID]
+        _VERSE_CACHE[book_id] = verses_by_ch
+    verses_by_ch = _VERSE_CACHE[book_id]
 
     if ps_id not in verses_by_ch:
         return []
@@ -2546,7 +2551,7 @@ def _expand_psalm_ref(conn, ref):
     return [f"{ps_id}:{vn}:{txt}" for vn, txt in all_verses]
 
 
-def _build_blocks_from_txt_rows(sec_rows, conn):
+def _build_blocks_from_txt_rows(sec_rows, conn, lang: str = "la"):
     """
     Convert parsed txt section rows into antiphon+verses blocks.
 
@@ -2585,7 +2590,7 @@ def _build_blocks_from_txt_rows(sec_rows, conn):
             current_verses = []
             pending_bare = False
             for ref in s_refs:
-                current_verses.extend(_expand_psalm_ref(conn, ref))
+                current_verses.extend(_expand_psalm_ref(conn, ref, lang=lang))
 
         elif s_type == "bare":
             # First bare ref after an antiphon row: close the antiphon block first
@@ -2594,7 +2599,7 @@ def _build_blocks_from_txt_rows(sec_rows, conn):
                 current_ant, current_verses = None, []
             pending_bare = True
             for ref in s_refs:
-                current_verses.extend(_expand_psalm_ref(conn, ref))
+                current_verses.extend(_expand_psalm_ref(conn, ref, lang=lang))
 
     # Flush any remaining open block
     if current_ant is not None:
@@ -4042,9 +4047,12 @@ def compile_divine_office(conn, lang: str = "la"):
         day = int(m.group(1))
         ot_raw = m.group(2).strip()
         ot = "Vespers" if ot_raw.lower().startswith("vesper") else "Laudes" if ot_raw.lower().startswith("laudes") else ot_raw
-        blocks = _build_blocks_from_txt_rows(sec_rows, conn)
+        blocks = _build_blocks_from_txt_rows(sec_rows, conn, lang=lang)
         if blocks:
-            ferial_map[(day, ot)] = blocks
+            # Source splits some days into "DayN Laudes1" + "DayN Laudes2" (the
+            # second being the bare-verse continuations of the first's antiphons).
+            # Append to existing key so the full block list is preserved.
+            ferial_map.setdefault((day, ot), []).extend(blocks)
 
     matins_map = {}
     for sec_key, sec_rows in mat_secs.items():
@@ -4059,7 +4067,7 @@ def compile_divine_office(conn, lang: str = "la"):
             day = int(rest)
         except ValueError:
             continue
-        blocks = _build_blocks_from_txt_rows(sec_rows, conn)
+        blocks = _build_blocks_from_txt_rows(sec_rows, conn, lang=lang)
         if blocks:
             matins_map[day] = blocks
 
@@ -4079,7 +4087,10 @@ def compile_divine_office(conn, lang: str = "la"):
                 )
 
     expanded = 0
-    cu = conn.execute("SELECT id, day, office_type FROM divine_office_psalms")
+    cu = conn.execute(
+        "SELECT id, day, office_type FROM divine_office_psalms WHERE language=?",
+        (lang,),
+    )
     for row_id, day, office_type in cu.fetchall():
         ot = office_type or "Laudes"
         blocks = None
