@@ -1,0 +1,1 @@
+• App icon now adapts to your launcher's preferred shape (circle, squircle, square, etc.) and supports dynamic color theming on Android 12+
