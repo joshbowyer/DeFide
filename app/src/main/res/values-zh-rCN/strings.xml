@@ -109,7 +109,6 @@
     <string name="saints_sort_name">By Name</string>
     <string name="saints_sort_feast">By Feast Day</string>
     <string name="saints_not_available">您的语言暂不支持圣人内容。欢迎在 GitHub 上贡献翻译。</string>
-
     <!-- Confession log -->
     <string name="nav_confession">Confession</string>
     <string name="confession_title">Confession</string>
@@ -126,7 +125,6 @@
     <string name="confession_last_on">Confession on %s</string>
     <string name="confession_delete_record_title">Delete Record?</string>
     <string name="confession_delete_record_text">This will permanently remove this confession from your history.</string>
-
     <!-- Rosary intentions -->
     <string name="rosary_intentions_title">Prayer Intentions</string>
     <string name="rosary_intention_hint">Mystery %d…</string>
