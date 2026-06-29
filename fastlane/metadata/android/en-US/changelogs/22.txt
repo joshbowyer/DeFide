@@ -1,0 +1,7 @@
+• Divine Office (Breviary): pray Lauds, Vespers, Matins, and Compline offline
+• Rite toggle: choose Modern (English), Traditional (Latin antiphons/prayers, English scripture), or Latin (fully in Latin)
+• Latin Rosary: full Pater Noster, Ave Maria, Gloria Patri, and all 20 mysteries in Latin
+• Two new offline catechisms: Compendium of the CCC and Baltimore Catechism
+• Fixed Rosary always opening to the mystery picker instead of the home screen
+• Fixed catechism dialog showing options in wrong order
+• Italian translation added
