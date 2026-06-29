@@ -1,6 +1,7 @@
 package com.tristinbaker.defide.data.db.content
 
 import android.database.Cursor
+import com.tristinbaker.defide.data.model.CompendiumCatechism
 import com.tristinbaker.defide.data.model.Book
 import com.tristinbaker.defide.data.model.MysteryBead
 import com.tristinbaker.defide.data.model.Mystery
@@ -10,6 +11,10 @@ import com.tristinbaker.defide.data.model.Prayer
 import com.tristinbaker.defide.data.model.Saint
 import com.tristinbaker.defide.data.model.Translation
 import com.tristinbaker.defide.data.model.Verse
+import com.tristinbaker.defide.data.model.BaltimoreCatechism
+import com.tristinbaker.defide.data.model.DivineOffice
+import com.tristinbaker.defide.data.model.DivineOfficeCalendar
+import com.tristinbaker.defide.data.model.DivineOfficePsalm
 
 fun Cursor.toTranslation() = Translation(
     id = getString(getColumnIndexOrThrow("id")),
@@ -88,6 +93,61 @@ fun Cursor.toSaint() = Saint(
     rank = getIntOrNull("rank"),
 )
 
+fun Cursor.toBaltimoreCatechism() = BaltimoreCatechism(
+    id = getInt(getColumnIndexOrThrow("id")),
+    number = getInt(getColumnIndexOrThrow("number")),
+    lesson = getInt(getColumnIndexOrThrow("lesson")),
+    question = getString(getColumnIndexOrThrow("question")),
+    answer = getString(getColumnIndexOrThrow("answer")),
+)
+
+fun Cursor.toDivineOffice() = DivineOffice(
+    id = getInt(getColumnIndexOrThrow("id")),
+    file = getString(getColumnIndexOrThrow("file")),
+    fileType = getString(getColumnIndexOrThrow("file_type")),
+    language = getString(getColumnIndexOrThrow("language")),
+    title = getString(getColumnIndexOrThrow("title")),
+    officeType = getStringOrNull("office_type"),
+    invitatorium = getStringOrNull("invitatorium"),
+    ant1 = getStringOrNull("antiphon_1"), ant2 = getStringOrNull("antiphon_2"), ant3 = getStringOrNull("antiphon_3"),
+    ant4 = getStringOrNull("antiphon_4"), ant5 = getStringOrNull("antiphon_5"), ant6 = getStringOrNull("antiphon_6"),
+    ant7 = getStringOrNull("antiphon_7"), ant8 = getStringOrNull("antiphon_8"), ant9 = getStringOrNull("antiphon_9"),
+    antVespera1 = getStringOrNull("antiphon_vespera_1"), antVespera2 = getStringOrNull("antiphon_vespera_2"), antVespera3 = getStringOrNull("antiphon_vespera_3"),
+    antVespera4 = getStringOrNull("antiphon_vespera_4"), antVespera5 = getStringOrNull("antiphon_vespera_5"), antVespera6 = getStringOrNull("antiphon_vespera_6"),
+    antVespera7 = getStringOrNull("antiphon_vespera_7"), antVespera8 = getStringOrNull("antiphon_vespera_8"), antVespera9 = getStringOrNull("antiphon_vespera_9"),
+    antVespera10 = getStringOrNull("antiphon_vespera_10"), antVespera11 = getStringOrNull("antiphon_vespera_11"), antVespera12 = getStringOrNull("antiphon_vespera_12"),
+    hymn = getStringOrNull("hymn"),
+    lectio1 = getStringOrNull("lectio_1"), lectio2 = getStringOrNull("lectio_2"), lectio3 = getStringOrNull("lectio_3"),
+    responsory1 = getStringOrNull("responsory_1"), responsory2 = getStringOrNull("responsory_2"), responsory3 = getStringOrNull("responsory_3"),
+    versus = getStringOrNull("versus"),
+    preces = getStringOrNull("preces"),
+    capitulum = getStringOrNull("capitulum"),
+    oratio = getStringOrNull("oratio"),
+    conclusio = getStringOrNull("conclusio"),
+    matinsAntiphon = getStringOrNull("matins_antiphon"),
+)
+
+fun Cursor.toDivineOfficeCalendar() = DivineOfficeCalendar(
+    key = getString(getColumnIndexOrThrow("key")),
+    language = getString(getColumnIndexOrThrow("language")),
+    title = getString(getColumnIndexOrThrow("title")),
+    rank = getStringOrNull("rank"),
+    grade = getInt(getColumnIndexOrThrow("grade")),
+    temporaFile = getStringOrNull("tempora_file"),
+    sanctiFile = getStringOrNull("sancti_file"),
+    communeFile = getStringOrNull("commune_file"),
+)
+
+fun Cursor.toDivineOfficePsalm() = DivineOfficePsalm(
+    id = getInt(getColumnIndexOrThrow("id")),
+    day = getInt(getColumnIndexOrThrow("day")),
+    officeType = getString(getColumnIndexOrThrow("office_type")),
+    language = getString(getColumnIndexOrThrow("language")),
+    antiphon = getStringOrNull("antiphon"),
+    psalms = getString(getColumnIndexOrThrow("psalms")),
+    psalmTextJson = getStringOrNull("psalm_text"),
+)
+
 private fun Cursor.getStringOrNull(column: String): String? {
     val idx = getColumnIndexOrThrow(column)
     return if (isNull(idx)) null else getString(idx)
@@ -109,3 +169,13 @@ inline fun <T> Cursor.mapRows(transform: Cursor.() -> T): List<T> = use {
 inline fun <T> Cursor.firstOrNull(transform: Cursor.() -> T): T? = use {
     if (moveToFirst()) transform() else null
 }
+
+
+fun Cursor.toCompendiumCatechism() = CompendiumCatechism(
+    id = getInt(0),
+    groupName = getString(1) ?: "",
+    title = getString(2) ?: "",
+    number = getInt(3),
+    question = getString(4) ?: "",
+    answer = getString(5) ?: "",
+)

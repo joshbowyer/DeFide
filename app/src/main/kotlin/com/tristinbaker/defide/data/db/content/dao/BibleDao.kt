@@ -72,9 +72,19 @@ class BibleDao @Inject constructor(private val db: SQLiteDatabase) {
         ).firstOrNull { toVerse() }
     }
 
-    fun getBookById(bookId: Int): Book? =
-        db.rawQuery("SELECT * FROM books WHERE id = ?", arrayOf(bookId.toString()))
-            .firstOrNull { toBook() }
+    fun getBookById(bookId: Int, translationId: String? = null): Book? {
+        val args = if (translationId != null) {
+            arrayOf(bookId.toString(), translationId)
+        } else {
+            arrayOf(bookId.toString())
+        }
+        val sql = if (translationId != null) {
+            "SELECT * FROM books WHERE id = ? AND translation_id = ?"
+        } else {
+            "SELECT * FROM books WHERE id = ?"
+        }
+        return db.rawQuery(sql, args).firstOrNull { toBook() }
+    }
 
     /** FTS5 full-text search across all verses for a given translation. */
     fun searchVerses(translationId: String, query: String): List<Verse> {

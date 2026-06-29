@@ -10,6 +10,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.tristinbaker.defide.data.backup.BackupManager
 import com.tristinbaker.defide.data.preferences.AppFont
+import com.tristinbaker.defide.data.preferences.AppRite
 import com.tristinbaker.defide.data.preferences.AppTheme
 import com.tristinbaker.defide.data.preferences.BackupFrequency
 import com.tristinbaker.defide.data.preferences.RosaryOrder
@@ -198,5 +199,9 @@ class SettingsViewModel @Inject constructor(
 
     private fun cancelAutoBackup() {
         WorkManager.getInstance(context).cancelUniqueWork(BackupWorker.WORK_NAME)
+    }
+
+    fun setAppRite(rite: AppRite) {
+        viewModelScope.launch { prefsRepository.setAppRite(rite) }
     }
 }

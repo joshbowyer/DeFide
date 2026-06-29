@@ -56,6 +56,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.tristinbaker.defide.R
+import com.tristinbaker.defide.data.preferences.AppRite
 import com.tristinbaker.defide.data.preferences.RosaryOrder
 import kotlin.math.PI
 import kotlin.math.cos
@@ -69,6 +70,8 @@ fun RosaryHomeScreen(
     viewModel: RosaryViewModel = hiltViewModel(),
 ) {
     val mysteries by viewModel.mysteries.collectAsState()
+    val currentRite by viewModel.currentRite.collectAsState()
+    val englishMysteries by viewModel.englishMysteries.collectAsState()
     val todaysMysteryId = viewModel.todaysMysteryId
     val intentions by viewModel.intentions.collectAsState()
     var showIntentionsSheet by remember { mutableStateOf(false) }
@@ -118,7 +121,13 @@ fun RosaryHomeScreen(
                     else androidx.compose.material3.CardDefaults.cardColors(),
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text(mystery.name, style = MaterialTheme.typography.titleSmall)
+                        Text(
+                            text = when (currentRite) {
+                                AppRite.TRADITIONAL -> englishMysteries.find { it.id == mystery.id }?.name ?: mystery.name
+                                else -> mystery.name
+                            },
+                            style = MaterialTheme.typography.titleSmall,
+                        )
                         mystery.traditionalDays?.let { days ->
                             Text(
                                 text = if (isToday) stringResource(R.string.today_mystery_prefix, days) else days,
@@ -197,6 +206,10 @@ fun RosarySessionScreen(
     val prayerTexts by viewModel.prayerTexts.collectAsState()
     val prayerTitles by viewModel.prayerTitles.collectAsState()
     val rosaryOrder by viewModel.rosaryOrder.collectAsState()
+    // For Traditional mode: English mystery titles pulled directly from VM's StateFlows
+    val englishMysteries by viewModel.englishMysteries.collectAsState()
+    val englishBeads by viewModel.englishBeads.collectAsState()
+    val currentRite by viewModel.currentRite.collectAsState()
     val isFatima = rosaryOrder == RosaryOrder.FATIMA
     val hapticEnabled by viewModel.hapticFeedback.collectAsState()
     val completing by viewModel.completing.collectAsState()
@@ -207,8 +220,24 @@ fun RosarySessionScreen(
     LaunchedEffect(mysteryId) { viewModel.startSession(mysteryId) }
 
     val currentBead = beads.getOrNull(position)
+
     val isLast = position == beads.lastIndex && beads.isNotEmpty()
     val isAnnouncementBead = currentBead?.prayerId == null && currentBead?.mysteryTitle != null
+
+    // In Traditional mode pull English titles/scripture from englishBeads (per-mystery, not group).
+    val englishTitle: String? = if (currentRite == AppRite.TRADITIONAL) {
+        englishBeads[mysteryId]?.find { it.mysteryNumber == currentBead?.mysteryNumber }?.mysteryTitle
+    } else null
+
+    /** English scripture reference for the current mystery (used in Traditional mode). */
+    val englishScripture: String? = if (currentRite == AppRite.TRADITIONAL) {
+        englishBeads[mysteryId]?.find { it.mysteryNumber == currentBead?.mysteryNumber }?.mysteryScripture
+    } else null
+
+    /** English meditation text for the current mystery (used in Traditional mode). */
+    val englishMeditation: String? = if (currentRite == AppRite.TRADITIONAL) {
+        englishBeads[mysteryId]?.find { it.mysteryNumber == currentBead?.mysteryNumber }?.mysteryMeditation
+    } else null
 
     val prayerName = currentBead?.prayerId?.let { prayerTitles[it] } ?: ""
     val prayerBody = currentBead?.prayerId?.let { prayerTexts[it] }
@@ -245,7 +274,7 @@ fun RosarySessionScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 if (isAnnouncementBead) {
-                    // Dedicated mystery page
+                    // Dedicated mystery page — title/scripture shown in mystery's own language
                     currentBead.mysteryNumber?.let { num ->
                         val ordinalStr = when (num) {
                             1 -> stringResource(R.string.ordinal_first)
@@ -263,8 +292,13 @@ fun RosarySessionScreen(
                         )
                         Spacer(Modifier.height(8.dp))
                     }
+                    // Mystery title: English in Traditional, mystery's own language otherwise
+                    val mysteryTitle = when (currentRite) {
+                        AppRite.TRADITIONAL -> englishTitle ?: currentBead!!.mysteryTitle!!
+                        else -> currentBead!!.mysteryTitle!!
+                    }
                     Text(
-                        text = currentBead!!.mysteryTitle!!,
+                        text = mysteryTitle,
                         style = MaterialTheme.typography.headlineSmall,
                         color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Center,
@@ -284,7 +318,12 @@ fun RosarySessionScreen(
                             }
                         }
                     }
-                    currentBead.mysteryScripture?.let { scripture ->
+                    // Scripture reference: English in Traditional, mystery's own language otherwise
+                    val scriptureRef = when (currentRite) {
+                        AppRite.TRADITIONAL -> englishScripture ?: currentBead.mysteryScripture
+                        else -> currentBead.mysteryScripture
+                    }
+                    scriptureRef?.let { scripture ->
                         val firstRef = scripture.substringBefore(";").trim()
                         Spacer(Modifier.height(12.dp))
                         Text(
@@ -297,7 +336,12 @@ fun RosarySessionScreen(
                             modifier = Modifier.clickable { onScriptureClicked(firstRef) },
                         )
                     }
-                    currentBead.mysteryMeditation?.let { meditation ->
+                    // Meditation: English in Traditional, mystery's own language otherwise
+                    val meditationText = when (currentRite) {
+                        AppRite.TRADITIONAL -> englishMeditation ?: currentBead.mysteryMeditation
+                        else -> currentBead.mysteryMeditation
+                    }
+                    meditationText?.let { meditation ->
                         Spacer(Modifier.height(16.dp))
                         HorizontalDivider()
                         Spacer(Modifier.height(16.dp))
@@ -323,9 +367,13 @@ fun RosarySessionScreen(
                             Spacer(Modifier.height(8.dp))
                         }
                     }
-                    // Regular prayer bead
-                    currentBead?.mysteryTitle?.let { title ->
-                        // On intro Hail Marys this is the intention; on mystery Hail Marys this is null
+                    // Regular prayer bead — in Traditional mode show English title
+                    val displayTitle = if (currentRite == AppRite.TRADITIONAL && englishTitle != null) {
+                        englishTitle
+                    } else {
+                        currentBead?.mysteryTitle
+                    }
+                    displayTitle?.let { title ->
                         Text(
                             text = title,
                             style = MaterialTheme.typography.bodySmall,
@@ -334,6 +382,7 @@ fun RosarySessionScreen(
                         )
                         Spacer(Modifier.height(6.dp))
                     }
+                    // Scripture in mystery's own language
                     currentBead?.mysteryScripture?.let { scripture ->
                         val firstRef = scripture.substringBefore(";").trim()
                         Text(
@@ -345,6 +394,10 @@ fun RosarySessionScreen(
                             textAlign = TextAlign.Center,
                             modifier = Modifier.clickable { onScriptureClicked(firstRef) },
                         )
+                        Spacer(Modifier.height(16.dp))
+                        HorizontalDivider()
+                        Spacer(Modifier.height(16.dp))
+                    } ?: run {
                         Spacer(Modifier.height(16.dp))
                         HorizontalDivider()
                         Spacer(Modifier.height(16.dp))

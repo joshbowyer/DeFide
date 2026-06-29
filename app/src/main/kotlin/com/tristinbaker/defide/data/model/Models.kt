@@ -88,3 +88,22 @@ data class Saint(
     val category: String,
     val rank: Int? = null,
 )
+
+@Immutable
+data class BaltimoreCatechism(
+    val id: Int,
+    val number: Int,
+    val lesson: Int,
+    val question: String,
+    val answer: String,
+)
+
+@Immutable
+data class CompendiumCatechism(
+    val id: Int,
+    val groupName: String,
+    val title: String,
+    val number: Int,
+    val question: String,
+    val answer: String,
+)

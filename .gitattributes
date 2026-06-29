@@ -1,0 +1,8 @@
+# Force binary diff for SQLite databases to avoid corruption
+*.db binary
+*.db-journal binary
+*.db-wal binary
+*.db-shm binary
+
+# Don't diff large binary assets
+app/src/main/assets/databases/** binary

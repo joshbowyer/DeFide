@@ -46,8 +46,19 @@ class BibleRepository @Inject constructor(
         withContext(Dispatchers.IO) {
             val epochDay = LocalDate.now().toEpochDay()
             val verse = bibleDao.getVerseOfDay(translationId, epochDay) ?: return@withContext null
-            val book = bibleDao.getBookById(verse.bookId) ?: return@withContext null
+            val book = bibleDao.getBookById(verse.bookId, translationId) ?: return@withContext null
             Pair(verse, book)
+        }
+
+    suspend fun getBookById(bookId: Int, translationId: String): Book? =
+        withContext(Dispatchers.IO) { bibleDao.getBookById(bookId, translationId) }
+
+    /** Loads verses by bookNumber + chapter, bypassing the books StateFlow. */
+    suspend fun getVersesByBookNumber(translationId: String, bookNumber: Int, chapter: Int): Pair<Book, List<Verse>>? =
+        withContext(Dispatchers.IO) {
+            val book = bibleDao.getBook(translationId, bookNumber) ?: return@withContext null
+            val verses = bibleDao.getVerses(book.id, chapter)
+            Pair(book, verses)
         }
 
     suspend fun search(translationId: String, query: String): List<Verse> =

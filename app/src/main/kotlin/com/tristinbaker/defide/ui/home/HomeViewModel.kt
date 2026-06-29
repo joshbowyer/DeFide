@@ -2,7 +2,10 @@ package com.tristinbaker.defide.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tristinbaker.defide.data.preferences.AppRite
 import com.tristinbaker.defide.data.preferences.UserPreferencesRepository
+import com.tristinbaker.defide.data.preferences.contentLanguage
+import com.tristinbaker.defide.data.preferences.language
 import com.tristinbaker.defide.data.repository.BibleRepository
 import com.tristinbaker.defide.data.repository.RosaryRepository
 import com.tristinbaker.defide.ui.rosary.suggestedMysteryId
@@ -59,29 +62,39 @@ class HomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            prefsRepository.preferences
-                .map { it.bibleTranslationId }
-                .distinctUntilChanged()
-                .collect { translationId ->
-                    bibleRepository.getVerseOfDay(translationId)?.let { (verse, book) ->
-                        _verseOfDay.value = VerseOfDay(
-                            text = verse.text,
-                            reference = "${book.fullName} ${verse.chapter}:${verse.verse}",
-                            translationId = translationId,
-                            bookNumber = book.bookNumber,
-                            chapter = verse.chapter,
-                            verse = verse.verse,
-                        )
-                    }
+            combine(
+                prefsRepository.preferences,
+                prefsRepository.preferences.map { it.appRite }.distinctUntilChanged(),
+            ) { prefs, rite ->
+                Pair(prefs, rite)
+            }.collect { (prefs, rite) ->
+                // Use Latin Vulgate in LATIN/Traditional (bible in English in Traditional)
+                val translationId = when (rite) {
+                    AppRite.LATIN       -> "vulgate"
+                    AppRite.TRADITIONAL -> "dra"
+                    AppRite.MODERN     -> prefs.bibleTranslationId
                 }
+                bibleRepository.getVerseOfDay(translationId)?.let { (verse, book) ->
+                    _verseOfDay.value = VerseOfDay(
+                        text = verse.text,
+                        reference = "${book.fullName} ${verse.chapter}:${verse.verse}",
+                        translationId = translationId,
+                        bookNumber = book.bookNumber,
+                        chapter = verse.chapter,
+                        verse = verse.verse,
+                    )
+                }
+            }
         }
         viewModelScope.launch {
             val mysteryId = suggestedMysteryId()
             prefsRepository.preferences
-                .map { it.appLanguage }
+                .map { it.appRite }
                 .distinctUntilChanged()
-                .collect { language ->
-                    rosaryRepository.getMysteries(language).find { it.id == mysteryId }?.let {
+                .collect { rite ->
+                    // Traditional: mystery titles in English; LATIN/MODERN: mystery titles in local language
+                    val mysteryLang = rite.language
+                    rosaryRepository.getMysteries(mysteryLang).find { it.id == mysteryId }?.let {
                         _todaysMystery.value = TodaysMystery(it.id, it.name, it.traditionalDays)
                     }
                 }

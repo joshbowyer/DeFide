@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.compose.runtime.Composable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -14,6 +15,29 @@ enum class AppTheme { SYSTEM, LIGHT, DARK, AMOLED, DYNAMIC }
 enum class AppFont { SERIF, SYSTEM, SANS_SERIF }
 enum class RosaryOrder { DOMINICAN, FATIMA }
 enum class BackupFrequency { OFF, DAILY, WEEKLY, MONTHLY }
+enum class AppRite { MODERN, TRADITIONAL, LATIN }
+
+val AppRite.language: String
+    get() = when (this) {
+        AppRite.MODERN      -> "en"
+        AppRite.TRADITIONAL -> "en"
+        AppRite.LATIN       -> "la"
+    }
+
+/** Language for all prayer/mystery content — differs from `language` in TRADITIONAL mode. */
+val AppRite.contentLanguage: String
+    get() = when (this) {
+        AppRite.MODERN      -> "en"
+        AppRite.TRADITIONAL -> "la"
+        AppRite.LATIN       -> "la"
+    }
+
+val AppRite.displayNameResId: Int
+    @Composable get() = when (this) {
+        AppRite.MODERN      -> com.tristinbaker.defide.R.string.rite_modern
+        AppRite.TRADITIONAL -> com.tristinbaker.defide.R.string.rite_traditional
+        AppRite.LATIN       -> com.tristinbaker.defide.R.string.rite_latin
+    }
 
 data class UserPreferences(
     val theme: AppTheme = AppTheme.SYSTEM,
@@ -31,6 +55,7 @@ data class UserPreferences(
     val autoBackupFrequency: BackupFrequency = BackupFrequency.OFF,
     val autoBackupFolderUri: String = "",
     val rosaryIntentions: List<String> = List(5) { "" },
+    val appRite: AppRite = AppRite.MODERN,
 )
 
 @Singleton
@@ -57,13 +82,15 @@ class UserPreferencesRepository @Inject constructor(
         private val KEY_ROSARY_INTENTION_2 = stringPreferencesKey("rosary_intention_2")
         private val KEY_ROSARY_INTENTION_3 = stringPreferencesKey("rosary_intention_3")
         private val KEY_ROSARY_INTENTION_4 = stringPreferencesKey("rosary_intention_4")
+        private val KEY_APP_RITE         = stringPreferencesKey("app_rite")
     }
 
     val preferences: Flow<UserPreferences> = dataStore.data.map { prefs ->
+        val storedRite = prefs[KEY_APP_RITE]?.let { runCatching { AppRite.valueOf(it) }.getOrNull() } ?: AppRite.MODERN
         UserPreferences(
             theme = prefs[KEY_THEME]?.let { runCatching { AppTheme.valueOf(it) }.getOrNull() } ?: AppTheme.SYSTEM,
             appFont = prefs[KEY_APP_FONT]?.let { runCatching { AppFont.valueOf(it) }.getOrNull() } ?: AppFont.SERIF,
-            appLanguage = prefs[KEY_APP_LANGUAGE] ?: "en",
+            appLanguage = storedRite.language,
             bibleTranslationId = prefs[KEY_BIBLE_TRANSLATION] ?: "dra",
             novenaNotificationTime = prefs[KEY_NOVENA_NOTIFICATION_TIME] ?: "",
             bibleStreakGoal = prefs[KEY_BIBLE_STREAK_GOAL] ?: 1,
@@ -82,6 +109,7 @@ class UserPreferencesRepository @Inject constructor(
                 prefs[KEY_ROSARY_INTENTION_3] ?: "",
                 prefs[KEY_ROSARY_INTENTION_4] ?: "",
             ),
+            appRite = prefs[KEY_APP_RITE]?.let { runCatching { AppRite.valueOf(it) }.getOrNull() } ?: AppRite.MODERN,
         )
     }
 
@@ -127,6 +155,13 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun setAutoBackupFolderUri(uri: String) {
         dataStore.edit { it[KEY_AUTO_BACKUP_FOLDER_URI] = uri }
+    }
+
+    suspend fun setAppRite(rite: AppRite) {
+        dataStore.edit { prefs ->
+            prefs[KEY_APP_RITE] = rite.name
+            prefs[KEY_APP_LANGUAGE] = rite.language
+        }
     }
 
     suspend fun setBibleLastPosition(translationId: String, bookNumber: Int, chapter: Int) {
