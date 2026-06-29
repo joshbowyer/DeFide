@@ -6,8 +6,8 @@
     <string name="action_save">Salva</string>
     <string name="action_turn_off">Spegni</string>
     <string name="action_all">Tutte</string>
-    <string name="catechism_dialog_title">Apri Catechismo</string>
-    <string name="catechism_dialog_text">Si aprirà il Catechismo della Chiesa Cattolica dal sito USCCB nel tuo browser.</string>
+    <string name="catechism_dialog_title">Scegli Catechismo</string>
+    <string name="catechism_dialog_text">Scegli quale Catechismo leggere:</string>
     <string name="loth_dialog_title">Apri Liturgia delle Ore</string>
     <string name="loth_dialog_text">Si aprirà la Liturgia delle Ore su HoursVibe nel tuo Browser.</string>
     <string name="search_prayers_hint">Cerca preghiere…</string>
@@ -54,4 +54,5 @@
     <string name="how_to_use_label">Come si usa</string>
     <string name="section_about">Crediti</string>
     <string name="about_tagline">Libero e open-source. Nessun tracking, nessun account, non richiede Internet.</string>
+    <string name="action_ok">OK</string>
 </resources>
