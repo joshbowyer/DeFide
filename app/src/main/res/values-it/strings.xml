@@ -55,4 +55,5 @@
     <string name="section_about">Crediti</string>
     <string name="about_tagline">Libero e open-source. Nessun tracking, nessun account, non richiede Internet.</string>
     <string name="action_ok">OK</string>
+    <string name="catechism_option_ccc">Catechismo della Chiesa Cattolica (Online)</string>
 </resources>
