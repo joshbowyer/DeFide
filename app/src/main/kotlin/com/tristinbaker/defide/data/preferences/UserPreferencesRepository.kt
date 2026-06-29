@@ -90,7 +90,7 @@ class UserPreferencesRepository @Inject constructor(
         UserPreferences(
             theme = prefs[KEY_THEME]?.let { runCatching { AppTheme.valueOf(it) }.getOrNull() } ?: AppTheme.SYSTEM,
             appFont = prefs[KEY_APP_FONT]?.let { runCatching { AppFont.valueOf(it) }.getOrNull() } ?: AppFont.SERIF,
-            appLanguage = storedRite.language,
+            appLanguage = prefs[KEY_APP_LANGUAGE] ?: storedRite.language,
             bibleTranslationId = prefs[KEY_BIBLE_TRANSLATION] ?: "dra",
             novenaNotificationTime = prefs[KEY_NOVENA_NOTIFICATION_TIME] ?: "",
             bibleStreakGoal = prefs[KEY_BIBLE_STREAK_GOAL] ?: 1,

@@ -51,6 +51,7 @@ import com.tristinbaker.defide.data.model.DivineOffice
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -218,7 +219,7 @@ fun DivineOfficeHomeScreen(
         if (showDatePicker) {
             val datePickerState = rememberDatePickerState(
                 initialSelectedDateMillis = selectedDate
-                    .atStartOfDay(ZoneId.systemDefault())
+                    .atStartOfDay(ZoneOffset.UTC)
                     .toInstant()
                     .toEpochMilli(),
             )
@@ -229,7 +230,7 @@ fun DivineOfficeHomeScreen(
                         onClick = {
                             datePickerState.selectedDateMillis?.let { millis ->
                                 val picked = Instant.ofEpochMilli(millis)
-                                    .atZone(ZoneId.systemDefault())
+                                    .atOffset(ZoneOffset.UTC)
                                     .toLocalDate()
                                 viewModel.setDate(picked)
                             }

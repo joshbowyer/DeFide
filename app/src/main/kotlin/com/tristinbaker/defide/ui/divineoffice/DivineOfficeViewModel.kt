@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
@@ -65,6 +66,8 @@ class DivineOfficeViewModel @Inject constructor(
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    private var loadJob: Job? = null
 
     // ── Office reader state ───────────────────────────────────────────────────
 
@@ -160,7 +163,8 @@ class DivineOfficeViewModel @Inject constructor(
     // ── Data loading ─────────────────────────────────────────────────────────
 
     private fun loadForDate(date: LocalDate, lang: String) {
-        viewModelScope.launch {
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
             _isLoading.value = true
 
             val mmDd = "%02d-%02d".format(date.monthValue, date.dayOfMonth)
