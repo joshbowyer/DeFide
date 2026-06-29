@@ -49,4 +49,9 @@
     <string name="auto_backup_folder_label">Cartella di Backup</string>
     <string name="auto_backup_folder_none">Nessuna cartella selezionata</string>
     <string name="auto_backup_folder_set">Cartella selezionata</string>
+    <string name="auto_backup_choose_folder">Scegli cartella</string>
+    <string name="section_help">Aiuto</string>
+    <string name="how_to_use_label">Come si usa</string>
+    <string name="section_about">Crediti</string>
+    <string name="about_tagline">Libero e open-source. Nessun tracking, nessun account, non richiede Internet.</string>
 </resources>
