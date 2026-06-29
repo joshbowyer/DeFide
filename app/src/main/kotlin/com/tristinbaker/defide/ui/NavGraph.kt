@@ -616,10 +616,9 @@ private fun DeFideNavHost(
             )
         }
 
-        composable("divine_office_reader") {
-            val divineOfficeViewModel: DivineOfficeViewModel = androidx.hilt.navigation.compose.hiltViewModel(
-                navController.getBackStackEntry("divine_office_home")
-            )
+        composable("divine_office_reader") { backStackEntry ->
+            val homeEntry = runCatching { navController.getBackStackEntry("divine_office_home") }.getOrElse { backStackEntry }
+            val divineOfficeViewModel: DivineOfficeViewModel = androidx.hilt.navigation.compose.hiltViewModel(homeEntry)
             DivineOfficeReaderScreen(
                 viewModel = divineOfficeViewModel,
                 onBack = { navController.popBackStack() },
