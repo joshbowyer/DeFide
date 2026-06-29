@@ -239,7 +239,6 @@
     <string name="tag_vocations">Vocações</string>
     <string name="tag_workers">Trabalhadores</string>
     <string name="saints_sort_popularity">Popular</string>
-
     <!-- Confession log -->
     <string name="nav_confession">Confession</string>
     <string name="confession_title">Confession</string>
@@ -256,7 +255,6 @@
     <string name="confession_last_on">Confession on %s</string>
     <string name="confession_delete_record_title">Delete Record?</string>
     <string name="confession_delete_record_text">This will permanently remove this confession from your history.</string>
-
     <!-- Rosary intentions -->
     <string name="rosary_intentions_title">Prayer Intentions</string>
     <string name="rosary_intention_hint">Mystery %d…</string>
