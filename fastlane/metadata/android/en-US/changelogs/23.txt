@@ -1,0 +1,3 @@
+• Fixed rosary prayers and mysteries not showing in the user's chosen language (e.g. Portuguese)
+• Fixed app crash when searching short words like "is" in the Bible
+• Fixed F-Droid build: content database is now compiled correctly from source

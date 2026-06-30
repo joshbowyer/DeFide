@@ -137,7 +137,7 @@ Builds:
 
   - versionName: 2.0.4
     versionCode: 21
-    commit: 482f3d5
+    commit: 482f3d50419270870af3bc8c61f696eb54f7e449
     subdir: app
     gradle:
       - yes
@@ -146,6 +146,7 @@ Builds:
     versionCode: 22
     commit: 57af3076bbd4a67bb167704acf0172c2214b8612
     subdir: app
+    submodules: true
     gradle:
       - yes
 

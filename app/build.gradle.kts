@@ -19,8 +19,8 @@ android {
         applicationId = "com.tristinbaker.defide"
         minSdk = 26
         targetSdk = 35
-        versionCode = 22
-        versionName = "2.0.5"
+        versionCode = 23
+        versionName = "2.0.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -89,14 +89,14 @@ val compileContent by tasks.registering {
     description = "Compile content databases from source JSON and DivinumOfficium submodule"
 
     doLast {
-        val script = file("scripts/compile_content.py")
+        val script = rootProject.file("scripts/compile_content.py")
         if (!script.exists()) {
             logger.warn("compile_content.py not found — skipping content compilation")
             return@doLast
         }
 
-        val dbFile = file("app/src/main/assets/databases/defide_content.db")
-        val submoduleDir = file("divinum-officium")
+        val dbFile = rootProject.file("app/src/main/assets/databases/defide_content.db")
+        val submoduleDir = rootProject.file("divinum-officium")
         if (!submoduleDir.exists() || !submoduleDir.resolve("web").exists()) {
             logger.warn(
                 "DivinumOfficium submodule not found at divinum-officium/. " +

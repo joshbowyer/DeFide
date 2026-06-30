@@ -179,13 +179,13 @@ class RosaryViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Eagerly, AppRite.MODERN)
 
     init {
-        // React to appRite changes — the Rite setting controls prayer/mystery language
+        // React to rite or language changes — MODERN rite uses the user's appLanguage
         viewModelScope.launch {
             prefsRepository.preferences
-                .distinctUntilChangedBy { it.appRite }
+                .distinctUntilChangedBy { it.appRite to it.appLanguage }
                 .collectLatest { prefs ->
-                    val mysteryLang = prefs.appRite.language
-                    currentLanguage = prefs.appRite.contentLanguage
+                    val mysteryLang = if (prefs.appRite == AppRite.MODERN) prefs.appLanguage else prefs.appRite.language
+                    currentLanguage = if (prefs.appRite == AppRite.MODERN) prefs.appLanguage else prefs.appRite.contentLanguage
                     _mysteries.value = repository.getMysteries(mysteryLang)
                     // Traditional mode: mysteries in English, prayers in Latin
                     if (prefs.appRite == AppRite.TRADITIONAL) {

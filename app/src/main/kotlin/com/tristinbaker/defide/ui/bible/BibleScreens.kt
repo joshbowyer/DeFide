@@ -144,7 +144,7 @@ fun BibleHomeScreen(
                             )
                             HorizontalDivider()
                         }
-                        items(matchedBooks, key = { it.bookNumber }) { book ->
+                        items(matchedBooks, key = { "b${it.bookNumber}" }) { book ->
                             Text(
                                 text = book.fullName,
                                 style = MaterialTheme.typography.bodyLarge,
@@ -168,7 +168,7 @@ fun BibleHomeScreen(
                             )
                             HorizontalDivider()
                         }
-                        items(searchResults, key = { it.id }) { verse ->
+                        items(searchResults, key = { "v${it.id}" }) { verse ->
                             val book = bookIdMap[verse.bookId] ?: return@items
                             Column(
                                 modifier = Modifier
