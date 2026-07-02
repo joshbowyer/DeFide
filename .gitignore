@@ -7,6 +7,7 @@ NEXTSTEPS.md
 .gradle-home/
 .kotlin/
 .idea/
+.vscode/
 local.properties
 /.DS_Store
 /build/
@@ -39,7 +40,12 @@ android-sdk
 compile_output*.log
 gradle_build.log
 .sandbox-tmp/
+# Mac artifacts
+.DS_Store
 
 # Claw Code local instructions (never push)
 CLAW.md
 CLAUDE.md
+# Other AI agents
+AGENTS.md
+.agents/
