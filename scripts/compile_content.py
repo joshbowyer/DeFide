@@ -4839,6 +4839,7 @@ def main() -> None:
         compile_saints(conn, "pt-BR")
         compile_saints(conn, "pt-PT")
         compile_saints(conn, "zh-CN")
+        compile_saints(conn, "it")
 
         compile_baltimore_catechism(conn)
         compile_compendium_catechism(conn)
