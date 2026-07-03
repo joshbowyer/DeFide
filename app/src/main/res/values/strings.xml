@@ -40,8 +40,9 @@
     <string name="lang_pt_BR">Português (Brasil)</string>
     <string name="lang_pt_PT">Português (Portugal)</string>
     <string name="lang_zh_CN">中文 (简体)</string>
+    <string name="lang_it">Italiano</string>
     <string name="lang_la">Latina</string>
-
+ 
     <string name="settings_title">Settings</string>
     <string name="section_appearance">Appearance</string>
     <string name="theme_system">System</string>
