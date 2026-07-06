@@ -6,9 +6,9 @@
     <string name="action_save">Enregistrer</string>
     <string name="action_turn_off">Désactiver</string>
     <string name="action_all">Tout</string>
-    <string name="catechism_dialog_title">Ouvrir le Catéchisme</string>
-    <string name="catechism_dialog_text">Ceci va ouvrir le Catéchisme de l\'Église catholique sur le site USCCB sur votre navigateur.</string>
-    <string name="loth_dialog_title">Ouvrir la Liturgie des Heures</string>
+    <string name="catechism_dialog_title">Choisir le Catéchisme</string>
+    <string name="catechism_dialog_text">Choisissez le catéchisme que vous souhaitez lire :</string>
+    <string name="loth_dialog_title">Liturgie des Heures</string>
     <string name="loth_dialog_text">Cela ouvrira la Liturgie des Heures sur HoursVibe dans votre navigateur.</string>
     <string name="prayers_title">Prières</string>
     <string name="search_prayers_hint">Chercher des prières…</string>
@@ -247,4 +247,8 @@
     <string name="rosary_clear_intentions">Clear All</string>
     <string name="rosary_save_intentions">Save</string>
     <string name="rosary_your_intention">Intention: %s</string>
+    <string name="action_ok">Ok</string>
+    <string name="catechism_option_ccc">Catéchisme de l\'Église catholique (en ligne)</string>
+    <string name="catechism_option_baltimore">Catéchisme de Baltimore (hors ligne)</string>
+    <string name="catechism_option_compendium">Compendium du Catéchisme (hors ligne)</string>
 </resources>
