@@ -4841,6 +4841,23 @@ def compile_divine_office(conn, lang: str = "la"):
     print(f"    Cross-file @ ref resolution: {cross_resolved} hymn rows, {field_resolved} lectio/responsory cells resolved.")
 
 
+def _zero_sqlite_version_stamp(db_path: str) -> None:
+    """
+    Zero out the "version-valid-for" and SQLITE_VERSION_NUMBER fields
+    (file header bytes 92-99) that SQLite stamps with the version of the
+    libsqlite3 that last wrote the file (e.g. on VACUUM).
+
+    These bytes are advisory only (SQLite falls back to conservative
+    behavior when they don't validate) but differ depending on which
+    libsqlite3 build produced the file, which breaks F-Droid's
+    reproducible-build comparison against the developer-supplied
+    reference APK when the two machines have different SQLite versions.
+    """
+    with open(db_path, "r+b") as f:
+        f.seek(92)
+        f.write(b"\x00" * 8)
+
+
 def main() -> None:
     os.makedirs(os.path.dirname(OUT_DB), exist_ok=True)
 
@@ -4949,6 +4966,8 @@ def main() -> None:
         raise
     finally:
         conn.close()
+
+    _zero_sqlite_version_stamp(OUT_DB)
 
 
 if __name__ == "__main__":

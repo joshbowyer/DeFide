@@ -1,0 +1,1 @@
+• Fixed non-reproducible F-Droid builds: the content database no longer embeds a build-machine-specific SQLite version stamp
