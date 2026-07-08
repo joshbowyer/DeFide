@@ -3886,7 +3886,8 @@ def compile_divine_office(conn, lang: str = "la"):
     def _canticle(name: str) -> str | None:
         if name not in canticles: return None
         return canticles[name][1] if lang == "en" else canticles[name][0]
-    for root, _dirs, files in os.walk(do_dir):
+    for root, dirs, files in os.walk(do_dir):
+        dirs.sort()  # os.walk's traversal order is filesystem-dependent otherwise, breaking reproducible builds
         for fn in sorted(files):
             if not fn.endswith(".json"):
                 continue
@@ -4222,13 +4223,16 @@ def compile_divine_office(conn, lang: str = "la"):
                     else:
                         matins_antiphon = None  # matins antiphon populated by dedicated column in source
 
-                    # Collect any unmapped fields into supplemental JSON for UI display
-                    supplemental_keys = {
+                    # Collect any unmapped fields into supplemental JSON for UI display.
+                    # Must be an ordered sequence (not a set): iteration order here becomes
+                    # the JSON key order, and set iteration order is hash-seed-dependent,
+                    # which broke reproducible builds (F-Droid rebuild verification).
+                    supplemental_keys = (
                         'Lectio4', 'Lectio 4', 'Lectio5', 'Lectio 5', 'Lectio6', 'Lectio 6',
                         'Responsory1', 'Responsory2', 'Responsory3',
                         'Responsory4', 'Responsory5', 'Responsory6', 'Responsory7', 'Responsory8',
                         'Scriptura',
-                    }
+                    )
                     supp_data = {}
                     for k in supplemental_keys:
                         if k in merged and merged[k] is not None:
@@ -4495,7 +4499,8 @@ def compile_divine_office(conn, lang: str = "la"):
 
     # Build comprehensive tag -> text lookup from ALL language-specific horas .txt files
     tag_to_text: dict[str, str] = {}
-    for root, _dirs, files in os.walk(HYMN_HORAS):
+    for root, dirs, files in os.walk(HYMN_HORAS):
+        dirs.sort()  # os.walk's traversal order is filesystem-dependent otherwise, breaking reproducible builds
         for fn in sorted(files):
             if not fn.endswith(".txt"):
                 continue

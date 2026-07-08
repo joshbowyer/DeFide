@@ -159,6 +159,10 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch { prefsRepository.setRosaryHapticFeedback(enabled) }
     }
 
+    fun setRosaryNarrationEnabled(enabled: Boolean) {
+        viewModelScope.launch { prefsRepository.setRosaryNarrationEnabled(enabled) }
+    }
+
     fun setAutoBackupFolder(uri: Uri) {
         context.contentResolver.takePersistableUriPermission(
             uri,

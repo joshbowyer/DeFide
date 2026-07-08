@@ -132,6 +132,9 @@
     </plurals>
     <string name="rosary_order_fatima">Fátima</string>
     <string name="rosary_haptic_label">Vibration lors de la navigation entre les grains</string>
+    <string name="rosary_narration_label">Réciter les prières à voix haute</string>
+    <string name="rosary_narration_mute_cd">Couper la narration</string>
+    <string name="rosary_narration_unmute_cd">Activer la narration</string>
     <string name="rosary_junction_label">Style du marqueur de jonction</string>
     <string name="rosary_junction_bead">Grain</string>
     <string name="rosary_junction_triangle">Triangle</string>

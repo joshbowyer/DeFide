@@ -93,6 +93,9 @@
     <string name="rosary_order_dominican">Dominikoniškas</string>
     <string name="rosary_order_fatima">Fatimos</string>
     <string name="rosary_haptic_label">Vibracija naršant karoliukus</string>
+    <string name="rosary_narration_label">Skaityti maldas balsu</string>
+    <string name="rosary_narration_mute_cd">Išjungti pasakojimą</string>
+    <string name="rosary_narration_unmute_cd">Įjungti pasakojimą</string>
     <string name="rosary_junction_label">Jungties žymeklio stilius</string>
     <string name="rosary_junction_bead">Karoliukas</string>
     <string name="rosary_junction_triangle">Trikampis</string>

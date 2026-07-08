@@ -107,6 +107,9 @@
     <string name="ordinal_fourth">Quarto</string>
     <string name="ordinal_fifth">Quinto</string>
     <string name="rosary_haptic_label">Vibração ao navegar pelas contas</string>
+    <string name="rosary_narration_label">Narrar orações em voz alta</string>
+    <string name="rosary_narration_mute_cd">Silenciar narração</string>
+    <string name="rosary_narration_unmute_cd">Reproduzir narração</string>
     <string name="rosary_junction_label">Estilo do marcador central</string>
     <string name="rosary_junction_bead">Conta</string>
     <string name="rosary_junction_triangle">Triângulo</string>

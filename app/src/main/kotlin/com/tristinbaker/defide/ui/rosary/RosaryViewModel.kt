@@ -11,6 +11,8 @@ import com.tristinbaker.defide.data.preferences.contentLanguage
 import com.tristinbaker.defide.data.preferences.language
 import com.tristinbaker.defide.data.repository.PrayerRepository
 import com.tristinbaker.defide.data.repository.RosaryRepository
+import com.tristinbaker.defide.data.tts.TtsController
+import com.tristinbaker.defide.data.tts.TtsEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -39,6 +41,7 @@ class RosaryViewModel @Inject constructor(
     private val repository: RosaryRepository,
     private val prayerRepository: PrayerRepository,
     private val prefsRepository: UserPreferencesRepository,
+    private val ttsController: TtsController,
 ) : ViewModel() {
 
     private val _mysteries = MutableStateFlow<List<Mystery>>(emptyList())
@@ -178,6 +181,19 @@ class RosaryViewModel @Inject constructor(
         .map { it.appRite }
         .stateIn(viewModelScope, SharingStarted.Eagerly, AppRite.MODERN)
 
+    // Eagerly (not WhileSubscribed) — this drives narration auto-advance logic in
+    // startSession()/navigateTo(), not just UI display, so it must not depend on a
+    // Composable having subscribed first.
+    val narrationEnabled: StateFlow<Boolean> = prefsRepository.preferences
+        .map { it.rosaryNarrationEnabled }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
+    private val _isSpeaking = MutableStateFlow(false)
+    val isSpeaking: StateFlow<Boolean> = _isSpeaking.asStateFlow()
+
+    /** Bumped on every manual navigation or narration toggle to invalidate stale TTS callbacks. */
+    private var narrationGeneration = 0
+
     init {
         // React to rite or language changes — MODERN rite uses the user's appLanguage
         viewModelScope.launch {
@@ -202,6 +218,23 @@ class RosaryViewModel @Inject constructor(
             prefsRepository.preferences
                 .distinctUntilChangedBy { it.rosaryOrder }
                 .collect { prefs -> currentRosaryOrder = prefs.rosaryOrder }
+        }
+        viewModelScope.launch {
+            ttsController.events.collect { event ->
+                val expectedKey = _beads.value.getOrNull(_currentPosition.value)?.let { narrationKeyFor(it) }
+                when (event) {
+                    is TtsEvent.SequenceCompleted -> {
+                        if (event.key != expectedKey) return@collect
+                        _isSpeaking.value = false
+                        if (narrationEnabled.value && _currentPosition.value < _beads.value.lastIndex) {
+                            navigateTo(_currentPosition.value + 1)
+                        }
+                    }
+                    is TtsEvent.SequenceInterrupted -> {
+                        if (event.key == expectedKey) _isSpeaking.value = false
+                    }
+                }
+            }
         }
     }
 
@@ -228,19 +261,74 @@ class RosaryViewModel @Inject constructor(
             _currentPosition.value = 0
             _currentMysteryId.value = mysteryId
             _sessionId.value = repository.startSession(mysteryId)
+            // Use the freshly-fetched prefs rather than the narrationEnabled StateFlow:
+            // that flow is WhileSubscribed and may not have delivered its first value yet
+            // this early in the session, which would wrongly skip narrating bead 0.
+            if (prefs.rosaryNarrationEnabled) speakCurrentBead()
         }
     }
 
-    fun advance() {
-        val next = _currentPosition.value + 1
-        if (next < _beads.value.size) {
-            _currentPosition.value = next
+    fun advance() = navigateTo(_currentPosition.value + 1)
+
+    fun back() = navigateTo(_currentPosition.value - 1)
+
+    private fun navigateTo(target: Int) {
+        if (target !in _beads.value.indices) return
+        narrationGeneration++
+        ttsController.stop()
+        _isSpeaking.value = false
+        _currentPosition.value = target
+        maybeSpeakCurrentBead()
+    }
+
+    fun setNarrationEnabled(enabled: Boolean) {
+        viewModelScope.launch { prefsRepository.setRosaryNarrationEnabled(enabled) }
+        narrationGeneration++
+        if (enabled) {
+            speakCurrentBead()
+        } else {
+            ttsController.stop()
+            _isSpeaking.value = false
         }
     }
 
-    fun back() {
-        val prev = _currentPosition.value - 1
-        if (prev >= 0) _currentPosition.value = prev
+    fun stopNarration() {
+        narrationGeneration++
+        ttsController.stop()
+        _isSpeaking.value = false
+    }
+
+    private fun narrationKeyFor(bead: MysteryBead): String = "bead-${bead.id}-$narrationGeneration"
+
+    private fun maybeSpeakCurrentBead() {
+        if (narrationEnabled.value) speakCurrentBead()
+    }
+
+    private fun speakCurrentBead() {
+        val bead = _beads.value.getOrNull(_currentPosition.value) ?: return
+        val (parts, languageCode) = buildNarrationContent(bead) ?: return
+        _isSpeaking.value = true
+        ttsController.speak(parts, languageCode, key = narrationKeyFor(bead))
+    }
+
+    /** Builds the ordered text parts to narrate for [bead], and the language to speak them in. */
+    private fun buildNarrationContent(bead: MysteryBead): Pair<List<String>, String>? {
+        val isAnnouncement = bead.prayerId == null && bead.mysteryTitle != null
+        return if (isAnnouncement) {
+            val rite = currentRite.value
+            val english = if (rite == AppRite.TRADITIONAL) {
+                _englishBeads.value[_currentMysteryId.value]?.find { it.mysteryNumber == bead.mysteryNumber }
+            } else null
+            val title = english?.mysteryTitle ?: bead.mysteryTitle
+            val scripture = english?.mysteryScripture ?: bead.mysteryScripture
+            val meditation = english?.mysteryMeditation ?: bead.mysteryMeditation
+            val language = if (rite == AppRite.TRADITIONAL) "en" else currentLanguage
+            val parts = listOfNotNull(title, scripture, meditation)
+            if (parts.isEmpty()) null else parts to language
+        } else {
+            val body = bead.prayerId?.let { _prayerTexts.value[it] } ?: return null
+            listOf(body) to currentLanguage
+        }
     }
 
     fun completeSession(onDone: () -> Unit) {
@@ -250,5 +338,10 @@ class RosaryViewModel @Inject constructor(
             _sessionId.value?.let { repository.completeSession(it) }
             onDone()
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        ttsController.shutdown()
     }
 }

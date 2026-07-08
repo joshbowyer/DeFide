@@ -1,0 +1,4 @@
+• Added optional Rosary narration: reads prayers and mysteries aloud using your device's text-to-speech voice, with auto-advance through beads
+• Added Italian Bible (Martini, 1782), prayers, novenas, rosary, and saints
+• Updated German, Spanish, French, Italian, Lithuanian, Portuguese, Russian, and Chinese translations (via Weblate)
+• Fixed non-reproducible F-Droid builds: the content database is now generated in a deterministic order every time

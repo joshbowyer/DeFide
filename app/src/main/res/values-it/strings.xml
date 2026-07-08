@@ -229,6 +229,9 @@
     <string name="rosary_order_dominican">Dominicano</string>
     <string name="rosary_order_fatima">Fatima</string>
     <string name="rosary_haptic_label">Feedback aptico sulla navigazione del grano</string>
+    <string name="rosary_narration_label">Recita le preghiere ad alta voce</string>
+    <string name="rosary_narration_mute_cd">Disattiva narrazione</string>
+    <string name="rosary_narration_unmute_cd">Attiva narrazione</string>
     <string name="saints_feast_date_label">Giorno Festivo</string>
     <string name="saints_sort_name">Per Nome</string>
     <string name="saints_sort_feast">Per Giorno Festivo</string>

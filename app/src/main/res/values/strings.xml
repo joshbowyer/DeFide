@@ -217,6 +217,9 @@
     <string name="rosary_order_dominican">Dominican</string>
     <string name="rosary_order_fatima">Fátima</string>
     <string name="rosary_haptic_label">Haptic feedback on bead navigation</string>
+    <string name="rosary_narration_label">Narrate prayers aloud</string>
+    <string name="rosary_narration_mute_cd">Mute narration</string>
+    <string name="rosary_narration_unmute_cd">Play narration</string>
     <string name="rosary_junction_label">Junction Marker Style</string>
     <string name="rosary_junction_bead">Bead</string>
     <string name="rosary_junction_triangle">Triangle</string>

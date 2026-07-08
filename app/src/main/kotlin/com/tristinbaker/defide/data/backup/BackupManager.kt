@@ -70,6 +70,7 @@ class BackupManager @Inject constructor(
         put("keep_screen_on", prefs.keepScreenOn)
         put("rosary_order", prefs.rosaryOrder.name)
         put("rosary_haptic_feedback", prefs.rosaryHapticFeedback)
+        put("rosary_narration_enabled", prefs.rosaryNarrationEnabled)
     }
 
     private suspend fun applyPrefs(json: JSONObject) {
@@ -90,6 +91,7 @@ class BackupManager @Inject constructor(
             ?.let { runCatching { RosaryOrder.valueOf(it) }.getOrNull() }
             ?.let { prefsRepository.setRosaryOrder(it) }
         prefsRepository.setRosaryHapticFeedback(json.optBoolean("rosary_haptic_feedback", true))
+        prefsRepository.setRosaryNarrationEnabled(json.optBoolean("rosary_narration_enabled", false))
         val lastBook = json.optInt("bible_last_book_number", 0)
         if (lastBook > 0) {
             prefsRepository.setBibleLastPosition(

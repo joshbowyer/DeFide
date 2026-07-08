@@ -423,6 +423,22 @@ fun SettingsScreen(
                         onCheckedChange = { viewModel.setRosaryHapticFeedback(it) },
                     )
                 }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        stringResource(R.string.rosary_narration_label),
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.weight(1f),
+                    )
+                    Switch(
+                        checked = prefs.rosaryNarrationEnabled,
+                        onCheckedChange = { viewModel.setRosaryNarrationEnabled(it) },
+                    )
+                }
                 HorizontalDivider(modifier = Modifier.padding(top = 8.dp))
             }
             item {

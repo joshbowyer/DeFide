@@ -139,6 +139,9 @@
     <string name="rosary_order_dominican">Доминиканский</string>
     <string name="rosary_order_fatima">Фатимский</string>
     <string name="rosary_haptic_label">Виброотклик при навигации по бусинам</string>
+    <string name="rosary_narration_label">Озвучивать молитвы вслух</string>
+    <string name="rosary_narration_mute_cd">Отключить озвучивание</string>
+    <string name="rosary_narration_unmute_cd">Включить озвучивание</string>
     <string name="rosary_junction_label">Стиль маркера соединения</string>
     <string name="rosary_junction_bead">Бусина</string>
     <string name="rosary_junction_triangle">Треугольник</string>

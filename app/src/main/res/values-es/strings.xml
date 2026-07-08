@@ -93,6 +93,9 @@
     <string name="rosary_order_dominican">Dominicano</string>
     <string name="rosary_order_fatima">Fátima</string>
     <string name="rosary_haptic_label">Vibración al navegar entre cuentas</string>
+    <string name="rosary_narration_label">Narrar oraciones en voz alta</string>
+    <string name="rosary_narration_mute_cd">Silenciar narración</string>
+    <string name="rosary_narration_unmute_cd">Reproducir narración</string>
     <string name="rosary_junction_label">Estilo del marcador central</string>
     <string name="rosary_junction_bead">Cuenta</string>
     <string name="rosary_junction_triangle">Triángulo</string>
