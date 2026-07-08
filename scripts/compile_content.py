@@ -478,6 +478,7 @@ _TRANSLATION_BOOK_ID_OFFSET = {
     "rk1998":     8001,
     "platense":   9001,
     "sg":         10001,
+    "martini":    11001,
 }
 
 # Portuguese display names for Ave-Maria, keyed by DR filename (no extension).
@@ -1063,6 +1064,82 @@ _ZH_BOOK_NAMES = {
     "3 John":           "若望三书",
     "Jude":             "犹大书",
     "Apocalypse":       "默示录",
+}
+
+_IT_BOOK_NAMES = {
+    "Genesis":          "Genesi",
+    "Exodus":           "Esodo",
+    "Leviticus":        "Levitico",
+    "Numbers":          "Numeri",
+    "Deuteronomy":      "Deuteronomio",
+    "Josue":            "Giosuè",
+    "Judges":           "Giudici",
+    "Ruth":             "Rut",
+    "1 Kings":          "I Samuele",
+    "2 Kings":          "II Samuele",
+    "3 Kings":          "I Re",
+    "4 Kings":          "II Re",
+    "1 Paralipomenon":  "I Cronache",
+    "2 Paralipomenon":  "II Cronache",
+    "1 Esdras":         "Esdra",
+    "2 Esdras":         "Neemia",
+    "Tobias":           "Tobia",
+    "Judith":           "Giuditta",
+    "Esther":           "Ester",
+    "Job":              "Giobbe",
+    "Psalms":           "Salmi",
+    "Proverbs":         "Proverbi",
+    "Ecclesiastes":     "Qoelet",
+    "Canticles":        "Cantico dei Cantici",
+    "Wisdom":           "Sapienza",
+    "Ecclesiasticus":   "Siracide",
+    "Isaias":           "Isaia",
+    "Jeremias":         "Geremia",
+    "Lamentations":     "Lamentazioni",
+    "Baruch":           "Baruc",
+    "Ezechiel":         "Ezechiele",
+    "Daniel":           "Daniele",
+    "Osee":             "Osea",
+    "Joel":             "Gioele",
+    "Amos":             "Amos",
+    "Abdias":           "Abdia",
+    "Jonas":            "Giona",
+    "Micheas":          "Michea",
+    "Nahum":            "Naum",
+    "Habacuc":          "Abacuc",
+    "Sophonias":        "Sofonia",
+    "Aggeus":           "Aggeo",
+    "Zacharias":        "Zaccaria",
+    "Malachias":        "Malachia",
+    "1 Machabees":      "I Maccabei",
+    "2 Machabees":      "II Maccabei",
+    "Matthew":          "Matteo",
+    "Mark":             "Marco",
+    "Luke":             "Luca",
+    "John":             "Giovanni",
+    "Acts":             "Atti degli Apostoli",
+    "Romans":           "Romani",
+    "1 Corinthians":    "I Corinzi",
+    "2 Corinthians":    "II Corinzi",
+    "Galatians":        "Galati",
+    "Ephesians":        "Efesini",
+    "Philippians":      "Filippesi",
+    "Colossians":       "Colossesi",
+    "1 Thessalonians":  "I Tessalonicesi",
+    "2 Thessalonians":  "II Tessalonicesi",
+    "1 Timothy":        "I Timoteo",
+    "2 Timothy":        "II Timoteo",
+    "Titus":            "Tito",
+    "Philemon":         "Filemone",
+    "Hebrews":          "Ebrei",
+    "James":            "Giacomo",
+    "1 Peter":          "I Pietro",
+    "2 Peter":          "II Pietro",
+    "1 John":           "I Giovanni",
+    "2 John":           "II Giovanni",
+    "3 John":           "III Giovanni",
+    "Jude":             "Giuda",
+    "Apocalypse":       "Apocalisse",
 }
 
 
@@ -4799,6 +4876,9 @@ def main() -> None:
         print("Compiling Bible (Biblia Platense — Spanish)...")
         compile_dr_format(conn, "platense", lang="es", book_full_names=_ES_BOOK_NAMES)
 
+        print("Compiling Bible (Martini 1782 — Italian)...")
+        compile_dr_format(conn, "martini", lang="it", book_full_names=_IT_BOOK_NAMES)
+
         print("Compiling Bible (思高圣经 — Chinese)...")
         compile_sg(conn)
 
@@ -4813,6 +4893,7 @@ def main() -> None:
         compile_prayers(conn, "fr")
         compile_prayers(conn, "lt")
         compile_prayers(conn, "es")
+        compile_prayers(conn, "it")
 
         print("Compiling Novenas...")
         compile_novenas(conn, "en")
@@ -4820,6 +4901,7 @@ def main() -> None:
         compile_novenas(conn, "pt-PT")
         compile_novenas(conn, "fr")
         compile_novenas(conn, "es")
+        compile_novenas(conn, "it")
 
         print("Compiling Rosary...")
         compile_rosary(conn, "en")
@@ -4830,6 +4912,7 @@ def main() -> None:
         compile_rosary(conn, "fr")
         compile_rosary(conn, "lt")
         compile_rosary(conn, "es")
+        compile_rosary(conn, "it")
 
         print("Compiling Saints...")
         compile_saints(conn, "en")
@@ -4839,6 +4922,7 @@ def main() -> None:
         compile_saints(conn, "pt-BR")
         compile_saints(conn, "pt-PT")
         compile_saints(conn, "zh-CN")
+        compile_saints(conn, "it")
 
         compile_baltimore_catechism(conn)
         compile_compendium_catechism(conn)

@@ -1,0 +1,234 @@
+[
+  {
+    "id": "apostles-creed",
+    "title": "Credo Apostolico",
+    "body": "Io credo in Dio, Padre onnipotente, Creatore del cielo e della terra. E in Gesù Cristo, Suo unico Figlio, nostro Signore, il quale fu concepito di Spirito Santo, nacque da Maria Vergine, patì sotto Ponzio Pilato, fu crocifisso, morì e fu sepolto; discese agli inferi; il terzo giorno risuscitò da morte; salì al cielo, siede alla destra di Dio Padre onnipotente: di là verrà a giudicare i vivi e i morti. Credo nello Spirito Santo, la santa Chiesa cattolica, la comunione dei santi, la remissione dei peccati, la risurrezione della carne, la vita eterna. Amen.",
+    "source": null,
+    "category": "rosary",
+    "tags": ["rosary", "creed", "faith"]
+  },
+  {
+    "id": "our-father",
+    "title": "Padre Nostro",
+    "body": "Padre nostro che sei nei cieli, sia santificato il Tuo nome. Venga il Tuo regno. Sia fatta la Tua volontà, come in cielo così in terra. Dacci oggi il nostro pane quotidiano. E rimetti a noi i nostri debiti, come noi li rimettiamo ai nostri debitori. E non ci indurre in tentazione, ma liberaci dal male. Amen.",
+    "source": "Matteo 6,9–13",
+    "category": "rosary",
+    "tags": ["rosary", "morning", "evening", "meals"]
+  },
+  {
+    "id": "hail-mary",
+    "title": "Ave Maria",
+    "body": "Ave, o Maria, piena di grazia, il Signore è con te. Tu sei benedetta fra le donne e benedetto è il frutto del tuo seno, Gesù. Santa Maria, Madre di Dio, prega per noi peccatori, adesso e nell'ora della nostra morte. Amen.",
+    "source": "Luca 1,28.42",
+    "category": "rosary",
+    "tags": ["rosary", "marian"]
+  },
+  {
+    "id": "glory-be",
+    "title": "Gloria al Padre (Dossologia)",
+    "body": "Gloria al Padre e al Figlio e allo Spirito Santo. Come era nel principio, ora e sempre, nei secoli dei secoli. Amen.",
+    "source": null,
+    "category": "rosary",
+    "tags": ["rosary", "morning", "evening"]
+  },
+  {
+    "id": "fatima-prayer",
+    "title": "Preghiera di Fatima (O mio Gesù)",
+    "body": "O mio Gesù, perdona i nostri peccati, salvaci dal fuoco dell'inferno, porta in cielo tutte le anime, specialmente le più bisognose della Tua misericordia. Amen.",
+    "source": "Dato dalla Madonna di Fatima, 1917",
+    "category": "rosary",
+    "tags": ["rosary", "marian", "mercy"]
+  },
+  {
+    "id": "hail-holy-queen",
+    "title": "Salve Regina",
+    "body": "Salve, Regina, Madre di misericordia, vita, dolcezza e speranza nostra; salve! A Te ricorriamo, esuli figli di Eva; a Te sospiriamo, gementi e piangenti in questa valle di lacrime. Orsù dunque, avvocata nostra, rivolgi a noi gli occhi Tuoi misericordiosi; e mostraci, dopo questo esilio, Gesù, il frutto benedetto del Tuo seno. O clemente, o pia, o dolce Vergine Maria! Prega per noi, santa Madre di Dio, affinché siamo fatti degni delle promesse di Cristo. Amen.",
+    "source": null,
+    "category": "rosary",
+    "tags": ["rosary", "marian"]
+  },
+  {
+    "id": "morning-offering",
+    "title": "Offerta della Mattina",
+    "body": "O Gesù, per il Cuore Immacolato di Maria, Ti offro le mie preghiere, le mie opere, le mie gioie e le mie sofferenze di questo giorno, in unione con il Santo Sacrificio della Messa in tutto il mondo. Le offro per tutte le intenzioni del Tuo Sacro Cuore: la salvezza delle anime, la riparazione dei peccati e la riunione di tutti i cristiani. Le offro per le intenzioni dei nostri vescovi e di tutti gli Apostoli della Preghiera, e in particolare per quelle raccomandate dal Santo Padre in questo mese. Amen.",
+    "source": null,
+    "category": "morning",
+    "tags": ["morning", "offering", "daily"]
+  },
+  {
+    "id": "act-of-contrition",
+    "title": "Atto di Dolore (Atto di Contrizione)",
+    "body": "Mio Dio, mi pento e mi dolgo con tutto il cuore dei miei peccati, perché peccando ho meritato i tuoi castighi, e molto più perché ho offeso te, infinitamente buono e degno di essere amato sopra ogni cosa. Propongo con il tuo santo aiuto di non offenderti mai più e di fuggire le occasioni prossime di peccato. Signore, misericordia, perdonami.",
+    "source": null,
+    "category": "penitential",
+    "tags": ["penitential", "confession", "evening", "contrition"]
+  },
+  {
+    "id": "act-of-faith",
+    "title": "Atto di Fede",
+    "body": "Mio Dio, credo fermamente che Tu sei unico Dio in tre Divine Persone, Padre, Figlio e Spirito Santo. Credo che il Tuo Divin Figlio si è fatto uomo ed è morto per i nostri peccati, e che verrà a giudicare i vivi e i morti. Credo queste e tutte le verità che la santa Chiesa cattolica insegna, perché Tu le hai rivelate, Tu che non puoi né ingannare né essere ingannato. Amen.",
+    "source": null,
+    "category": "devotional",
+    "tags": ["faith", "daily", "devotional"]
+  },
+  {
+    "id": "act-of-hope",
+    "title": "Atto di Speranza",
+    "body": "Mio Dio, confidando nella Tua onnipotente potenza e nella Tua infinita misericordia e promesse, spero di ottenere il perdono dei miei peccati, l'aiuto della Tua grazia e la vita eterna, per i meriti di Gesù Cristo, mio Signore e Redentore. Amen.",
+    "source": null,
+    "category": "devotional",
+    "tags": ["hope", "daily", "devotional", "anxiety", "depression"]
+  },
+  {
+    "id": "act-of-love",
+    "title": "Atto di Carità (Atto di Amore)",
+    "body": "Mio Dio, Ti amo sopra ogni cosa con tutto il cuore e con tutta l'anima, perché sei infinitamente buono e degno di ogni amore. Amo il mio prossimo come me stesso per amor Tuo. Perdono tutti coloro che mi hanno offeso e chiedo perdono a tutti coloro che ho offeso. Amen.",
+    "source": null,
+    "category": "devotional",
+    "tags": ["love", "charity", "daily", "devotional", "forgiveness"]
+  },
+  {
+    "id": "memorare",
+    "title": "Memorare",
+    "body": "Ricordati, o piissima Vergine Maria, non essersi mai udito al mondo che alcuno abbia ricorso al tuo patrocinio, implorato il tuo aiuto, chiesto la tua protezione e sia stato abbandonato. Animato da tale confidenza, a te ricorro, o Madre, Vergine delle Vergini, a te vengo e, peccatore contrito, innanzi a te mi prostro. Non volere, o Madre del Verbo, disprezzare le mie preghiere, ma ascoltami propizia ed esaudiscimi. Amen.",
+    "source": "Attribuito a San Bernardo di Chiaravalle",
+    "category": "marian",
+    "tags": ["marian", "intercession", "anxiety", "grief", "hope"]
+  },
+  {
+    "id": "anima-christi",
+    "title": "Anima di Cristo (Anima Christi)",
+    "body": "Anima di Cristo, santificami. Corpo di Cristo, salvami. Sangue di Cristo, inebriami. Acqua del costato di Cristo, lavami. Passione di Cristo, confortami. O buon Gesù, esaudiscimi. Dentro le tue ferite nascondimi. Non permettere che io mi separi da te. Dal nemico maligno difendimi. Nell'ora della mia morte chiamami. Comandami di venire a te, perché con i tuoi Santi io ti lodi nei secoli dei secoli. Amen.",
+    "source": "XIV secolo, attribuito a vari autori",
+    "category": "devotional",
+    "tags": ["eucharist", "passion", "devotional", "after-communion"]
+  },
+  {
+    "id": "prayer-before-meals",
+    "title": "Benedizione prima dei pasti",
+    "body": "Benedici, o Signore, noi e questi Tuoi doni, che stiamo per ricevere dalla Tua bontà, per Cristo nostro Signore. Amen.",
+    "source": null,
+    "category": "meals",
+    "tags": ["meals", "gratitude", "daily"]
+  },
+  {
+    "id": "grace-after-meals",
+    "title": "Ringraziamento dopo i pasti",
+    "body": "Ti rendiamo grazie, o Dio onnipotente, per tutti i Tuoi benefici, Tu che vivi e regni nei secoli; e le anime dei fedeli defunti, per la misericordia di Dio, riposino in pace. Amen.",
+    "source": null,
+    "category": "meals",
+    "tags": ["meals", "gratitude", "daily"]
+  },
+  {
+    "id": "guardian-angel",
+    "title": "Preghiera all'Angelo Custode",
+    "body": "Angelo di Dio, che sei il mio custode, a cui l'amore divino mi ha affidato, sii sempre al mio fianco in questo giorno, per illuminarmi, custodirmi, guidarmi e proteggermi. Amen.",
+    "source": null,
+    "category": "morning",
+    "tags": ["morning", "guardian-angel", "protection", "daily", "children"]
+  },
+  {
+    "id": "prayer-st-michael",
+    "title": "Preghiera a San Michele Arcangelo",
+    "body": "San Michele Arcangelo, difendici nella battaglia; sii la nostra protezione contro la malvagità e le insidie del diavolo. Lo umilmente preghiamo che Dio lo domini; e tu, Principe della milizia celeste, con la potenza di Dio, getta nell'inferno Satana e tutti gli spiriti maligni che si aggirano per il mondo per la rovina delle anime. Amen.",
+    "source": "Papa Leone XIII, 1886",
+    "category": "saints",
+    "tags": ["spiritual-warfare", "protection", "saints", "evening"]
+  },
+  {
+    "id": "eternal-rest",
+    "title": "Requiem Eterno (Preghiera per i defunti)",
+    "body": "L'eterno riposo dona loro, o Signore, e la luce perpetua li illumini. Riposino in pace. Amen. Le anime dei fedeli defunti, per la misericordia di Dio, riposino in pace. Amen.",
+    "source": null,
+    "category": "devotional",
+    "tags": ["dead", "grief", "mourning", "purgatory", "mercy"]
+  },
+  {
+    "id": "prayer-for-the-sick",
+    "title": "Preghiera per gli ammalati",
+    "body": "O Padre delle misericordie e Dio di ogni consolazione, guarda con compassione al Tuo servo / alla Tua serva nel tempo della malattia. Concedi saggezza e abilità a coloro che lo/la curano. Confortalo/la con la Tua presenza e rinnova le sue forze. Che questa sofferenza serva per l'aumento della grazia, e sia fatta la Tua santa volontà. Per Cristo nostro Signore. Amen.",
+    "source": null,
+    "category": "devotional",
+    "tags": ["sick", "healing", "suffering", "hospital"]
+  },
+  {
+    "id": "prayer-for-vocations",
+    "title": "Preghiera per le vocazioni",
+    "body": "Signore della messe, manda operai nella Tua messe. Ispira uomini e donne a offrirsi per il servizio come sacerdoti e religiosi. Dona loro il coraggio di seguire la Tua chiamata, la saggezza di discernere la Tua volontà e la fede di perseverare. Rafforza coloro che servono, consola coloro che soffrono e rinnova in tutti noi la disponibilità a servire dove siamo necessari. Per Cristo nostro Signore. Amen.",
+    "source": null,
+    "category": "devotional",
+    "tags": ["vocations", "priesthood", "religious-life", "discernment"]
+  },
+  {
+    "id": "prayer-in-anxiety",
+    "title": "Preghiera nel tempo dell'ansia",
+    "body": "O Signore, sono turbato e oppresso oltre ciò che posso sopportare da solo. Getto su di Te ogni mia preoccupazione, perché Tu hai cura di me. Concedimi la grazia di confidare nella Tua Provvidenza, sapendo che nulla è al di là del Tuo potere e della Tua misericordia. Calma il mio cuore ansioso come un tempo hai calmato le onde del mare. La Tua pace, che supera ogni intelligenza, custodisca il mio cuore e la mia mente in Cristo Gesù. Amen.",
+    "source": "cfr. 1 Pietro 5,7; Filippesi 4,7",
+    "category": "devotional",
+    "tags": ["anxiety", "peace", "trust", "suffering", "mental-health"]
+  },
+  {
+    "id": "prayer-in-grief",
+    "title": "Preghiera nel tempo del lutto",
+    "body": "O Dio di ogni consolazione, pongo davanti a Te il mio dolore e la mia tristezza. Tu conosci la mia sofferenza, poiché non Ti è estranea la perdita: il Tuo Figlio ha pianto davanti alla tomba di Lazzaro. Sostienimi ora nel mio lutto. Dammi la fede di credere nella risurrezione e la speranza che coloro che muoiono in Te non sono perduti ma trasformati. Fino al giorno del ricongiungimento, confortami con la Tua presenza. Amen.",
+    "source": "cfr. Giovanni 11,35; 1 Tessalonicesi 4,13–14",
+    "category": "devotional",
+    "tags": ["grief", "mourning", "loss", "death", "suffering"]
+  },
+  {
+    "id": "prayer-in-depression",
+    "title": "Preghiera nel tempo della tenebra",
+    "body": "Signore Gesù, che hai gridato dalla Croce, anch'io mi sento abbandonato. L'oscurità intorno è pesante e la luce sembra lontana. Non lasciarmi andare, anche quando non posso sentirti vicino. Come il salmista ha gridato a Te dal profondo, così io grido. Ascolta la mia voce. Ricordami che Tu non disprezzi l'afflitto né nascondi il Tuo volto da lui. Fammi conoscere la Tua presenza anche qui, nella valle dell'ombra. Amen.",
+    "source": "cfr. Salmo 22; Salmo 130",
+    "category": "devotional",
+    "tags": ["depression", "suffering", "darkness", "mental-health", "loneliness"]
+  },
+  {
+    "id": "prayer-for-the-family",
+    "title": "Preghiera per la famiglia",
+    "body": "Signore Dio, dal Quale ogni famiglia prende nome, guarda la nostra famiglia con amore. Mantienici fedeli gli uni agli altri nei momenti di prova. Aiutaci a perdonare come Tu ci hai perdonato. Riempi la nostra casa con la Tua pace, i nostri cuori con il Tuo amore e la nostra vita con la Tua grazia. La Santa Famiglia di Nazareth sia il nostro modello e patrono. Per Cristo nostro Signore. Amen.",
+    "source": null,
+    "category": "devotional",
+    "tags": ["family", "marriage", "home", "children", "peace"]
+  },
+  {
+    "id": "prayer-compline",
+    "title": "Preghiera della sera (Compieta)",
+    "body": "Visita, Ti preghiamo, o Signore, questa dimora e tieni lontano da essa tutte le insidie del nemico. I Tuoi santi angeli dimorino qui per custodirci nella pace, e la Tua benedizione sia sempre su di noi. Per Cristo nostro Signore. Amen.",
+    "source": "Dall'Ufficio Divino",
+    "category": "evening",
+    "tags": ["evening", "night", "protection", "daily"]
+  },
+  {
+    "id": "prayer-st-joseph",
+    "title": "Preghiera a San Giuseppe",
+    "body": "O Beato Giuseppe, fedele custode e padre putativo del Figlio di Dio, ricordati della tenera carità con cui abbracciasti Gesù Bambino e della diligente cura con cui vegliasti sulla Santa Famiglia. Per l'amore che portasti loro, proteggi i fedeli che ricorrono a te nelle loro prove. Intercedi per noi davanti al trono di Dio, affinché ci siano concesse la tua forza, la tua prudenza e la tua fiducia nella Provvidenza. Amen.",
+    "source": null,
+    "category": "saints",
+    "tags": ["st-joseph", "saints", "fathers", "workers", "protection", "family", "vocations"]
+  },
+  {
+    "id": "divine-mercy-chaplet",
+    "title": "Coroncina della Divina Misericordia",
+    "body": "Si inizia con il Credo Apostolico, un Padre Nostro, un'Ave Maria e il Credo.\n\nSul grano grosso di ogni decina:\nPadre eterno, Ti offro il Corpo e il Sangue, l'Anima e la Divinità del Tuo dilettissimo Figlio, nostro Signore Gesù Cristo, in espiazione dei nostri peccati e di quelli del mondo intero.\n\nSu ogni grano piccolo della decina:\nPer la Sua dolorosa Passione, abbi misericordia di noi e del mondo intero.\n\nSi conclude (tre volte):\nDio Santo, Dio Forte, Dio Immortale, abbi misericordia di noi e del mondo intero.",
+    "source": "Rivelata a Santa Faustina Kowalska, 1935",
+    "category": "devotional",
+    "tags": ["mercy", "devotional", "daily", "passion"]
+  },
+  {
+    "id": "litany-of-humility",
+    "title": "Litania dell'Umiltà",
+    "body": "O Gesù, mite e umile di cuore, ascoltami.\n\nDal desiderio di essere stimato, liberami, o Gesù.\nDal desiderio di essere amato, liberami, o Gesù.\nDal desiderio di essere esaltato, liberami, o Gesù.\nDal desiderio di essere onorato, liberami, o Gesù.\nDal desiderio di essere lodato, liberami, o Gesù.\nDal desiderio di essere preferito ad altri, liberami, o Gesù.\nDal desiderio di essere consultato, liberami, o Gesù.\nDal desiderio di essere approvato, liberami, o Gesù.\n\nDalla paura di essere umiliato, liberami, o Gesù.\nDalla paura di essere disprezzato, liberami, o Gesù.\nDalla paura di essere rimproverato, liberami, o Gesù.\nDalla paura di essere calunniato, liberami, o Gesù.\nDalla paura di essere dimenticato, liberami, o Gesù.\nDalla paura di essere deriso, liberami, o Gesù.\nDalla paura di essere offeso, liberami, o Gesù.\nDalla paura di essere sospettato, liberami, o Gesù.\n\nChe altri siano amati più di me, Gesù, concedimi la grazia di desiderarlo.\nChe altri siano stimati più di me, Gesù, concedimi la grazia di desiderarlo.\nChe altri aumentino e io diminuisca nel giudizio del mondo, Gesù, concedimi la grazia di desiderarlo.\nChe altri siano scelti e io messo da parte, Gesù, concedimi la grazia di desiderarlo.\nChe altri siano lodati e io ignorato, Gesù, concedimi la grazia di desiderarlo.\nChe altri siano preferiti a me in tutto, Gesù, concedimi la grazia di desiderarlo.\nChe altri diventino più santi di me, purché io diventi santo quanto dovrei, Gesù, concedimi la grazia di desiderarlo.",
+    "source": "Attribuita al Cardinale Rafael Merry del Val (1865–1930)",
+    "category": "devotional",
+    "tags": ["humility", "devotional", "faith", "daily"]
+  },
+  {
+    "id": "litany-of-purity",
+    "title": "Litania della Purezza",
+    "body": "Signore, pietà.\nCristo, pietà.\nSignore, pietà.\n\nDio Padre del Cielo, abbi pietà di noi.\nDio Figlio, Redentore del mondo, abbi pietà di noi.\nDio Spirito Santo, abbi pietà di noi.\nSanta Trinità, unico Dio, abbi pietà di noi.\n\nGesù, mite e umile di cuore, rendi i nostri cuori simili al Tuo.\nGesù, modello di castità, rendici puri.\nGesù, amante delle anime, custodisci le nostre anime.\n\nDa ogni impurità di cuore, liberaci, o Signore.\nDa ogni pensiero impuro, liberaci, o Signore.\nDalla cecità che il peccato porta, liberaci, o Signore.\nDa ogni occasione di impurità, liberaci, o Signore.\nDalla negligenza nel custodire i sensi, liberaci, o Signore.\n\nChe possiamo amare la purezza del cuore, Signore, concedici questa grazia.\nChe possiamo perseverare nella virtù, Signore, concedici questa grazia.\nChe possiamo resistere a ogni tentazione con il Tuo aiuto, Signore, concedici questa grazia.\nChe possiamo imitare la purezza della Beata Vergine Maria, Signore, concedici questa grazia.\nChe possiamo custodire i nostri pensieri, parole e opere per la Tua gloria, Signore, concedici questa grazia.\n\nAgnello di Dio, che togli i peccati del mondo, perdonaci, o Signore.\nAgnello di Dio, che togli i peccati del mondo, ascoltaci, o Signore.\nAgnello di Dio, che togli i peccati del mondo, abbi pietà di noi.\n\nPrega per noi, o Santa Vergine Maria, affinché siamo fatti degni delle promesse di Cristo.",
+    "source": null,
+    "category": "devotional",
+    "tags": ["purity", "faith", "devotional"]
+  }
+]

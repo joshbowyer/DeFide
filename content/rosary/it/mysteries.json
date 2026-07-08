@@ -1,0 +1,150 @@
+[
+  {
+    "id": "joyful",
+    "name": "Misteri Gaudiosi",
+    "traditional_days": "Lunedì, Sabato",
+    "mysteries": [
+      {
+        "number": 1,
+        "title": "L'Annunciazione",
+        "scripture": "Luca 1,26–38",
+        "meditation": "L'angelo Gabriele annuncia a Maria che concepirà e darà alla luce il Figlio di Dio. Maria umilmente accetta la volontà di Dio: «Ecco l'ancella del Signore; avvenga di me secondo la tua parola». Preghiera per la virtù dell'umiltà."
+      },
+      {
+        "number": 2,
+        "title": "La Visitazione",
+        "scripture": "Luca 1,39–56",
+        "meditation": "Maria si reca in fretta a visitare sua cugina Elisabetta, che è piena di Spirito Santo ed esclama: «Benedetta tu fra le donne, e benedetto il frutto del tuo seno!» Il bambino Giovanni sussulta di gioia nel grembo. Preghiera per la virtù della carità verso il prossimo."
+      },
+      {
+        "number": 3,
+        "title": "La Natività",
+        "scripture": "Luca 2,1–20",
+        "meditation": "Gesù nasce in una stalla a Betlemme, avvolto in fasce e deposto in una mangiatoia, perché non c'era posto nell'albergo. Gli angeli annunciano la buona notizia ai poveri pastori. Preghiera per la virtù della povertà di spirito e del distacco dalle cose del mondo."
+      },
+      {
+        "number": 4,
+        "title": "La Presentazione al Tempio",
+        "scripture": "Luca 2,22–38",
+        "meditation": "Maria e Giuseppe presentano il bambino Gesù al Tempio secondo la Legge di Mosè. Il santo uomo Simeone prende il bambino tra le braccia e profetizza che Egli sarà luce per le nazioni e che una spada trafiggerà l'anima di Maria. Preghiera per la virtù dell'obbedienza e della fedeltà alla Legge di Dio."
+      },
+      {
+        "number": 5,
+        "title": "Il Ritrovamento di Gesù al Tempio",
+        "scripture": "Luca 2,41–52",
+        "meditation": "Gesù dodicenne, rimasto a Gerusalemme, viene ritrovato da Maria e Giuseppe dopo tre giorni nel Tempio, seduto in mezzo ai dottori, mentre li ascolta e li interroga. Dice loro che deve occuparsi delle cose del Padre suo. Preghiera per la virtù dello zelo per le cose di Dio."
+      }
+    ]
+  },
+  {
+    "id": "sorrowful",
+    "name": "Misteri Dolorosi",
+    "traditional_days": "Martedì, Venerdì",
+    "mysteries": [
+      {
+        "number": 1,
+        "title": "L'Agonia nel Giardino",
+        "scripture": "Luca 22,39–46",
+        "meditation": "Gesù prega nell'orto del Getsemani, con l'anima triste fino alla morte. Suda sangue e un angelo viene a confortarlo. Tuttavia dice: «Non la mia volontà, ma la Tua sia fatta». Preghiera per la virtù della contrizione per i nostri peccati."
+      },
+      {
+        "number": 2,
+        "title": "La Flagellazione alla Colonna",
+        "scripture": "Giovanni 19,1; Isaia 53,5",
+        "meditation": "Gesù viene legato a una colonna e crudelmente flagellato dai soldati romani. Per le Sue lividure siamo stati guariti. Sopporta tutto per amore nostro e per la riparazione dei peccati d'impurità. Preghiera per la virtù della purezza e della mortificazione."
+      },
+      {
+        "number": 3,
+        "title": "L'Incoronazione di Spine",
+        "scripture": "Matteo 27,28–29",
+        "meditation": "I soldati intrecciano una corona di spine e la premono sul capo di Gesù, gli mettono in mano una canna e lo deridono come Re dei Giudei. Egli accetta questa umiliazione per noi. Preghiera per la virtù del coraggio e della fortezza morale."
+      },
+      {
+        "number": 4,
+        "title": "La Salita al Calvario",
+        "scripture": "Giovanni 19,17; Luca 23,26–31",
+        "meditation": "Gesù porta la Croce per le strade di Gerusalemme fino al Calvario, cadendo sotto il suo peso. Lungo la via incontra sua Madre. Simone di Cirene è costretto ad aiutarlo a portare la Croce. Preghiera per la virtù della pazienza nel portare le nostre croci quotidiane."
+      },
+      {
+        "number": 5,
+        "title": "La Crocifissione e Morte",
+        "scripture": "Giovanni 19,18–30",
+        "meditation": "Gesù viene crocifisso tra due ladroni. Sulla Croce perdona i suoi nemici, affida sua Madre al discepolo prediletto e raccomanda il suo spirito nelle mani del Padre. Con un forte grido spira. Preghiera per la virtù della perseveranza finale e per una santa morte."
+      }
+    ]
+  },
+  {
+    "id": "glorious",
+    "name": "Misteri Gloriosi",
+    "traditional_days": "Mercoledì, Domenica",
+    "mysteries": [
+      {
+        "number": 1,
+        "title": "La Risurrezione",
+        "scripture": "Marco 16,1–8; Giovanni 20,1–18",
+        "meditation": "Il terzo giorno Gesù risorge dai morti, vittorioso sul peccato, sulla morte e sul diavolo. Il sepolcro è vuoto. Appare prima a Maria Maddalena e poi ai discepoli. La morte è stata vinta per sempre. Preghiera per la virtù della fede nella risurrezione."
+      },
+      {
+        "number": 2,
+        "title": "L'Ascensione",
+        "scripture": "Luca 24,50–51; Atti 1,9–11",
+        "meditation": "Quaranta giorni dopo la Risurrezione, Gesù conduce i discepoli fino a Betania, li benedice e viene assunto in cielo. Due angeli dicono ai discepoli che Egli ritornerà allo stesso modo. Preghiera per la virtù della speranza e del desiderio del Cielo."
+      },
+      {
+        "number": 3,
+        "title": "La Discesa dello Spirito Santo",
+        "scripture": "Atti 2,1–11",
+        "meditation": "Nel giorno di Pentecoste, gli Apostoli e Maria sono riuniti in preghiera quando improvvisamente si sente un forte vento e lingue di fuoco si posano su ciascuno di loro. Vengono riempiti di Spirito Santo e cominciano a parlare in molte lingue. Nasce la Chiesa. Preghiera per i doni dello Spirito Santo."
+      },
+      {
+        "number": 4,
+        "title": "L'Assunzione di Maria",
+        "scripture": "Apocalisse 12,1; (tradizione)",
+        "meditation": "Al termine della sua vita terrena, la Beata Vergine Maria, preservata dalla corruzione del sepolcro, è assunta in anima e corpo nella gloria celeste per regnare come Regina accanto al Figlio. Preghiera per la virtù della devozione a Maria e per la grazia di una santa morte."
+      },
+      {
+        "number": 5,
+        "title": "L'Incoronazione di Maria",
+        "scripture": "Apocalisse 12,1; Giuditta 15,9",
+        "meditation": "Maria è incoronata Regina del Cielo e della Terra, Regina degli Angeli e dei Santi, da suo Figlio Gesù Cristo. Intercede incessantemente per noi davanti al trono di Dio. Preghiera per la grazia della perseveranza per condividere la sua gloria."
+      }
+    ]
+  },
+  {
+    "id": "luminous",
+    "name": "Misteri Luminosi",
+    "traditional_days": "Giovedì",
+    "mysteries": [
+      {
+        "number": 1,
+        "title": "Il Battesimo di Gesù nel Giordano",
+        "scripture": "Matteo 3,13–17",
+        "meditation": "Gesù viene da Giovanni al Giordano e viene battezzato. I cieli si aprono, lo Spirito Santo discende in forma di colomba e la voce del Padre si fa sentire: «Questi è il mio Figlio diletto, nel quale mi sono compiaciuto». Gesù consacra le acque del battesimo. Preghiera per la fedeltà alle promesse battesimali."
+      },
+      {
+        "number": 2,
+        "title": "Le Nozze di Cana",
+        "scripture": "Giovanni 2,1–11",
+        "meditation": "Alle nozze di Cana, Maria dice a Gesù: «Non hanno vino», e ordina ai servi: «Fate quello che vi dirà». Gesù trasforma l'acqua in vino, il suo primo miracolo, rivelando la sua gloria. Preghiera per la grazia di confidare nell'intercessione di Maria e obbedire ai comandi del Signore."
+      },
+      {
+        "number": 3,
+        "title": "L'Annuncio del Regno",
+        "scripture": "Marco 1,14–15; Matteo 5–7",
+        "meditation": "Gesù proclama la venuta del Regno di Dio e chiama tutti alla conversione e alla fede nel Vangelo. Insegna le Beatitudini e la via della misericordia. Preghiera per l'apertura alla conversione e per il coraggio di vivere il Vangelo."
+      },
+      {
+        "number": 4,
+        "title": "La Trasfigurazione",
+        "scripture": "Luca 9,28–36",
+        "meditation": "Gesù prende Pietro, Giacomo e Giovanni sul monte Tabor, dove si trasfigura davanti a loro, il suo volto risplende come il sole e le sue vesti diventano candide come la luce. Mosè ed Elia appaiono con Lui. Il Padre dice: «Questi è il mio Figlio diletto; ascoltatelo». Preghiera per la grazia della contemplazione e il desiderio della gloria eterna."
+      },
+      {
+        "number": 5,
+        "title": "L'Istituzione dell'Eucaristia",
+        "scripture": "Matteo 26,26–28; Luca 22,19–20",
+        "meditation": "Nell'Ultima Cena, Gesù prende il pane e il vino e dice: «Questo è il mio Corpo... Questo è il mio Sangue». Comanda agli Apostoli: «Fate questo in memoria di me». Ci dona sé stesso, Corpo, Sangue, Anima e Divinità, come cibo per le nostre anime. Preghiera per la riverenza verso l'Eucaristia e per una frequente e degna Comunione."
+      }
+    ]
+  }
+]

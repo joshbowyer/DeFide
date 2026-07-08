@@ -197,6 +197,7 @@ fun SettingsScreen(
                     "pt-BR" to stringResource(R.string.lang_pt_BR),
                     "pt-PT" to stringResource(R.string.lang_pt_PT),
                     "zh-CN" to stringResource(R.string.lang_zh_CN),
+                    "it"    to stringResource(R.string.lang_it),
                     "la"    to stringResource(R.string.lang_la),
                 )
                 var languageDropdownExpanded by remember { mutableStateOf(false) }
@@ -311,6 +312,10 @@ fun SettingsScreen(
                     "lt" -> listOf(
                         Triple("rk1998",  "Biblija (RK, K1998)",            "Katalikiška lietuviška Biblija"),
                         Triple("vulgate", "Vulgata Latina",                  "Originarinis lotyniškas šv. Jeronimo tekstas"),
+                    )
+                    "it" -> listOf(
+                        Triple("mar", "Bibbia Martini (1782)", "Traduzione cattolica italiana di Antonio Martini"),
+                        Triple("vulgate", "Vulgata Latina", "Testo latino originale di San Girolamo"),
                     )
                     "zh-CN" -> listOf(
                         Triple("sg", "思高圣经", "天主教中文圣经译本"),

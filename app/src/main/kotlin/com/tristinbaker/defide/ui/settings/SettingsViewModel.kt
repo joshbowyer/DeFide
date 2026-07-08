@@ -85,6 +85,7 @@ class SettingsViewModel @Inject constructor(
                 "fr"    -> "crampon"
                 "lt"    -> "rk1998"
                 "zh-CN" -> "sg"
+                "it"    -> "mar"
                 else    -> "dra"
             }
             prefsRepository.setBibleTranslation(defaultTranslation)
